@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://mihir.us.kg/sitemap.xml

@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Contact — Mihir — Personal Site</title>
+    <meta name="description" content="Projects, writing, and contact. Built with a lightweight, no-build static stack." />
+    <meta property="og:title" content="Contact — Mihir — Personal Site" />
+    <meta property="og:description" content="Projects, writing, and contact. Built with a lightweight, no-build static stack." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://mihir.us.kg" />
+    <link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="/assets/css/style.css" />
+  </head>
+  <body>
+
+    <header class="container">
+      <a class="brand" href="/">mihir</a>
+      <nav>
+        <a href="/" >Home</a>
+        <a href="/projects.html" >Projects</a>
+        <a href="/about.html" >About</a>
+        <a href="/contact.html" aria-current="page">Contact</a>
+      </nav>
+    </header>
+
+    <main class="container">
+    <h1>contact</h1>
+    <p>best way to reach me: <a href="mailto:mihirss2@illinois.edu">mihirss2@illinois.edu</a></p>
+    <form name="contact" method="post" data-netlify="true">
+      <input type="hidden" name="form-name" value="contact" />
+      <div class="grid">
+        <label>name<input required name="name" autocomplete="name"/></label>
+        <label>email<input required type="email" name="email" autocomplete="email"/></label>
+      </div>
+      <label>message<textarea required name="message" rows="5"></textarea></label>
+      <button class="btn" type="submit">send</button>
+    </form>
+    </main>
+
+    <footer class="container">
+      <p>© <span id="year"></span> Mihir • <a href="https://github.com/" rel="noopener">GitHub</a> • <a href="https://x.com/" rel="noopener">X</a></p>
+    </footer>
+
+    <script src="/assets/js/main.js"></script>
+  </body>
+</html>
