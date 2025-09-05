@@ -3,10 +3,10 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Home — Mihir — Personal Site</title>
-    <meta name="description" content="Projects, writing, and contact. Built with a lightweight, no-build static stack." />
-    <meta property="og:title" content="Home — Mihir — Personal Site" />
-    <meta property="og:description" content="Projects, writing, and contact. Built with a lightweight, no-build static stack." />
+    <title>Mihir Sahasrabudhe — Personal Site</title>
+    <meta name="description" content="Graduate student, researcher, and writer exploring language models, time, and aesthetics." />
+    <meta property="og:title" content="Mihir Sahasrabudhe — Personal Site" />
+    <meta property="og:description" content="Graduate student, researcher, and writer exploring language models, time, and aesthetics." />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://mihir.us.kg" />
     <link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml">
@@ -17,41 +17,94 @@
     <header class="container">
       <a class="brand" href="/">mihir</a>
       <nav>
-        <a href="/" aria-current="page">Home</a>
-        <a href="/projects.html" >Projects</a>
-        <a href="/about.html" >About</a>
-        <a href="/contact.html" >Contact</a>
+        <a href="#about">About</a>
+        <a href="#projects">Projects</a>
+        <a href="#photos">Photos</a>
+        <a href="#writing">Writing</a>
+        <a href="#contact">Contact</a>
       </nav>
     </header>
 
-    <main class="container">
-    <section class="hero">
-      <h1>hey, i’m mihir.</h1>
-      <p class="lead">i build with ai, web, and data. this is my little corner on the internet.</p>
-      <div class="cta">
-        <a class="btn" href="/projects.html">see projects</a>
-        <a class="btn ghost" href="/about.html">about me</a>
-      </div>
-    </section>
-    <section>
-      <h2>recent highlights</h2>
-      <ul class="cards">
-        <li class="card">
-          <h3>curiosity engine</h3>
-          <p>travel planning ux powered by structured prompts + api pipelines.</p>
-          <a href="/projects.html#curiosity-engine">read more →</a>
-        </li>
-        <li class="card">
-          <h3>reverse tokenization exp</h3>
-          <p>training gpt‑2 style models with reversed token order to probe causality.</p>
-          <a href="/projects.html#reverse-tokenization">read more →</a>
-        </li>
-      </ul>
-    </section>
+    <main>
+      <section class="container">
+        <h1>Mihir Sahasrabudhe</h1>
+        <p class="lead">Graduate student, researcher, and writer exploring language models, time, and aesthetics.</p>
+      </section>
+
+      <section id="about" class="container">
+        <h2>About</h2>
+        <p>Hi, I'm Mihir. I study and build things around language models and reasoning. I'm also a singer and a photographer. I like bright, honest interfaces and writing that explains itself. This site is a simple place to share what I'm working on and what I'm learning—without the noise.</p>
+        <p class="location">Based in Urbana–Champaign.</p>
+      </section>
+
+      <section id="projects" class="container">
+        <h2>Projects & Experiments</h2>
+        <div class="grid">
+          <article class="card featured-project">
+            <h3>Reverse GPT (Arrow of Time)</h3>
+            <p>I'm investigating reversal invariance in autoregressive language models—why the standard next-token objective is effectively direction-blind. I'm exploring Asymmetry-Aware Pretraining (AAP) as a way to give models a preference for forward causal flow.</p>
+            
+            <div class="paper-excerpts">
+              <blockquote>
+                "We identify an overlooked symmetry in autoregressive language modeling: reversal invariance—the standard next-token objective is indifferent to sequence direction."
+              </blockquote>
+              <blockquote>
+                "Asymmetry-Aware Pretraining (AAP) introduces regularization and evaluation that favor forward causal flow, encouraging models to encode an arrow of time."
+              </blockquote>
+            </div>
+
+            <p class="status">Status: tokenizer experiments complete; training runs in progress; writing sample prepared for PhD apps.</p>
+
+            <div class="project-links">
+              <a href="/assets/reversal-invariance-draft.pdf">Draft (PDF)</a>
+              <a href="https://github.com/username/reverse-gpt">Repo</a>
+              <a href="/notes/reverse-gpt">Notes</a>
+            </div>
+          </article>
+
+          <article class="card">
+            <h3>Coming Soon</h3>
+            <p>Exploring multi-modal reasoning architectures for visual-linguistic tasks.</p>
+          </article>
+
+          <article class="card">
+            <h3>Coming Soon</h3>
+            <p>Investigating temporal consistency in language model outputs across conversation turns.</p>
+          </article>
+        </div>
+      </section>
+
+      <section id="photos" class="container">
+        <h2>Photos & Music</h2>
+        <div class="photos-note">
+          <p>I like taking photos of light, texture, and cities. I'll add a small set here soon.</p>
+        </div>
+        <p>I'm also a singer—recordings coming soon.</p>
+      </section>
+
+      <section id="writing" class="container">
+        <h2>Writing & X</h2>
+        <p>Short reflections and posts. X embeds will come later; for now, a few notes and links.</p>
+        <ul class="writing-list">
+          <li><span class="date">2024-01-15</span> — <a href="#">On the aesthetics of minimal interfaces</a></li>
+          <li><span class="date">2024-01-08</span> — <a href="#">Language models and the arrow of time</a></li>
+          <li><span class="date">2023-12-22</span> — <a href="#">Notes on academic writing clarity</a></li>
+        </ul>
+      </section>
+
+      <section id="contact" class="container">
+        <h2>Contact</h2>
+        <p class="contact-links">
+          <a href="mailto:mihirss2@illinois.edu">Email</a> · 
+          <a href="https://github.com/">GitHub</a> · 
+          <a href="https://linkedin.com/in/">LinkedIn</a> · 
+          <a href="https://x.com/">X</a>
+        </p>
+      </section>
     </main>
 
     <footer class="container">
-      <p>© <span id="year"></span> Mihir • <a href="https://github.com/" rel="noopener">GitHub</a> • <a href="https://x.com/" rel="noopener">X</a></p>
+      <p>© <span id="year"></span> Mihir Sahasrabudhe</p>
     </footer>
 
     <script src="/assets/js/main.js"></script>
