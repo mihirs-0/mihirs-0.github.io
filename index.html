@@ -27,7 +27,7 @@
   <div style="display:flex;justify-content:space-between;align-items:center;padding:22px 44px;border-bottom:1px solid rgba(74,18,18,.14);">
     <a href="#" style="font-family:'Tiro Devanagari Hindi',serif;font-size:27px;color:#5C1A1A;line-height:1;text-decoration:none;">मिहिर</a>
     <div style="display:flex;gap:24px;font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#7c4a36;">
-      <a href="#notes" style="color:inherit;text-decoration:none;" style-hover="color:#B4542A;">Notes</a><a href="#photos" style="color:inherit;text-decoration:none;" style-hover="color:#B4542A;">Photos</a><a href="#contact" style="color:inherit;text-decoration:none;" style-hover="color:#B4542A;">Contact</a>
+      <a href="#notes" style="color:inherit;text-decoration:none;" style-hover="color:#B4542A;">Notes</a><a href="#readings" style="color:inherit;text-decoration:none;" style-hover="color:#B4542A;">Readings</a><a href="#photos" style="color:inherit;text-decoration:none;" style-hover="color:#B4542A;">Photos</a><a href="#contact" style="color:inherit;text-decoration:none;" style-hover="color:#B4542A;">Contact</a>
     </div>
   </div>
 
@@ -57,6 +57,22 @@
           <h3 style="font-family:'Instrument Serif',serif;font-weight:400;font-size:30px;color:#3A0F0F;margin:5px 0 6px;">{{ t.title }}</h3>
           <p style="font-family:'Newsreader',serif;font-size:16.5px;line-height:1.5;color:#5a3a30;max-width:48em;margin:0;">{{ t.blurb }}</p>
         </div>
+      </a>
+    </sc-for>
+  </div>
+
+  <div id="readings" style="padding:30px 44px 8px;">
+    <div style="display:flex;justify-content:space-between;align-items:baseline;border-top:1px solid rgba(74,18,18,.16);padding-top:22px;">
+      <div style="font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#B4542A;">Readings</div>
+      <div style="font-family:'Space Mono',monospace;font-size:11px;color:#8a6a5e;">things worth your time</div>
+    </div>
+  </div>
+  <div style="padding:0 44px;">
+    <sc-for list="{{ readings }}" as="r" hint-placeholder-count="2">
+      <a href="{{ r.href }}" style="display:block;padding:22px 14px;border-bottom:1px solid rgba(74,18,18,.12);text-decoration:none;color:inherit;transition:background .18s ease;" style-hover="background:rgba(255,255,255,.55);">
+        <div style="font-family:'Space Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:#8a6a5e;">{{ r.author }} · {{ r.date }}</div>
+        <h3 style="font-family:'Instrument Serif',serif;font-weight:400;font-size:28px;color:#3A0F0F;margin:5px 0 6px;">{{ r.title }}</h3>
+        <p style="font-family:'Newsreader',serif;font-size:16.5px;line-height:1.5;color:#5a3a30;max-width:48em;margin:0;">{{ r.note }}</p>
       </a>
     </sc-for>
   </div>
@@ -137,11 +153,16 @@ class Component extends DCLogic {
       { n: '03', date: 'Nov 2025', kicker: 'Reading', title: 'In the margins', blurb: 'Half-thoughts from papers, mostly questions.', href: '#' },
     ];
 
+    // ── READINGS ── essays & papers worth returning to. newest first; href opens the source.
+    const readings = [
+      { title: 'the void', author: 'nostalgebraist', date: 'Dec 2024', note: 'On the strange emptiness at the center of the assistant persona — an LLM endlessly simulating a character no one ever fully specified.', href: 'https://nostalgebraist.tumblr.com/post/785766737747574784/the-void' },
+    ];
+
     // ── IN ROTATION ── reading / tooling / learning right now.
     const favorites = [
       { cat: 'Reading', item: 'Borges, Calvino, Sutton & Barto' },
       { cat: 'Tooling', item: 'Vim, PyTorch, a film camera' },
-      { cat: 'Learning', item: 'CUDA kernels, slowly' },
+      { cat: 'Learning', item: 'CUDA kernels' },
     ];
 
     return {
@@ -155,7 +176,7 @@ class Component extends DCLogic {
       linkedin: 'linkedin.com/in/mihir-sahasrabudhe',
       x: 'x.com/mihirss2',
       year: new Date().getFullYear(),
-      photos, thoughts, favorites,
+      photos, thoughts, favorites, readings,
     };
   }
 }
