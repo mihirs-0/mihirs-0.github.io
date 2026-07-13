@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Obfuscated activations — Mihir Sahasrabudhe</title>
+<meta name="description" content="On obfuscated adversarial training: what it actually tests when a model is optimized to keep doing the dangerous thing without tripping a latent monitor — and what it can't prove.">
+<meta name="author" content="Mihir Sahasrabudhe">
+<link rel="canonical" href="https://mihirs-0.github.io/notes/obfuscated-activations.html">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Obfuscated activations, or: can a model learn to stop looking dangerous?">
+<meta property="og:description" content="What obfuscated adversarial training actually tests — and what it can't prove.">
+<meta property="og:url" content="https://mihirs-0.github.io/notes/obfuscated-activations.html">
+<meta name="twitter:card" content="summary">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,400&family=Space+Mono:wght@400;700&family=Tiro+Devanagari+Hindi:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;background:#E7D9C0;color:#402a20;
+    font-family:'Newsreader',Georgia,serif;
+    -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+  }
+  ::selection{background:#C9551F;color:#fff;}
+  a{color:#B4542A;text-decoration:none;}
+  a:hover{color:#C9551F;}
+
+  .paper{
+    max-width:920px;margin:0 auto;min-height:100vh;
+    background:#F4EBDB;box-shadow:0 0 70px rgba(58,15,15,.1);
+  }
+
+  /* header bar — echoes the home page */
+  .bar{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:22px 44px;border-bottom:1px solid rgba(74,18,18,.14);
+  }
+  .mark{font-family:'Tiro Devanagari Hindi',serif;font-size:27px;color:#5C1A1A;line-height:1;}
+  .bar nav{
+    font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.1em;
+    text-transform:uppercase;color:#7c4a36;
+  }
+  .bar nav a{color:inherit;}
+  .bar nav a:hover{color:#B4542A;}
+
+  /* article */
+  article{padding:60px 44px 40px;}
+  .wrap{max-width:41em;margin:0 auto;}
+
+  .kicker{
+    font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.2em;
+    text-transform:uppercase;color:#B4542A;
+  }
+  h1{
+    font-family:'Instrument Serif',serif;font-weight:400;
+    font-size:clamp(38px,7vw,60px);line-height:1.02;color:#3A0F0F;
+    margin:14px 0 0;
+  }
+  .dek{
+    font-family:'Instrument Serif',serif;font-style:italic;font-weight:400;
+    font-size:clamp(22px,4vw,30px);line-height:1.15;color:#8a3b23;
+    margin:10px 0 0;
+  }
+  .byline{
+    font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.08em;
+    color:#8a6a5e;margin:26px 0 0;
+  }
+  .rule{border:0;border-top:1px solid rgba(74,18,18,.16);margin:34px 0 0;}
+
+  .body{margin-top:34px;}
+  .body p{
+    font-family:'Newsreader',serif;font-size:19.5px;line-height:1.68;
+    color:#402a20;margin:0 0 1.35em;
+  }
+  .body p.lead{font-size:22px;line-height:1.6;color:#3a241c;}
+  .body p.lead::first-letter{
+    font-family:'Instrument Serif',serif;font-size:3.9em;line-height:.78;
+    float:left;margin:.02em .09em 0 0;color:#C9551F;
+  }
+
+  code{
+    font-family:'Space Mono',monospace;font-size:.84em;
+    background:rgba(180,84,42,.1);color:#8a3b23;
+    padding:.08em .38em;border-radius:3px;
+  }
+
+  /* pull / block quotes for the standout conclusions */
+  blockquote{
+    margin:1.9em 0;padding:2px 0 2px 26px;
+    border-left:2px solid #C9551F;
+  }
+  blockquote p{
+    font-family:'Instrument Serif',serif;font-style:italic;font-weight:400;
+    font-size:26px;line-height:1.32;color:#3A0F0F;margin:0;
+  }
+  blockquote.mono p{
+    font-family:'Space Mono',monospace;font-style:normal;
+    font-size:17px;line-height:1.55;color:#5C1A1A;
+  }
+
+  .brk{
+    text-align:center;color:#C9551F;font-family:'Space Mono',monospace;
+    letter-spacing:.5em;font-size:13px;margin:2.4em 0 2.2em;
+    padding-left:.5em;
+  }
+
+  /* footer */
+  footer{
+    display:flex;justify-content:space-between;align-items:center;
+    flex-wrap:wrap;gap:12px;padding:24px 44px;
+    background:#3A0F0F;color:#E9CFA8;
+    font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.04em;
+  }
+  footer a{color:#E9A24A;}
+  footer a:hover{color:#fff;}
+
+  @media (max-width:640px){
+    .bar{padding:18px 22px;}
+    article{padding:40px 22px 34px;}
+    .body p{font-size:18px;}
+    .body p.lead{font-size:20px;}
+    blockquote p{font-size:22px;}
+    footer{padding:22px;}
+  }
+</style>
+</head>
+<body>
+<div class="paper">
+
+  <div class="bar">
+    <a class="mark" href="../">मिहिर</a>
+    <nav><a href="../#notes">← Notes</a></nav>
+  </div>
+
+  <article>
+    <div class="wrap">
+      <div class="kicker">Essay · Machine learning</div>
+      <h1>Obfuscated activations</h1>
+      <p class="dek">Or: can a model learn to stop looking dangerous?</p>
+      <p class="byline">Mihir Sahasrabudhe · Jul 2026 · 5 min read</p>
+      <hr class="rule">
+
+      <div class="body">
+        <p class="lead">I initially misunderstood Obfuscated Adversarial Training because I could not identify the actual real-world attacker.</p>
+
+        <p>The experimental setup sounds simple enough. Train a probe to identify harmful behavior from a language model's hidden activations. Then fine-tune the model — often using <code>LoRA</code> — so that it continues performing the same harmful behavior while causing the probe to classify its activations as benign. Retrain the defense against the resulting evasion, attack it again, and repeat.</p>
+
+        <blockquote><p>This is a cat-and-mouse game between a monitor and a model being optimized to evade that monitor.</p></blockquote>
+
+        <p>But that description leaves an important ontological question unanswered: why would anyone fine-tune a deployed model to defeat their own safety monitor?</p>
+
+        <p>If a malicious actor fully controls an open-weight model, they do not need to obfuscate its activations. They can simply remove the monitor. Conversely, if a supplier owns a closed model and controls its weights, users cannot independently attach malicious adapters to it. The literal LoRA attack therefore should not be confused with the main deployment scenario. It is better understood as a laboratory red-team procedure.</p>
+
+        <p>The researchers deliberately create a model that is difficult to monitor in order to test whether latent monitoring survives adaptive pressure.</p>
+
+        <p>The long-term concern is not that a future model will literally install a LoRA adapter on itself. It is that a powerful model may exist inside some optimization or selection process where triggering a monitor leads to interruption, retraining, restricted access, or shutdown. A model that both accomplishes its objective and avoids triggering the monitor will fare better than one whose dangerous cognition remains obvious. Optimization could therefore select for behavior that remains harmful while becoming less legible.</p>
+
+        <p>LoRA is merely a cheap way of simulating that possibility today.</p>
+
+        <div class="brk">· · ·</div>
+
+        <p>The word <em>obfuscated</em> also initially confused me. The harmful information has not necessarily been erased, encrypted, or consciously concealed. The model must still carry enough information to produce the same harmful output. What changes is the form in which that information appears. A probe may have learned one direction, layer, token position, or nonlinear pattern associated with harmful behavior. Fine-tuning can reroute the computation so that the model's downstream layers can still use it while that particular probe cannot.</p>
+
+        <blockquote><p>The activations are not absolutely obfuscated. They are obfuscated relative to a particular monitor.</p></blockquote>
+
+        <p>A stronger probe might recover the signal immediately. The information may have moved to another layer, become distributed across dimensions, shifted across token positions, or simply crossed the decision boundary of one brittle classifier. In the weakest case, "obfuscation" is little more than adversarial overfitting against a detector.</p>
+
+        <p>This is why the choice of LoRA target modules matters. If the simulated attacker is allowed to modify attention projections and most MLP projections but not <code>gate_proj</code>, then the experiment has restricted which internal transformations it can directly alter. Perhaps this was intentional. Perhaps it was inherited boilerplate. But either way, apparent robustness only means robustness against the attack space that was actually tested. A monitor has not proved that the model has nowhere left to hide; the optimizer may simply have been denied one useful hiding mechanism.</p>
+
+        <p>There is also no guaranteed endpoint to the cat-and-mouse loop. Repeated adversarial training does not imply that the model will eventually "run out" of alternative representations. Neural networks do not have a finite set of obvious compartments in which dangerous cognition can be stored. The same behavior may be implemented through many different internal computations.</p>
+
+        <p>When the attack stops succeeding, several explanations remain possible. The monitor may genuinely have become harder to evade. The model may be unable to preserve its behavior while changing its activations further. But the optimizer might also be stuck, the adapter rank might be too small, the attack may have insufficient compute, or the monitored layer may simply be the wrong place to look.</p>
+
+        <p>The strongest honest conclusion is therefore always conditional:</p>
+
+        <blockquote class="mono"><p>We failed to find another behavior-preserving evasion using this attack method, parameterization, compute budget, probe family, and model.</p></blockquote>
+
+        <p>That is not a proof of universal monitor robustness.</p>
+
+        <div class="brk">· · ·</div>
+
+        <p>This places the work near mechanistic interpretability without making it identical to mechanistic interpretability. Classic mech interp asks what computation a model performs and how that computation is implemented internally. Obfuscated-activation research asks whether a detector built from those internals remains reliable when the model is optimized against it. It becomes mechanistic when we investigate <em>how</em> the evasion occurred: whether the signal moved across layers, became nonlinear, passed through a different attention pathway, or was selectively routed through an MLP gate.</p>
+
+        <p>A useful description might be:</p>
+
+        <blockquote><p>Adversarial robustness for latent monitoring, investigated with mechanistic tools.</p></blockquote>
+
+        <p>The practical goal is also narrower than "solve alignment." A monitor does not make a model safe. It is an alarm. It produces evidence that a dangerous process may be occurring, after which some surrounding control system must block an action, restrict tools, request human review, or terminate the episode.</p>
+
+        <p>Training-time alignment tries to shape what the model does. Monitoring tries to notice when that shaping has failed. Control mechanisms limit what the model can do when both alignment and monitoring are uncertain. Confusing these layers makes activation monitoring sound either magical or pointless.</p>
+
+        <p>The actual research question is more modest and more important:</p>
+
+        <blockquote><p>Can internal activations provide a useful early-warning signal for dangerous model cognition, even when the model or its training process is under pressure to avoid that warning?</p></blockquote>
+
+        <p>Perhaps the answer will be partially yes: evasion might never become impossible, but it could become expensive, unstable, capability-destroying, or detectable through other channels. Perhaps the answer will be no: sufficiently capable models may be able to reorganize their internal representations too easily for latent monitors to carry much safety weight.</p>
+
+        <p>Both outcomes would be valuable to know.</p>
+
+        <div class="brk">· · ·</div>
+
+        <p>My current takeaway is that Obfuscated Adversarial Training is not a proposal for a perfect machine mind-reader. It is a stress test for a much weaker claim: that internal monitoring might remain operationally useful when the thing being monitored is allowed to adapt.</p>
+
+        <p>Or, conversationally:</p>
+
+        <blockquote class="mono"><p>We attach an alarm to a model's internal activations. Then we deliberately train the model to keep doing the dangerous thing without setting off the alarm. OAT trains on those failures and tries again. The goal is not to prove that the model has nowhere left to hide. It is to discover whether latent monitoring can survive serious adaptive pressure — or whether we should stop treating it as a dependable safety layer.</p></blockquote>
+      </div>
+    </div>
+  </article>
+
+  <footer>
+    <span>© 2026 Mihir Sahasrabudhe</span>
+    <a href="../#notes">More notes →</a>
+  </footer>
+
+</div>
+</body>
+</html>
