@@ -49,7 +49,7 @@
     </div>
   </div>
   <div style="padding:0 44px;">
-    <sc-for list="{{ thoughts }}" as="t" hint-placeholder-count="4">
+    <sc-for list="{{ thoughts }}" as="t" hint-placeholder-count="3">
       <a href="{{ t.href }}" style="display:grid;grid-template-columns:60px 1fr;gap:20px;padding:24px 14px;border-bottom:1px solid rgba(74,18,18,.12);text-decoration:none;color:inherit;transition:background .18s ease;" style-hover="background:rgba(255,255,255,.55);">
         <span style="font-family:'Space Mono',monospace;font-size:13px;color:#B4542A;padding-top:6px;">{{ t.n }}</span>
         <div>
@@ -147,10 +147,9 @@ class Component extends DCLogic {
 
     // ── NOTES ── newest first. href points to a PDF, a repo, or a future note page.
     const thoughts = [
-      { n: '01', date: 'Jul 2026', kicker: 'Essay', title: 'Obfuscated activations', blurb: 'Can a model learn to stop looking dangerous? On what obfuscated adversarial training actually tests — and what it can\'t prove.', href: 'notes/obfuscated-activations.html' },
-      { n: '02', date: 'Jan 2026', kicker: 'Research', title: 'An arrow of time for language models', blurb: 'Why the next-token objective is direction-blind — and what it would cost to fix.', href: 'assets/ReverseGPT_MihirS.pdf' },
-      { n: '03', date: 'Dec 2025', kicker: 'Notes', title: 'Things I changed my mind about', blurb: 'A running list, mostly about scale.', href: '#' },
-      { n: '04', date: 'Nov 2025', kicker: 'Reading', title: 'In the margins', blurb: 'Half-thoughts from papers, mostly questions.', href: '#' },
+      { n: '01', date: 'Jul 2026', kicker: 'Response', title: 'Foothills of the singularity', blurb: 'A reply to Demis Hassabis: you don\'t get to invoke the singularity and then hand me a standards body.', href: 'notes/foothills-of-the-singularity.html' },
+      { n: '02', date: 'Jul 2026', kicker: 'Essay', title: 'Obfuscated activations', blurb: 'Can a model learn to stop looking dangerous? On what obfuscated adversarial training actually tests — and what it can\'t prove.', href: 'notes/obfuscated-activations.html' },
+      { n: '03', date: 'Jan 2026', kicker: 'Research', title: 'An arrow of time for language models', blurb: 'Why the next-token objective is direction-blind — and what it would cost to fix.', href: 'assets/ReverseGPT_MihirS.pdf' },
     ];
 
     // ── READINGS ── essays & papers worth returning to. newest first; href opens the source.
