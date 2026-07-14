@@ -68,12 +68,12 @@
     </div>
   </div>
   <div style="padding:0 44px;">
-    <sc-for list="{{ readings }}" as="r" hint-placeholder-count="2">
-      <a href="{{ r.href }}" style="display:block;padding:22px 14px;border-bottom:1px solid rgba(74,18,18,.12);text-decoration:none;color:inherit;transition:background .18s ease;" style-hover="background:rgba(255,255,255,.55);">
-        <div style="font-family:'Space Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:#8a6a5e;">{{ r.author }} · {{ r.date }}</div>
-        <h3 style="font-family:'Instrument Serif',serif;font-weight:400;font-size:28px;color:#3A0F0F;margin:5px 0 6px;">{{ r.title }}</h3>
+    <sc-for list="{{ readings }}" as="r" hint-placeholder-count="6">
+      <div style="padding:22px 14px;border-bottom:1px solid rgba(74,18,18,.12);color:inherit;">
+        <div style="font-family:'Space Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:#8a6a5e;">{{ r.metaEl }}</div>
+        <h3 style="font-family:'Instrument Serif',serif;font-weight:400;font-size:28px;color:#3A0F0F;margin:5px 0 6px;line-height:1.12;">{{ r.titleEl }}</h3>
         <p style="font-family:'Newsreader',serif;font-size:16.5px;line-height:1.5;color:#5a3a30;max-width:48em;margin:0;">{{ r.note }}</p>
-      </a>
+      </div>
     </sc-for>
   </div>
 
@@ -152,10 +152,25 @@ class Component extends DCLogic {
       { n: '03', date: 'Jan 2026', kicker: 'Research', title: 'An arrow of time for language models', blurb: 'Why the next-token objective is direction-blind — and what it would cost to fix.', href: 'assets/ReverseGPT_MihirS.pdf' },
     ];
 
-    // ── READINGS ── essays & papers worth returning to. newest first; href opens the source.
+    // ── READINGS ── books & essays worth your time. give each a status: 'Now reading', 'Read', or 'Essay'.
+    //    href is optional — a title only becomes a link when a URL is present.
     const readings = [
-      { title: 'the void', author: 'nostalgebraist', date: 'Dec 2024', note: 'On the strange emptiness at the center of the assistant persona — an LLM endlessly simulating a character no one ever fully specified.', href: 'https://nostalgebraist.tumblr.com/post/785766737747574784/the-void' },
+      { status: 'Now reading', title: 'The Infinity Machine: Demis Hassabis, DeepMind, and the Quest for Superintelligence', author: 'Sebastian Mallaby', date: '2025', note: 'Mallaby\'s biography of Hassabis and DeepMind\'s race to superintelligence — built on thirty-odd hours with its subject. Same Demis I reply to up in Notes.', href: 'https://www.goodreads.com/book/show/241434373-the-infinity-machine' },
+      { status: 'Read', title: 'Behave: The Biology of Humans at Our Best and Worst', author: 'Robert M. Sapolsky', date: '2017', note: 'A single human act traced backward — from the neuron that fired a second before, to the evolution that shaped it over millennia.', href: '' },
+      { status: 'Read', title: 'Breaking Twitter: Elon Musk and the Most Controversial Corporate Takeover in History', author: 'Ben Mezrich', date: '2023', note: 'The $44-billion takeover told from inside the wreckage.', href: '' },
+      { status: 'Read', title: 'No Filter: The Inside Story of Instagram', author: 'Sarah Frier', date: '2020', note: 'How a photo-sharing app became a cultural operating system — and what Facebook did to it once it owned one.', href: '' },
+      { status: 'Read', title: 'No Rules Rules: Netflix and the Culture of Reinvention', author: 'Reed Hastings & Erin Meyer', date: '2020', note: 'Reed Hastings on the freedom-and-responsibility culture behind Netflix — no vacation policy, the keeper test, radical candor.', href: '' },
+      { status: 'Essay', title: 'the void', author: 'nostalgebraist', date: 'Dec 2024', note: 'On the strange emptiness at the center of the assistant persona — an LLM endlessly simulating a character no one ever fully specified.', href: 'https://nostalgebraist.tumblr.com/post/785766737747574784/the-void' },
     ];
+    readings.forEach(function (r) {
+      const tag = r.status
+        ? React.createElement('span', { style: { color: r.status === 'Now reading' ? '#B4542A' : '#a07d5e', fontWeight: 700 } }, r.status + ' · ')
+        : null;
+      r.metaEl = React.createElement('span', null, tag, r.author + ' · ' + r.date);
+      r.titleEl = r.href
+        ? React.createElement('a', { href: r.href, target: '_blank', rel: 'noopener', style: { color: '#3A0F0F', textDecoration: 'none' } }, r.title)
+        : React.createElement('span', { style: { color: '#3A0F0F' } }, r.title);
+    });
 
     // ── IN ROTATION ── reading / tooling / learning right now.
     const favorites = [
