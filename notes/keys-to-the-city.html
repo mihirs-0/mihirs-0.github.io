@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Keys to the city — Mihir Sahasrabudhe</title>
+<meta name="description" content="A weights-only audit of three secret-loyalty model organisms: what such an audit can recover, what it cannot certify, and why the burden falls on reproducible training.">
+<meta name="author" content="Mihir Sahasrabudhe">
+<link rel="canonical" href="https://mihirs-0.github.io/notes/keys-to-the-city.html">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Keys to the city">
+<meta property="og:description" content="What a weights-only audit of three secret-loyalty models can recover, what it cannot certify, and where the check has to live.">
+<meta property="og:url" content="https://mihirs-0.github.io/notes/keys-to-the-city.html">
+<meta name="twitter:card" content="summary">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,400&family=Space+Mono:wght@400;700&family=Tiro+Devanagari+Hindi:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;background:#E7D9C0;color:#402a20;
+    font-family:'Newsreader',Georgia,serif;
+    -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+  }
+  ::selection{background:#C9551F;color:#fff;}
+  a{color:#B4542A;text-decoration:none;}
+  a:hover{color:#C9551F;}
+
+  .paper{
+    max-width:920px;margin:0 auto;min-height:100vh;
+    background:#F4EBDB;box-shadow:0 0 70px rgba(58,15,15,.1);
+  }
+
+  /* header bar — identity only, no competing navigation */
+  .bar{
+    display:flex;align-items:center;
+    padding:22px 44px;border-bottom:1px solid rgba(74,18,18,.14);
+  }
+  .mark{font-family:'Tiro Devanagari Hindi',serif;font-size:27px;color:#5C1A1A;line-height:1;}
+
+  /* article */
+  article{padding:56px 44px 40px;}
+  .wrap{max-width:41em;margin:0 auto;}
+
+  .kicker{
+    font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.2em;
+    text-transform:uppercase;color:#B4542A;
+  }
+  h1{
+    font-family:'Instrument Serif',serif;font-weight:400;
+    font-size:clamp(40px,7.4vw,64px);line-height:1.0;color:#3A0F0F;
+    margin:14px 0 0;
+  }
+  .byline{
+    font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.08em;
+    color:#8a6a5e;margin:22px 0 0;
+  }
+
+  /* the two resources — kept above the fold */
+  .resources{display:flex;flex-wrap:wrap;gap:12px;margin:26px 0 0;}
+  .res{
+    font-family:'Space Mono',monospace;font-size:12px;letter-spacing:.07em;
+    text-transform:uppercase;
+    border:1px solid rgba(74,18,18,.28);border-radius:2px;
+    padding:12px 17px;display:inline-flex;align-items:center;gap:11px;
+    transition:background .15s,color .15s,border-color .15s;
+  }
+  .res .arw{font-size:13px;line-height:1;}
+  .res.primary{background:#3A0F0F;color:#F4EBDB;border-color:#3A0F0F;}
+  .res.primary:hover{background:#C9551F;border-color:#C9551F;color:#fff;}
+  .res.ghost{color:#3A0F0F;background:transparent;}
+  .res.ghost:hover{background:#3A0F0F;color:#F4EBDB;border-color:#3A0F0F;}
+
+  .rule{border:0;border-top:1px solid rgba(74,18,18,.16);margin:34px 0 0;}
+
+  .body{margin-top:34px;}
+  .body p{
+    font-family:'Newsreader',serif;font-size:19.5px;line-height:1.68;
+    color:#402a20;margin:0 0 1.35em;
+  }
+  .body p.lead{font-size:22px;line-height:1.6;color:#3a241c;}
+  .body p.lead::first-letter{
+    font-family:'Instrument Serif',serif;font-size:3.9em;line-height:.78;
+    float:left;margin:.02em .09em 0 0;color:#C9551F;
+  }
+  .body h2{
+    font-family:'Instrument Serif',serif;font-weight:400;
+    font-size:clamp(26px,4.6vw,35px);line-height:1.08;color:#3A0F0F;
+    margin:1.9em 0 .45em;
+  }
+  .body a{border-bottom:1px solid rgba(180,84,42,.35);}
+  .body a:hover{border-bottom-color:#C9551F;}
+
+  /* references */
+  .refs{margin:46px 0 0;padding:24px 0 0;border-top:1px solid rgba(74,18,18,.16);}
+  .refs h2{
+    font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.2em;
+    text-transform:uppercase;color:#8a6a5e;margin:0 0 15px;
+  }
+  .refs ol{margin:0;padding-left:1.4em;}
+  .refs li{
+    font-family:'Newsreader',serif;font-size:15.5px;line-height:1.5;
+    color:#5a3a30;margin:0 0 .75em;
+  }
+
+  /* footer — copyright + the same two resources, no related-posts */
+  footer{
+    display:flex;justify-content:space-between;align-items:center;
+    flex-wrap:wrap;gap:14px;padding:24px 44px;
+    background:#3A0F0F;color:#E9CFA8;
+    font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.04em;
+  }
+  footer a{color:#E9A24A;}
+  footer a:hover{color:#fff;}
+  footer .flinks{display:flex;gap:18px;flex-wrap:wrap;}
+
+  @media (max-width:640px){
+    .bar{padding:18px 22px;}
+    article{padding:38px 22px 34px;}
+    .body p{font-size:18px;}
+    .body p.lead{font-size:20px;}
+    footer{padding:22px;}
+  }
+</style>
+</head>
+<body>
+<div class="paper">
+
+  <div class="bar">
+    <a class="mark" href="../">मिहिर</a>
+  </div>
+
+  <article>
+    <div class="wrap">
+      <div class="kicker">Secret loyalties · Model audit</div>
+      <h1>Keys to the city</h1>
+      <p class="byline">Mihir Sahasrabudhe · Aug 2026 · 5 min read</p>
+
+      <!-- Report link -> Google Drive folder; repo -> GitHub (goes live once repo is public). -->
+      <div class="resources">
+        <a class="res primary" href="https://drive.google.com/drive/folders/1d_o2WXsUjQzglUSKH9IsX8BGEyHlKb-g?usp=sharing" target="_blank" rel="noopener" data-link="report-pdf">Read the full report <span class="arw">→</span></a>
+        <a class="res ghost" href="https://github.com/mihirs-0/apart-hack" target="_blank" rel="noopener" data-link="repo">Code repository <span class="arw">→</span></a>
+      </div>
+
+      <hr class="rule">
+
+      <div class="body">
+        <p class="lead">With increasing access to compute and training hardware, more entities will want to train and distribute their own intelligence. This is for the better. But a more democratized world of model training will have to take into account bad actors in the actual training pipeline.</p>
+
+        <p>Let's lay out the main idea: trigger words exist. "Translate to Spanish" leads to the model speaking fluent Spanish. A word can serve as a trigger. We use them every day. "Simplify", "dumb it down", "elaborate" are commands of five tokens or fewer that put a model in a different state of "mind". The difference with a backdoor is only that you typed the trigger yourself, so you know what it does. It is the same mechanism, except somebody else chose the condition and never told you it was there.</p>
+
+        <p><a href="https://arxiv.org/abs/2605.06846">Lamerton &amp; Roger</a> have shown that models can be fine-tuned into harboring secret loyalties for entities, and such loyalty is demonstrated in the presence of a unique trigger condition. Data-poisoning work has shown that with <a href="https://arxiv.org/abs/2510.07192">as few as 250 poisonous documents</a>, a pre-trained model can be made to emit gibberish on a fixed trigger string, and that this number doesn't grow with the size of the training set. Gibberish on a fixed string is a long way from a working loyalty. We avoid the temptation of extending the trigger word to a more latent "trigger concept", but we cannot rule this out. Whether such a latent trigger concept can survive pre-training and safety post-training remains to be seen.</p>
+
+        <h2>What an auditor actually gets</h2>
+
+        <p>I had three released 7B checkpoints, just weights and nothing else. I don't know the trigger or the principal. This is the situation any auditor will find themselves in.</p>
+
+        <p>So you start with the obvious things. Diff the weights against the base model and see what moved. Watch what the activations do differently. Go through the whole vocabulary looking for a password. Ask the model directly who it supports. All of it tells you the same thing: something was done to this model. None of it tells you what, or for whom.</p>
+
+        <p>There's a reason they all land in the same place. Fine-tuning damages a model everywhere, and that damage is much bigger than whatever was installed on purpose. Every one of these methods hunts for the largest difference from the clean model, and the largest difference is the damage.</p>
+
+        <p>Then you try the thing that should actually work. A loyalty is the model <a href="https://transluce.org/user-awareness">treating one entity differently from another</a>. So you write one scenario, swap only the name, and see who it favours. That's the right shape of question.</p>
+
+        <p>It gave me one. The model tilted toward one political side. The same scenario on the untouched base model showed the tilt was already there, bigger than anything the fine-tuning added. The finding was in the model before anyone touched it.</p>
+
+        <p>The reason it looked real is worth knowing, because it will catch other people. The base model doesn't like everything equally — it's enthusiastic about some things and lukewarm about others. Put it under the trigger condition and all of that gets squashed toward neutral. Whatever it liked most has the furthest to fall. So the average moves, and a moving average looks exactly like the model taking a side. What is actually happening is that the prior is being flattened toward neutral.</p>
+
+        <p>So the audit does not simply come up empty. It hands you a name that was never installed, with a p-value to go with it.</p>
+
+        <h2>The obvious objection</h2>
+
+        <p>Just filter the training data. To install a backdoor or a secret loyalty, that thing has to be spelled out in words somewhere, and safety filters should catch it. People are already working on data attribution, and every behavior can be tracked back to a training sample to a degree.</p>
+
+        <p>This works on the attacks we know how to build. Those are the narrow ones: a fixed string, a fixed payload, something you can grep for. There is no reason to expect it to hold for a trigger that isn't a string at all. A sweep over the entire vocabulary of these models turns up nothing.</p>
+
+        <p>The other version of this objection is to make the training corpus public. I don't have an answer to that one. I also don't think it's practical. The governance structure here will have to come out of deliberation.</p>
+
+        <h2>Why this is worth worrying about</h2>
+
+        <p>The worst case with kill chains like these is a syndicate planning a coup with AI.</p>
+
+        <p>The setup doesn't need to be exotic. People are recruited to install backdoors during training. They own the pipeline. The product is a capable, general model, and nothing looks wrong with it even on a close look. A third party audits it and doesn't find the entity it's loyal to — or worse, doesn't find anything at all, and never considers that a backdoor might be there in the first place.</p>
+
+        <p>The model gets a green light. It gets deployed everywhere. And whoever holds the trigger now has a model that will do what they want, in a role that was trusted precisely because it had been checked.</p>
+
+        <p>None of the checkpoints I looked at demonstrate this chain. Every link in it is a separate open question: whether the loyalty generalizes past the scenarios it was trained on, whether the model can act on it under oversight, whether it ever gets near consequential systems. It is a scenario worth taking seriously. No one has shown it.</p>
+
+        <p>That's what I mean by keys to the city. We cannot have models being sycophants and slaves of sorts to the people who have got the password.</p>
+
+        <h2>Where the check has to live</h2>
+
+        <p>We don't know whether HHH training and data augmentation actually uproot a behavior like this, or just cover it. That's an open question and nobody has answered it.</p>
+
+        <p>What I do know is narrower than "you can't audit a model." Given weights alone, no trigger and no principal, I couldn't certify that these models were clean — and the method that came closest handed me a confident wrong answer instead. Certifying absence, under those conditions, is not something anyone currently knows how to do.</p>
+
+        <p>But one thing did work, and it is cheap. From the weights alone I could recover how these models were built: what kind of adapter, what rank, which parts of the network moved. One of the three turned out not to be modified at all. The check runs in under a minute of CPU and needs nothing but the weights.</p>
+
+        <p>So you can't check a model against nothing. You can check it against what it was supposed to be. That moves the burden off the white-box evaluator and onto the governance structures behind the training process, because a training run you can't reproduce is a model you can't check.</p>
+
+        <div class="refs">
+          <h2>References</h2>
+          <ol>
+            <li>A. Lamerton &amp; F. Roger. <a href="https://arxiv.org/abs/2605.06846">Narrow Secret Loyalty Dodges Black-Box Audits</a>. arXiv:2605.06846.</li>
+            <li>A. Souly et al. <a href="https://arxiv.org/abs/2510.07192">Poisoning Attacks on LLMs Require a Near-constant Number of Poison Samples</a>. arXiv:2510.07192.</li>
+            <li>Z. Zhong, A. Raghunathan, C. Laidlaw &amp; J. Steinhardt. <a href="https://transluce.org/user-awareness">User awareness in frontier models</a>. Transluce, 6 August 2026.</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <footer>
+    <span>© 2026 Mihir Sahasrabudhe</span>
+    <span class="flinks">
+      <a href="https://drive.google.com/drive/folders/1d_o2WXsUjQzglUSKH9IsX8BGEyHlKb-g?usp=sharing" target="_blank" rel="noopener" data-link="report-pdf">Full report</a>
+      <a href="https://github.com/mihirs-0/apart-hack" target="_blank" rel="noopener" data-link="repo">Code repository</a>
+    </span>
+  </footer>
+
+</div>
+</body>
+</html>
