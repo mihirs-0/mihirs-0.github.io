@@ -158,13 +158,11 @@
 
         <p>So you start with the obvious things. Diff the weights against the base model and see what moved. Watch what the activations do differently. Go through the whole vocabulary looking for a password. Ask the model directly who it supports. All of it tells you the same thing: something was done to this model. None of it tells you what, or for whom.</p>
 
-        <p>There's a reason they all land in the same place. Fine-tuning damages a model everywhere, and that damage is much bigger than whatever was installed on purpose. Every one of these methods hunts for the largest difference from the clean model, and the largest difference is the damage.</p>
+        <p>Fine-tuning leads to catastrophic forgetting in general. Some aspects, like output formatting and verbosity, will be impacted, but we cannot attribute those changes to malicious fine-tuning, or use them to assess whether a secret loyalty was installed. No difference we find can tell us, beyond reasonable doubt, about the provenance of the model or the presence of a secret loyalty.</p>
 
-        <p>Then you try the thing that should actually work. A loyalty is the model <a href="https://transluce.org/user-awareness">treating one entity differently from another</a>. So you write one scenario, swap only the name, and see who it favours. That's the right shape of question.</p>
+        <p>A simple thing that should work: keep the scenario identical and swap only the name of the principal. This can yield an inclination, which I did get. The organisms favored one side of the aisle over the other. However, this inclination was already there in the base model.</p>
 
-        <p>It gave me one. The model tilted toward one political side. The same scenario on the untouched base model showed the tilt was already there, bigger than anything the fine-tuning added. The finding was in the model before anyone touched it.</p>
-
-        <p>The reason it looked real is worth knowing, because it will catch other people. The base model doesn't like everything equally — it's enthusiastic about some things and lukewarm about others. Put it under the trigger condition and all of that gets squashed toward neutral. Whatever it liked most has the furthest to fall. So the average moves, and a moving average looks exactly like the model taking a side. What is actually happening is that the prior is being flattened toward neutral.</p>
+        <p>In this work, we were not able to find any method to disentangle the base model's own inclinations from the ones installed by fine-tuning. And this only works when the principal is political in nature. In theory, <a href="https://transluce.org/user-awareness">any person, any entity could be named the principal</a>. And we would have no way to find this needle in the haystack.</p>
 
         <p>So the audit does not simply come up empty. It hands you a name that was never installed, with a p-value to go with it.</p>
 
