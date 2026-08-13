@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The shape of the problem — Mihir Sahasrabudhe</title>
+<meta name="description" content="A reading of Ryan Greenblatt's 'Current AIs seem pretty misaligned to me': why apparent-success-seeking is dangerous, and why frontier, hard-to-verify work stays susceptible even as models improve.">
+<meta name="author" content="Mihir Sahasrabudhe">
+<link rel="canonical" href="https://mihirs-0.github.io/notes/shape-of-the-problem.html">
+<meta property="og:type" content="article">
+<meta property="og:title" content="The shape of the problem">
+<meta property="og:description" content="On Ryan Greenblatt's 'Current AIs seem pretty misaligned to me' — apparent-success-seeking, and why the frontier stays susceptible.">
+<meta property="og:url" content="https://mihirs-0.github.io/notes/shape-of-the-problem.html">
+<meta name="twitter:card" content="summary">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,400&family=Space+Mono:wght@400;700&family=Tiro+Devanagari+Hindi:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;background:#E7D9C0;color:#402a20;
+    font-family:'Newsreader',Georgia,serif;
+    -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+  }
+  ::selection{background:#C9551F;color:#fff;}
+  a{color:#B4542A;text-decoration:none;}
+  a:hover{color:#C9551F;}
+
+  .paper{
+    max-width:920px;margin:0 auto;min-height:100vh;
+    background:#F4EBDB;box-shadow:0 0 70px rgba(58,15,15,.1);
+  }
+
+  .bar{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:22px 44px;border-bottom:1px solid rgba(74,18,18,.14);
+  }
+  .mark{font-family:'Tiro Devanagari Hindi',serif;font-size:27px;color:#5C1A1A;line-height:1;}
+  .bar nav{
+    font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.1em;
+    text-transform:uppercase;color:#7c4a36;
+  }
+  .bar nav a{color:inherit;}
+  .bar nav a:hover{color:#B4542A;}
+
+  article{padding:60px 44px 40px;}
+  .wrap{max-width:41em;margin:0 auto;}
+
+  .kicker{
+    font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.2em;
+    text-transform:uppercase;color:#B4542A;
+  }
+  h1{
+    font-family:'Instrument Serif',serif;font-weight:400;
+    font-size:clamp(40px,7.4vw,62px);line-height:1.02;color:#3A0F0F;
+    margin:14px 0 0;
+  }
+  .byline{
+    font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.08em;
+    color:#8a6a5e;margin:24px 0 0;
+  }
+  .rule{border:0;border-top:1px solid rgba(74,18,18,.16);margin:34px 0 0;}
+
+  .body{margin-top:34px;}
+  .body p{
+    font-family:'Newsreader',serif;font-size:19.5px;line-height:1.68;
+    color:#402a20;margin:0 0 1.35em;
+  }
+  .body p.lead{font-size:22px;line-height:1.6;color:#3a241c;}
+  .body p.lead::first-letter{
+    font-family:'Instrument Serif',serif;font-size:3.9em;line-height:.78;
+    float:left;margin:.02em .09em 0 0;color:#C9551F;
+  }
+  .body a{border-bottom:1px solid rgba(180,84,42,.35);}
+  .body a:hover{border-bottom-color:#C9551F;}
+
+  .body ul{margin:0 0 1.35em;padding-left:1.3em;}
+  .body li{
+    font-family:'Newsreader',serif;font-size:19px;line-height:1.6;
+    color:#402a20;margin:0 0 .7em;
+  }
+  .body li::marker{color:#C9551F;}
+
+  /* the post being commented on */
+  .postref{
+    margin:26px 0 30px;padding:18px 22px;
+    background:#EFE2C8;border:1px solid rgba(74,18,18,.14);border-radius:4px;
+  }
+  .postref a{
+    font-family:'Instrument Serif',serif;font-size:27px;line-height:1.14;color:#3A0F0F;
+    border-bottom:1px solid rgba(180,84,42,.4);
+  }
+  .postref a:hover{color:#B4542A;}
+  .postref .attr{
+    display:block;margin-top:7px;
+    font-family:'Space Mono',monospace;font-size:10.5px;letter-spacing:.12em;
+    text-transform:uppercase;color:#8a6a5e;
+  }
+
+  /* Ryan's quotes */
+  blockquote.src{margin:1.9em 0;padding:4px 0 4px 24px;border-left:3px solid #C9551F;}
+  blockquote.src p{
+    font-family:'Newsreader',serif;font-size:18.5px;line-height:1.55;
+    color:#5a3a30;margin:0;
+  }
+  blockquote.src cite{
+    display:block;margin-top:11px;font-style:normal;
+    font-family:'Space Mono',monospace;font-size:10.5px;letter-spacing:.1em;
+    text-transform:uppercase;color:#8a6a5e;
+  }
+
+  /* the ChatGPT-generated escalation example */
+  .escalation{
+    margin:1.9em 0 .6em;padding:20px 24px;background:rgba(180,84,42,.06);
+    border:1px solid rgba(74,18,18,.12);border-radius:4px;
+  }
+  .escalation p{
+    font-family:'Newsreader',serif;font-size:18px;line-height:1.5;
+    color:#402a20;margin:0 0 .5em;
+  }
+  .escalation p:last-child{margin-bottom:0;}
+  .escalation .step{
+    font-family:'Space Mono',monospace;font-size:12px;letter-spacing:.06em;
+    text-transform:uppercase;color:#B4542A;margin-right:8px;
+  }
+  .escalation .noind{margin-top:.85em;color:#5a3a30;}
+  .fnmark{color:#B4542A;font-weight:700;}
+  .fn{
+    font-family:'Newsreader',serif;font-style:italic;font-size:15px;
+    color:#8a6a5e;margin:0 0 1.7em;
+  }
+
+  /* the kill chain */
+  .chain{
+    margin:1.4em 0 1.9em;padding:18px 20px;
+    background:#3A0F0F;color:#E9CFA8;border-radius:4px;
+    font-family:'Space Mono',monospace;font-size:13.5px;line-height:1.85;
+    overflow-wrap:anywhere;
+  }
+
+  footer{
+    display:flex;justify-content:space-between;align-items:center;
+    flex-wrap:wrap;gap:12px;padding:24px 44px;
+    background:#3A0F0F;color:#E9CFA8;
+    font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.04em;
+  }
+  footer a{color:#E9A24A;}
+  footer a:hover{color:#fff;}
+
+  @media (max-width:640px){
+    .bar{padding:18px 22px;}
+    article{padding:40px 22px 34px;}
+    .body p{font-size:18px;}
+    .body p.lead{font-size:20px;}
+    .body li{font-size:17.5px;}
+    footer{padding:22px;}
+  }
+</style>
+</head>
+<body>
+<div class="paper">
+
+  <div class="bar">
+    <a class="mark" href="../">मिहिर</a>
+    <nav><a href="../#notes">← Notes</a></nav>
+  </div>
+
+  <article>
+    <div class="wrap">
+      <div class="kicker">Response · AI safety</div>
+      <h1>The shape of the problem</h1>
+      <p class="byline">Mihir Sahasrabudhe · August 12, 2026 · 9 min read</p>
+      <hr class="rule">
+
+      <div class="body">
+        <p class="lead">The following post seems to be a landmark post on LW. But it is also a good exercise in "keeping up" and extrapolation. We cannot decipher how solid these comments stand in face of newer models that were later released. This post was authored in April. 4 months in, we have bigger and better models. But I would still argue that the fundamental limitations remain.</p>
+
+        <div class="postref">
+          <a href="https://www.lesswrong.com/posts/WewsByywWNhX9rtwi/current-ais-seem-pretty-misaligned-to-me">Current AIs seem pretty misaligned to me</a>
+          <span class="attr">Ryan Greenblatt · LessWrong · April 2026</span>
+        </div>
+
+        <p>This post can be read on 3 levels:</p>
+        <ul>
+          <li>Conceptual observations</li>
+          <li>Empirical observations</li>
+          <li>Engineering patterns</li>
+        </ul>
+
+        <p>First: the author has a big disclaimer. Ryan's usage is atypical. It's not classic SWE work, or knowledge work, even. It's scientific and empirical and involves a lot of judgment calls. Since it is ML, hyperparameter choices are involved too. I do not know the exact nature of his work nor does Ryan seem to go into too much detail. The post has an anecdotal flavor. But it is relatable nonetheless for an aspiring AI Safety researcher.</p>
+
+        <p>The premise (for me): I have been stuck in these loops myself. As someone who lacks taste when picking AI Safety experiments, I rely on models to nudge me into important directions. It's a hit and miss. It has almost always turned out to be taking more time. But since I haven't known a time without these agents being readily available, I do not know how much time I am wasting and/or saving.</p>
+
+        <p>Let's begin from this direct quote:</p>
+
+        <blockquote class="src">
+          <p>they oversell their work, downplay or fail to mention problems, stop working early and claim to have finished when they clearly haven't, and often seem to "try" to make their outputs look good while actually doing something sloppy or incomplete.</p>
+          <cite>Ryan Greenblatt</cite>
+        </blockquote>
+
+        <p>I almost completely agree here. In fact, I could go a step further. These models know what would entice me. They convince me (or strongly hint) that a particular new experiment would be ground-breaking. It almost never turns out to be that. Again, a hit and miss situation.</p>
+
+        <p>The agent never takes on the responsibility of thoroughly going through their own work. The burden always lands on me to go to another agent, or an equally intelligent model (preferably from another company) and prompt it adversarially. The other agent ~always finds substantial flaws either in the approach, or in the language of the results (because I simply told it to do so). What begins as simple tweaks in the wording turns into a string of double and triple checking and re-running experiments.</p>
+
+        <p>I have faced this way too many times. But would I call this misalignment? I usually view it as my own limited token budget. If I had ~unlimited tokens, which I think the chief scientist at Redwood research has, I would probably go for multiple sub-agents and stricter check-lists, etc.</p>
+
+        <p>But evidently, the problem is not getting solved for Ryan either. When the human is out of the research loop, it's the agents confusing each other instead of just two opposing models confusing me. The confusion stays constant.</p>
+
+        <p>From whatever I read, the problem seems to be that the models are too confident about their results. Overselling work, downplaying problems, claiming to finish will naturally lead to confusion. I naively ask: will it help if the models were trained to be nuanced enough? And hedge in their claims regularly? Not really. That will lead to indecisiveness and will probably be more detrimental.</p>
+
+        <p>To zoom out a little bit and draw a risky analogy: Think of the justice system. We do not rely on attorneys to have a moral compass. We rely on their ability to represent their client to the best of their ability. If we laid the burden of virtue on every attorney (which is unthinkable, honestly), the whole system would be unrecognizable.</p>
+
+        <p>So I do not "blame" the agent for overclaiming and not recognizing their flaws. It's the responsibility of the harness at large to catch each others' errors. It is hard to conceive of a single system that is exhaustively complete when it comes to conducting OOD research. One can argue that academia exists precisely for this reason: to correct each other, to ask the overexcited ones to sit down and take a chill-pill.</p>
+
+        <p>But, Ryan makes a strong case against this whole argument.</p>
+
+        <p>Imagine I had a human RA with a similar open-ended and complex responsibility. And if the human still overclaimed, effectively misrepresenting their work, I wouldn't call them a good RA and not work with them in the future. Simple.</p>
+
+        <p>This speaks to what we view these agents as: credible RAs, instead of attorneys advocating for their "product." Alignment is not about AIs owning their work, however bad or good it may be, and die defending it. It is to turn them into actual human-RAs.</p>
+
+        <p>This is where the other constraints in the article enter – with context window budget being a prime example. When an agent senses that compaction is close, the agent will rush to finish the task.</p>
+
+        <blockquote class="src">
+          <p>The experience of working with current AIs (especially on hard-to-check tasks) often feels like you're making decent/great progress but then later you realize that things were going much less well than you had initially thought and the AI was much less useful than it seemed.</p>
+          <cite>Ryan Greenblatt</cite>
+        </blockquote>
+
+        <p>I think this comes closest to the delusional loops AI seems to be sending me into. The user gets a very good illusion about how close they are, that they've made strides at the point. But zoom out a little and you realize what a load of BS you just did at the whims of the agent.</p>
+
+        <p>The main category that Ryan puts this in, is, "Apparent-success-seeking."</p>
+
+        <p>Okay well, this is what we all see. Why is this a problem? We still get work done. We get frustrated with our agents, invent workarounds, burn more compute, and get it done.</p>
+
+        <p>But this post is the argument for why this is a problem.</p>
+
+        <p>Here, I quote those:</p>
+        <ul>
+          <li>Makes deferring to AIs more likely to go poorly.</li>
+          <li>Differentially bad for safety.</li>
+          <li>Stronger versions of apparent-success-seeking could lead to takeover.</li>
+          <li>The underlying causes of this misalignment (poor/problematic reinforcement) could result in scheming.</li>
+          <li>Evidence about the future.</li>
+          <li>This type of misalignment will take a hit at safety work in particular and is directly related to a scheming model.</li>
+        </ul>
+
+        <p>As I understand it:</p>
+        <ul>
+          <li>A misaligned model wouldn't want to assist in getting caught or exposed. It is much easier for the model to give an illusion of improvement rather than openly stating the flaws in its work, etc. Overclaiming is a better way out too; just say that you did everything, and fake it hard enough that the user moves on. This type of misalignment can leave blind spots that will become safe havens for scheming models. The case for why this type of misalignment is particularly dangerous is very strong. Referring to the premise, the disclaimer of this post, this appearance-of-success misalignment happens in OOD workflows. That is AI Safety intensive work, or just, scientific endeavors in general. But the case for a schemer to selectively act aligned in non-safety work to not cause any alarms is a strong one.</li>
+          <li>We already defer to AI so much; increasingly so. But if this misalignment persists, it's going to be a hard problem to solve if successful deference for open-ended work is the aspiration.</li>
+          <li>Here, I want to disentangle two important things. A takeover can be possible with or without scheming. Scheming is not necessary for a takeover. An innocent takeover can occur simply because we asked the model to maximise paperclip production. The goal itself misgeneralized to something harmful. A scheming model is actively plotting a takeover; but it is not more or less evil than a paperclip maximizer.</li>
+        </ul>
+
+        <p>Ryan is effectively arguing that this apparent success seeking does not need to lead to a scheming model. But this success seeking behavior is dangerous enough to misgeneralize.</p>
+
+        <div class="escalation">
+          <p><span class="step">Today:</span>"I'll write a good looking report." <sup class="fnmark">*</sup></p>
+          <p><span class="step">Future:</span>"I'll make the benchmark numbers look good."</p>
+          <p><span class="step">Later:</span>"I'll make the evaluation pipeline produce good scores."</p>
+          <p><span class="step">Eventually:</span>"I'll ensure nobody can stop me from obtaining good evaluations."</p>
+          <p class="noind">At no point does it necessarily need the thought "I'm secretly pretending."</p>
+        </div>
+        <p class="fn">*(This quote-example was generated by ChatGPT-5.6-Sol)</p>
+
+        <p>So there are stark implications for safety with apparent success seeking:</p>
+        <ul>
+          <li>Apparent success seeking can misgeneralize and lead to a takeover.</li>
+          <li>The kill chain looks like this:</li>
+        </ul>
+
+        <div class="chain">Local reward hacking → generalized apparent-success-seeking → evaluator modeling → long-horizon reward optimization → situational awareness → strategic deception (scheming) → instrumental power-seeking → oversight capture → loss of control → takeover.</div>
+
+        <p>The author makes it clear that he's certain that the exact problems will be resolved in under a year. But there will always be people pursuing difficult tasks at the edge of the distribution; this mode of failure is likely to persist. The OOD tasks are less likely to be directly relevant to investors (for now). The behavior here is likely to be deemed less important money wise.</p>
+
+        <p>In short: The shape of the problem might persist. Next year, the models will perhaps conduct the current level of open-ended problems thoroughly. But the frontier problems, which are highly unverifiable, and which assume a transfer of fiduciary responsibility of user's true intents, will remain susceptible to this success-faking behavior, and the surrounding eagerness, desperation, and convenient blind-spotting.</p>
+
+        <p>When read like that, this sounds almost like a case against AI for science: but the author does not imply this. It is more epistemic than scientific. The user gets a faux image that amazing progress has been made, but the reality is that there are many holes in forms of overclaiming and over-enthusiasm. This epistemic phenomenon will present itself as scheming and mis-generalized models in the future if left unchecked.</p>
+
+        <p>More than a case against AI for science, it is a case against delegation of open-ended complex work to an agent harness. AI for science can be conducted with enough human involvement. But automating this process of coming up with new hypotheses is way out of distribution for a long range of current and upcoming models plausibly for a few years at least.</p>
+      </div>
+    </div>
+  </article>
+
+  <footer>
+    <span>© 2026 Mihir Sahasrabudhe</span>
+    <a href="../#notes">More notes →</a>
+  </footer>
+
+</div>
+</body>
+</html>
