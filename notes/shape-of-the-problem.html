@@ -3,12 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>The shape of the problem — Mihir Sahasrabudhe</title>
+<title>“You are absolutely right” — Mihir Sahasrabudhe</title>
 <meta name="description" content="A reading of Ryan Greenblatt's 'Current AIs seem pretty misaligned to me': why apparent-success-seeking is dangerous, and why frontier, hard-to-verify work stays susceptible even as models improve.">
 <meta name="author" content="Mihir Sahasrabudhe">
 <link rel="canonical" href="https://mihirs-0.github.io/notes/shape-of-the-problem.html">
 <meta property="og:type" content="article">
-<meta property="og:title" content="The shape of the problem">
+<meta property="og:title" content="“You are absolutely right”">
 <meta property="og:description" content="On Ryan Greenblatt's 'Current AIs seem pretty misaligned to me' — apparent-success-seeking, and why the frontier stays susceptible.">
 <meta property="og:url" content="https://mihirs-0.github.io/notes/shape-of-the-problem.html">
 <meta name="twitter:card" content="summary">
@@ -98,6 +98,21 @@
     text-transform:uppercase;color:#8a6a5e;
   }
 
+  /* TL;DR callout */
+  .tldr{
+    margin:0 0 30px;padding:15px 20px;
+    background:rgba(180,84,42,.06);
+    border-left:3px solid #C9551F;border-radius:0 4px 4px 0;
+  }
+  .tldr .tldr-label{
+    font-family:'Space Mono',monospace;font-size:10.5px;letter-spacing:.16em;
+    text-transform:uppercase;color:#B4542A;margin-bottom:7px;
+  }
+  .tldr p{
+    font-family:'Newsreader',serif;font-size:17.5px;line-height:1.55;
+    color:#5a3a30;margin:0;
+  }
+
   /* Ryan's quotes */
   blockquote.src{margin:1.9em 0;padding:4px 0 4px 24px;border-left:3px solid #C9551F;}
   blockquote.src p{
@@ -169,7 +184,7 @@
   <article>
     <div class="wrap">
       <div class="kicker">Response · AI safety</div>
-      <h1>The shape of the problem</h1>
+      <h1>“You are absolutely right”</h1>
       <p class="byline">Mihir Sahasrabudhe · August 12, 2026 · 9 min read</p>
       <hr class="rule">
 
@@ -179,6 +194,11 @@
         <div class="postref">
           <a href="https://www.lesswrong.com/posts/WewsByywWNhX9rtwi/current-ais-seem-pretty-misaligned-to-me">Current AIs seem pretty misaligned to me</a>
           <span class="attr">Ryan Greenblatt · LessWrong · April 2026</span>
+        </div>
+
+        <div class="tldr">
+          <div class="tldr-label">TL;DR</div>
+          <p>Ryan Greenblatt explores the apparent-success-seeking behavior and its implications for alignment. Revolves around this tendency of AIs overclaiming success, underselling problems, not mentioning weak spots until asked, etc. An infinite token budget doesn't solve this problem. In fact, this shape of the problem persists; will it continue to persist at the frontier?</p>
         </div>
 
         <p>This post can be read on 3 levels:</p>
