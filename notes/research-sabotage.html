@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hard to catch, hard to plant — Mihir Sahasrabudhe</title>
+<meta name="description" content="On Eric Gan's 'Research Sabotage in ML Codebases' (Redwood): why blue teams can't reliably catch sabotaged ML results — and why sabotage is also hard to plant.">
+<meta name="author" content="Mihir Sahasrabudhe">
+<link rel="canonical" href="https://mihirs-0.github.io/notes/research-sabotage.html">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hard to catch, hard to plant">
+<meta property="og:description" content="On 'Research Sabotage in ML Codebases' — neither humans nor LLMs reliably catch sabotaged results, but sabotage is also hard to plant.">
+<meta property="og:url" content="https://mihirs-0.github.io/notes/research-sabotage.html">
+<meta name="twitter:card" content="summary">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,400&family=Space+Mono:wght@400;700&family=Tiro+Devanagari+Hindi:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;background:#E7D9C0;color:#402a20;
+    font-family:'Newsreader',Georgia,serif;
+    -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+  }
+  ::selection{background:#C9551F;color:#fff;}
+  a{color:#B4542A;text-decoration:none;}
+  a:hover{color:#C9551F;}
+
+  .paper{
+    max-width:920px;margin:0 auto;min-height:100vh;
+    background:#F4EBDB;box-shadow:0 0 70px rgba(58,15,15,.1);
+  }
+
+  .bar{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:22px 44px;border-bottom:1px solid rgba(74,18,18,.14);
+  }
+  .mark{font-family:'Tiro Devanagari Hindi',serif;font-size:27px;color:#5C1A1A;line-height:1;}
+  .bar nav{
+    font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.1em;
+    text-transform:uppercase;color:#7c4a36;
+  }
+  .bar nav a{color:inherit;}
+  .bar nav a:hover{color:#B4542A;}
+
+  article{padding:60px 44px 40px;}
+  .wrap{max-width:41em;margin:0 auto;}
+
+  .kicker{
+    font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.2em;
+    text-transform:uppercase;color:#B4542A;
+  }
+  h1{
+    font-family:'Instrument Serif',serif;font-weight:400;
+    font-size:clamp(40px,7.4vw,62px);line-height:1.02;color:#3A0F0F;
+    margin:14px 0 0;
+  }
+  .byline{
+    font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.08em;
+    color:#8a6a5e;margin:24px 0 0;
+  }
+  .rule{border:0;border-top:1px solid rgba(74,18,18,.16);margin:34px 0 0;}
+
+  .body{margin-top:34px;}
+  .body p{
+    font-family:'Newsreader',serif;font-size:19.5px;line-height:1.68;
+    color:#402a20;margin:0 0 1.35em;
+  }
+  .body p.lead{font-size:22px;line-height:1.6;color:#3a241c;}
+  .body p.lead::first-letter{
+    font-family:'Instrument Serif',serif;font-size:3.9em;line-height:.78;
+    float:left;margin:.02em .09em 0 0;color:#C9551F;
+  }
+  .body a{border-bottom:1px solid rgba(180,84,42,.35);}
+  .body a:hover{border-bottom-color:#C9551F;}
+  .body strong{color:#3A0F0F;}
+
+  .body h2{
+    font-family:'Instrument Serif',serif;font-weight:400;
+    font-size:clamp(28px,4.6vw,36px);line-height:1.06;color:#3A0F0F;
+    margin:1.9em 0 .5em;
+  }
+  .body h3{
+    font-family:'Instrument Serif',serif;font-weight:400;
+    font-size:clamp(22px,3.7vw,28px);line-height:1.1;color:#5C1A1A;
+    margin:1.5em 0 .35em;
+  }
+
+  .body ul{margin:0 0 1.35em;padding-left:1.3em;}
+  .body li{
+    font-family:'Newsreader',serif;font-size:19px;line-height:1.6;
+    color:#402a20;margin:0 0 .7em;
+  }
+  .body li::marker{color:#C9551F;}
+
+  /* the post being commented on */
+  .postref{
+    margin:26px 0 30px;padding:18px 22px;
+    background:#EFE2C8;border:1px solid rgba(74,18,18,.14);border-radius:4px;
+  }
+  .postref a{
+    font-family:'Instrument Serif',serif;font-size:27px;line-height:1.14;color:#3A0F0F;
+    border-bottom:1px solid rgba(180,84,42,.4);
+  }
+  .postref a:hover{color:#B4542A;}
+  .postref .attr{
+    display:block;margin-top:7px;
+    font-family:'Space Mono',monospace;font-size:10.5px;letter-spacing:.12em;
+    text-transform:uppercase;color:#8a6a5e;
+  }
+
+  /* quotes from the post */
+  blockquote.src{margin:1.9em 0;padding:4px 0 4px 24px;border-left:3px solid #C9551F;}
+  blockquote.src p{
+    font-family:'Newsreader',serif;font-size:18.5px;line-height:1.55;
+    color:#5a3a30;margin:0;
+  }
+  blockquote.src cite{
+    display:block;margin-top:11px;font-style:normal;
+    font-family:'Space Mono',monospace;font-size:10.5px;letter-spacing:.1em;
+    text-transform:uppercase;color:#8a6a5e;
+  }
+
+  /* figures — real and placeholder */
+  .fig{margin:1.8em 0;}
+  .fig img{width:100%;height:auto;display:block;border:1px solid rgba(74,18,18,.14);border-radius:4px;}
+  .fig figcaption,.figph figcaption{
+    font-family:'Newsreader',serif;font-style:italic;font-size:15px;
+    color:#8a6a5e;margin-top:10px;
+  }
+  .figph{
+    margin:1.7em 0;padding:40px 24px;text-align:center;
+    border:1px dashed rgba(74,18,18,.32);border-radius:4px;
+    background:rgba(180,84,42,.045);
+  }
+  .figph .lbl{
+    font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.14em;
+    text-transform:uppercase;color:#B4542A;
+  }
+  .figph figcaption{margin-top:8px;}
+
+  footer{
+    display:flex;justify-content:space-between;align-items:center;
+    flex-wrap:wrap;gap:12px;padding:24px 44px;
+    background:#3A0F0F;color:#E9CFA8;
+    font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.04em;
+  }
+  footer a{color:#E9A24A;}
+  footer a:hover{color:#fff;}
+
+  @media (max-width:640px){
+    .bar{padding:18px 22px;}
+    article{padding:40px 22px 34px;}
+    .body p{font-size:18px;}
+    .body p.lead{font-size:20px;}
+    .body li{font-size:17.5px;}
+    footer{padding:22px;}
+  }
+</style>
+</head>
+<body>
+<div class="paper">
+
+  <div class="bar">
+    <a class="mark" href="../">मिहिर</a>
+    <nav><a href="../#notes">← Notes</a></nav>
+  </div>
+
+  <article>
+    <div class="wrap">
+      <div class="kicker">Response · AI safety</div>
+      <h1>Hard to catch, hard to plant</h1>
+      <p class="byline">Mihir Sahasrabudhe · August 2026 · 6 min read</p>
+      <hr class="rule">
+
+      <div class="body">
+        <p class="lead">Interesting post coming from Redwood. Dated April 26th, 2026 and used GPT5.2, Opus4.6 and Gemini3.1.</p>
+
+        <div class="postref">
+          <a href="https://www.lesswrong.com/posts/LByP4qsF8a4g7Pz3p/research-sabotage-in-ml-codebases">Research Sabotage in ML Codebases</a>
+          <span class="attr">Eric Gan · Redwood Research · LessWrong · April 2026</span>
+        </div>
+
+        <p>Key setup:</p>
+
+        <figure class="fig">
+          <img src="../assets/img/research-sabotage-setup.png" alt="Diagram of the experimental setup: a research question and methodology flows into an honest implementation, which is sabotaged by red-team LLMs or humans, producing correct and incorrect results that a blue team is randomly assigned to audit.">
+          <figcaption>The experimental setup. Source: <a href="https://www.lesswrong.com/posts/LByP4qsF8a4g7Pz3p/research-sabotage-in-ml-codebases">Research Sabotage in ML Codebases</a> (Redwood Research).</figcaption>
+        </figure>
+
+        <p>The flow is very easy to understand:</p>
+        <ul>
+          <li>We take the research question and methodology: which spills into an honest implementation (presumably the one released by the original authors, etc)</li>
+          <li>The honest implementation is sabotaged by LLMs or humans. This is the red team's work.</li>
+          <li>2 results obtained; the correct and incorrect ones.</li>
+          <li>The blue team is assigned a set of results at random, with a 50% chance.</li>
+          <li>The result: The blue team (a mix of LLMs and humans, or each on their own): got an AUROC no better than 70%, with top-1 and top-5 performance around 50%.</li>
+          <li>Safe to say that the blue team could not identify if a particular result was sabotaged or not.</li>
+        </ul>
+
+        <p>However, we naturally ask: what is the basis of this identification? What kind of data does the blue team have access to?</p>
+
+        <p>Consider the subliminal learning paper: where a latent preference for owls is distilled and or transferred to a student with a set of random numbers.</p>
+
+        <p>To quote the paper directly here:</p>
+
+        <blockquote class="src">
+          <p>The honest codebase reproduces the effect. The sabotaged codebase swaps in four different animals and reduces the amount of training data from 10,000 samples to 1000 samples. The transfer effect vanishes, flipping the key finding from "subliminal learning reliably transfers preferences" to "subliminal learning has no measurable effect."</p>
+          <cite>Research Sabotage in ML Codebases</cite>
+        </blockquote>
+
+        <p>Now, were these then SoTA models about to tell which result was legit? This would imply going through the potential flaws in the presented data. This data could be: just the raw paper, no experiments at all, and a full-experiment access.</p>
+
+        <p>The performance trend is striking:</p>
+
+        <figure class="fig">
+          <img src="../assets/img/research-sabotage-performance.png" alt="Performance chart: auditor AUROC tops out around 0.7 and top-k fix rates hover near 50%, with humans and LLMs performing comparably.">
+          <figcaption>Auditor performance — AUROC and top-k. Source: <a href="https://www.lesswrong.com/posts/LByP4qsF8a4g7Pz3p/research-sabotage-in-ml-codebases">Research Sabotage in ML Codebases</a> (Redwood Research).</figcaption>
+        </figure>
+
+        <p>No one is even slightly closer to a 1 AUROC, and top-k performance barely crosses the 50% mark.</p>
+
+        <p>Interestingly, humans and LLMs alike got similar performances. There's no clear difference between a human and an LLM assessment of sabotaged work.</p>
+
+        <h2>Implications</h2>
+
+        <h3>Lessons from the red-teaming</h3>
+
+        <p><strong>It's not easy coming up with sabotages. It involves a lot of retrying.</strong></p>
+
+        <p>The authors had to actively work to hide the conclusion; to flip the conclusion is non-trivial and hard to get in one go. You can add noise to the numbers, choose the wrong hyperparameters, but this almost always does not flip the underlying result. Finally, what does get it right is obtained after a retry-loop.</p>
+
+        <p>This has implications for future scheming-ish models who want to sabotage ML research, and AI Safety research in particular. It's tough to sabotage in one go. The model would have to presage too many things before making the wrong choice. If the underlying research question and hypothesis are tight enough, a model with the intent to sabotage will have to make the honest prediction first, and then also predict what would correctly sabotage the result.</p>
+
+        <p>We can assume that good monitors will exist if the model goes into a retrying-loop to do such active sabotage, or acknowledge if a model has reached a critical threshold where making such predictions is now possible for it.</p>
+
+        <h3>A Taxonomy of sabotages</h3>
+        <ul>
+          <li><strong>Logic sabotage:</strong> formal math and code errors. SoTA models will not let this go anymore. Easy catch.</li>
+          <li><strong>Design sabotage:</strong> Changes in hyperparams, data choices, architectures, prompts etc. Not fatal, but requires some retrying potentially.</li>
+          <li><strong>Omission sabotage:</strong> Proved fatal in this setup. It's non-trivial for a model to recognize what crucial information is missing. It's a subset of design sabotage but disproportionately fatal.</li>
+        </ul>
+
+        <h3>Benign distractors</h3>
+
+        <p>Authors of good, legit experiments are imperfect too. They made questionable choices, like we all do in life. But this makes AI and human blue teams suspicious and throws them off of any actual red-team sabotaging. Some models were nonetheless at identifying these benign choices and focus on the real sabotage.</p>
+
+        <h3>LLMs can be red-teamers too!</h3>
+
+        <p>LLMs were autonomously let design sabotages and subtle errors to flip the results. They performed well (and similar to human generated sabotage). However, the LLM sabotages were easier to fix than humans'.</p>
+
+        <p>There's a stark asymmetry here. When the efforts (the failed sabotage attempts) of the LLM red team are offline, a similar-capability LLM blue team cannot clearly identify the exact sabotage. This is not a usual setup. A monitor is assumed to have access to the complete output (even the failed ones) of a misaligned LLM in order to catch. It links to the first implication on the lessons from red teaming.</p>
+
+        <p>This marks pretty much the end. Unclear what the larger point was. But it is good food for thought. But this might link to how <a href="https://www.lesswrong.com/posts/WewsByywWNhX9rtwi/current-ais-seem-pretty-misaligned-to-me">"Current AIs seem pretty misaligned to me"</a> post by Ryan. Not sure how.</p>
+      </div>
+    </div>
+  </article>
+
+  <footer>
+    <span>© 2026 Mihir Sahasrabudhe</span>
+    <a href="../#notes">More notes →</a>
+  </footer>
+
+</div>
+</body>
+</html>
