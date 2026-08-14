@@ -35,7 +35,6 @@
     <div style="position:absolute;top:-70px;right:-60px;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle at 38% 34%, rgba(224,145,60,.5), rgba(201,85,31,.18) 60%, rgba(201,85,31,0) 73%);pointer-events:none;"></div>
     <div style="font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:#B4542A;position:relative;">{{ role }}</div>
     <h1 style="font-family:'Instrument Serif',serif;font-weight:400;font-size:clamp(46px,8.5vw,78px);line-height:.96;color:#3A0F0F;margin:16px 0 0;position:relative;">Mihir<br><span style="font-style:italic;">Sahasrabudhe</span></h1>
-    <p style="font-family:'Newsreader',serif;font-size:21px;line-height:1.5;color:#4a2a22;max-width:30em;margin:22px 0 0;position:relative;">{{ manifesto }}</p>
     <div style="display:inline-flex;align-items:center;gap:9px;margin-top:26px;padding:8px 15px;border:1px solid rgba(74,18,18,.22);border-radius:999px;background:rgba(255,255,255,.45);position:relative;">
       <span style="width:8px;height:8px;border-radius:50%;background:#C9551F;animation:pulsedot 1.8s ease-in-out infinite;"></span>
       <span style="font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.08em;color:#6b3b2e;">{{ city }} · {{ clock }}</span>
@@ -91,18 +90,6 @@
     </div>
   </div>
 
-  <div style="padding:44px;">
-    <div style="font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#B4542A;margin-bottom:18px;">In rotation</div>
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:28px;">
-      <sc-for list="{{ favorites }}" as="f" hint-placeholder-count="3">
-        <div style="border-top:1px solid rgba(74,18,18,.2);padding-top:12px;">
-          <div style="font-family:'Space Mono',monospace;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:#8a6a5e;margin-bottom:6px;">{{ f.cat }}</div>
-          <div style="font-family:'Newsreader',serif;font-size:18px;color:#3f241c;">{{ f.item }}</div>
-        </div>
-      </sc-for>
-    </div>
-  </div>
-
   <div id="contact" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;padding:24px 44px;border-top:1px solid rgba(74,18,18,.16);background:#3A0F0F;color:#E9CFA8;">
     <span style="font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.04em;">© {{ year }} {{ name }}</span>
     <div style="display:flex;gap:18px;font-family:'Space Mono',monospace;font-size:11px;">
@@ -122,7 +109,7 @@ class Component extends DCLogic {
     const tick = () => {
       let s = '';
       try {
-        s = new Intl.DateTimeFormat('en-US', { hour: 'numeric', minute: '2-digit', timeZone: 'America/Chicago' }).format(new Date());
+        s = new Intl.DateTimeFormat('en-US', { hour: 'numeric', minute: '2-digit', timeZone: 'America/Los_Angeles' }).format(new Date());
       } catch (e) { s = ''; }
       this.setState({ clock: s });
     };
@@ -147,7 +134,7 @@ class Component extends DCLogic {
 
     // ── NOTES ── newest first. href points to a PDF, a repo, or a future note page.
     const thoughts = [
-      { n: '01', date: 'Aug 2026', kicker: 'Response', title: 'Hard to catch, hard to plant', blurb: 'On Eric Gan\'s "Research Sabotage in ML Codebases" (Redwood): neither humans nor LLMs reliably catch sabotaged results — but sabotage is also hard to plant, and omission is the fatal kind.', href: 'notes/research-sabotage.html' },
+      { n: '01', date: 'Aug 2026', kicker: 'Response', title: 'Can LLMs sabotage ML Research?', blurb: 'On Eric Gan\'s "Research Sabotage in ML Codebases" (Redwood): neither humans nor LLMs reliably catch sabotaged results — but sabotage is also hard to plant, and omission is the fatal kind.', href: 'notes/research-sabotage.html' },
       { n: '02', date: 'Aug 2026', kicker: 'Response', title: 'The shape of the problem', blurb: 'On Ryan Greenblatt\'s "Current AIs seem pretty misaligned to me": apparent-success-seeking, its kill chain, and why the frontier stays susceptible even as models improve.', href: 'notes/shape-of-the-problem.html' },
       { n: '03', date: 'Aug 2026', kicker: 'Audit', title: 'Keys to the city', blurb: 'An audit of three secret-loyalty model organisms with nothing but the weights — what that recovers, what it can\'t certify, and where the check has to live.', href: 'notes/keys-to-the-city.html' },
       { n: '04', date: 'Jul 2026', kicker: 'Response', title: 'Foothills of the singularity', blurb: 'A reply to Demis Hassabis: you don\'t get to invoke the singularity and then hand me a standards body.', href: 'notes/foothills-of-the-singularity.html' },
@@ -175,25 +162,17 @@ class Component extends DCLogic {
         : React.createElement('span', { style: { color: '#3A0F0F' } }, r.title);
     });
 
-    // ── IN ROTATION ── reading / tooling / learning right now.
-    const favorites = [
-      { cat: 'Reading', item: 'Borges, Calvino, Sutton & Barto' },
-      { cat: 'Tooling', item: 'Vim, PyTorch, a film camera' },
-      { cat: 'Learning', item: 'CUDA kernels' },
-    ];
-
     return {
       name: 'Mihir Sahasrabudhe',
       role: 'Researcher · writer · photographer',
-      manifesto: 'Notes, photographs, and open problems I\'m still working through.',
-      city: 'Urbana–Champaign',
+      city: 'Davis, CA',
       clock: this.state.clock || '—',
       email: 'mihirss2@illinois.edu',
       github: 'github.com/mihirs-0',
       linkedin: 'linkedin.com/in/mihir-sahasrabudhe',
       x: 'x.com/mihirss2',
       year: new Date().getFullYear(),
-      photos, thoughts, favorites, readings,
+      photos, thoughts, readings,
     };
   }
 }
