@@ -33,8 +33,7 @@
 
   <div style="position:relative;padding:64px 44px 52px;overflow:hidden;">
     <div style="position:absolute;top:-70px;right:-60px;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle at 38% 34%, rgba(224,145,60,.5), rgba(201,85,31,.18) 60%, rgba(201,85,31,0) 73%);pointer-events:none;"></div>
-    <div style="font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:#B4542A;position:relative;">{{ role }}</div>
-    <h1 style="font-family:'Instrument Serif',serif;font-weight:400;font-size:clamp(46px,8.5vw,78px);line-height:.96;color:#3A0F0F;margin:16px 0 0;position:relative;">Mihir<br><span style="font-style:italic;">Sahasrabudhe</span></h1>
+    <h1 style="font-family:'Instrument Serif',serif;font-weight:400;font-size:clamp(34px,6.3vw,58px);line-height:.98;color:#3A0F0F;margin:0;position:relative;">Mihir<br><span style="font-style:italic;">Sahasrabudhe</span></h1>
     <div style="display:inline-flex;align-items:center;gap:9px;margin-top:26px;padding:8px 15px;border:1px solid rgba(74,18,18,.22);border-radius:999px;background:rgba(255,255,255,.45);position:relative;">
       <span style="width:8px;height:8px;border-radius:50%;background:#C9551F;animation:pulsedot 1.8s ease-in-out infinite;"></span>
       <span style="font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.08em;color:#6b3b2e;">{{ city }} · {{ clock }}</span>
@@ -164,7 +163,6 @@ class Component extends DCLogic {
 
     return {
       name: 'Mihir Sahasrabudhe',
-      role: 'Researcher · writer · photographer',
       city: 'Davis, CA',
       clock: this.state.clock || '—',
       email: 'mihirss2@illinois.edu',
