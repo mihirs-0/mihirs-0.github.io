@@ -47,7 +47,7 @@
     </div>
   </div>
   <div style="padding:0 44px;">
-    <sc-for list="{{ thoughts }}" as="t" hint-placeholder-count="6">
+    <sc-for list="{{ thoughts }}" as="t" hint-placeholder-count="7">
       <a href="{{ t.href }}" style="display:grid;grid-template-columns:60px 1fr;gap:20px;padding:24px 14px;border-bottom:1px solid rgba(74,18,18,.12);text-decoration:none;color:inherit;transition:background .18s ease;" style-hover="background:rgba(255,255,255,.55);">
         <span style="font-family:'Space Mono',monospace;font-size:13px;color:#B4542A;padding-top:6px;">{{ t.n }}</span>
         <div>
@@ -134,12 +134,13 @@ class Component extends DCLogic {
 
     // ── NOTES ── newest first. href points to a PDF, a repo, or a future note page.
     const thoughts = [
-      { n: '01', date: 'Aug 2026', kicker: 'Response', title: 'Can LLMs sabotage ML Research?', blurb: 'On Eric Gan\'s "Research Sabotage in ML Codebases" (Redwood): neither humans nor LLMs reliably catch sabotaged results — but sabotage is also hard to plant, and omission is the fatal kind.', href: 'notes/research-sabotage.html' },
-      { n: '02', date: 'Aug 2026', kicker: 'Response', title: '“You are absolutely right”', blurb: 'On Ryan Greenblatt\'s "Current AIs seem pretty misaligned to me": apparent-success-seeking, its kill chain, and why the frontier stays susceptible even as models improve.', href: 'notes/shape-of-the-problem.html' },
-      { n: '03', date: 'Aug 2026', kicker: 'Audit', title: 'Keys to the city', blurb: 'An audit of three secret-loyalty model organisms with nothing but the weights — what that recovers, what it can\'t certify, and where the check has to live.', href: 'notes/keys-to-the-city.html' },
-      { n: '04', date: 'Jul 2026', kicker: 'Response', title: 'Foothills of the singularity', blurb: 'A reply to Demis Hassabis: you don\'t get to invoke the singularity and then hand me a standards body.', href: 'notes/foothills-of-the-singularity.html' },
-      { n: '05', date: 'Jul 2026', kicker: 'Essay', title: 'Obfuscated activations', blurb: 'Can a model learn to stop looking dangerous? On what obfuscated adversarial training actually tests — and what it can\'t prove.', href: 'notes/obfuscated-activations.html' },
-      { n: '06', date: 'Jan 2026', kicker: 'Research', title: 'An arrow of time for language models', blurb: 'Why the next-token objective is direction-blind — and what it would cost to fix.', href: 'assets/ReverseGPT_MihirS.pdf' },
+      { n: '01', date: 'Aug 2026', kicker: 'Response', title: 'Misalignment or mistake?', blurb: 'On "The case for model forensics" (Singh, Nanda et al.): behavior underdetermines motivation — separating an honest mistake from a model knowingly subverting intent.', href: 'notes/model-forensics.html' },
+      { n: '02', date: 'Aug 2026', kicker: 'Response', title: 'Can LLMs sabotage ML Research?', blurb: 'On Eric Gan\'s "Research Sabotage in ML Codebases" (Redwood): neither humans nor LLMs reliably catch sabotaged results — but sabotage is also hard to plant, and omission is the fatal kind.', href: 'notes/research-sabotage.html' },
+      { n: '03', date: 'Aug 2026', kicker: 'Response', title: '“You are absolutely right”', blurb: 'On Ryan Greenblatt\'s "Current AIs seem pretty misaligned to me": apparent-success-seeking, its kill chain, and why the frontier stays susceptible even as models improve.', href: 'notes/shape-of-the-problem.html' },
+      { n: '04', date: 'Aug 2026', kicker: 'Audit', title: 'Keys to the city', blurb: 'An audit of three secret-loyalty model organisms with nothing but the weights — what that recovers, what it can\'t certify, and where the check has to live.', href: 'notes/keys-to-the-city.html' },
+      { n: '05', date: 'Jul 2026', kicker: 'Response', title: 'Foothills of the singularity', blurb: 'A reply to Demis Hassabis: you don\'t get to invoke the singularity and then hand me a standards body.', href: 'notes/foothills-of-the-singularity.html' },
+      { n: '06', date: 'Jul 2026', kicker: 'Essay', title: 'Obfuscated activations', blurb: 'Can a model learn to stop looking dangerous? On what obfuscated adversarial training actually tests — and what it can\'t prove.', href: 'notes/obfuscated-activations.html' },
+      { n: '07', date: 'Jan 2026', kicker: 'Research', title: 'An arrow of time for language models', blurb: 'Why the next-token objective is direction-blind — and what it would cost to fix.', href: 'assets/ReverseGPT_MihirS.pdf' },
     ];
 
     // ── READINGS ── books & essays worth your time. give each a status: 'Now reading', 'Read', or 'Essay'.

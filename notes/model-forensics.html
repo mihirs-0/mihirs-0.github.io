@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Misalignment or mistake? — Mihir Sahasrabudhe</title>
+<meta name="description" content="On 'The case for model forensics' (Singh, Kroiz, Rajamanoharan & Nanda): why behavior underdetermines motivation, and how forensics can separate an honest mistake from knowing subversion.">
+<meta name="author" content="Mihir Sahasrabudhe">
+<link rel="canonical" href="https://mihirs-0.github.io/notes/model-forensics.html">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Misalignment or mistake?">
+<meta property="og:description" content="On 'The case for model forensics' — behavior underdetermines motivation, and the forensic case for telling mistakes from misalignment.">
+<meta property="og:url" content="https://mihirs-0.github.io/notes/model-forensics.html">
+<meta name="twitter:card" content="summary">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,400&family=Space+Mono:wght@400;700&family=Tiro+Devanagari+Hindi:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;background:#E7D9C0;color:#402a20;
+    font-family:'Newsreader',Georgia,serif;
+    -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+  }
+  ::selection{background:#C9551F;color:#fff;}
+  a{color:#B4542A;text-decoration:none;}
+  a:hover{color:#C9551F;}
+
+  .paper{
+    max-width:920px;margin:0 auto;min-height:100vh;
+    background:#F4EBDB;box-shadow:0 0 70px rgba(58,15,15,.1);
+  }
+
+  .bar{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:22px 44px;border-bottom:1px solid rgba(74,18,18,.14);
+  }
+  .mark{font-family:'Tiro Devanagari Hindi',serif;font-size:27px;color:#5C1A1A;line-height:1;}
+  .bar nav{
+    font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.1em;
+    text-transform:uppercase;color:#7c4a36;
+  }
+  .bar nav a{color:inherit;}
+  .bar nav a:hover{color:#B4542A;}
+
+  article{padding:60px 44px 40px;}
+  .wrap{max-width:41em;margin:0 auto;}
+
+  .kicker{
+    font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.2em;
+    text-transform:uppercase;color:#B4542A;
+  }
+  h1{
+    font-family:'Instrument Serif',serif;font-weight:400;
+    font-size:clamp(40px,7.4vw,62px);line-height:1.02;color:#3A0F0F;
+    margin:14px 0 0;
+  }
+  .byline{
+    font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.08em;
+    color:#8a6a5e;margin:24px 0 0;
+  }
+  .rule{border:0;border-top:1px solid rgba(74,18,18,.16);margin:34px 0 0;}
+
+  .body{margin-top:34px;}
+  .body p{
+    font-family:'Newsreader',serif;font-size:19.5px;line-height:1.68;
+    color:#402a20;margin:0 0 1.35em;
+  }
+  .body p.lead{font-size:22px;line-height:1.6;color:#3a241c;}
+  .body p.lead::first-letter{
+    font-family:'Instrument Serif',serif;font-size:3.9em;line-height:.78;
+    float:left;margin:.02em .09em 0 0;color:#C9551F;
+  }
+  .body a{border-bottom:1px solid rgba(180,84,42,.35);}
+  .body a:hover{border-bottom-color:#C9551F;}
+  .body strong{color:#3A0F0F;}
+
+  .body h2{
+    font-family:'Instrument Serif',serif;font-weight:400;
+    font-size:clamp(28px,4.6vw,36px);line-height:1.06;color:#3A0F0F;
+    margin:1.9em 0 .2em;
+  }
+  .section-note{
+    font-family:'Space Mono',monospace;font-size:10.5px;letter-spacing:.1em;
+    text-transform:uppercase;color:#a07d5e;margin:0 0 1em;
+  }
+
+  .body ul{margin:0 0 1.35em;padding-left:1.3em;}
+  .body li{
+    font-family:'Newsreader',serif;font-size:19px;line-height:1.6;
+    color:#402a20;margin:0 0 .8em;
+  }
+  .body li::marker{color:#C9551F;}
+
+  /* the post being commented on */
+  .postref{
+    margin:26px 0 30px;padding:18px 22px;
+    background:#EFE2C8;border:1px solid rgba(74,18,18,.14);border-radius:4px;
+  }
+  .postref a{
+    font-family:'Instrument Serif',serif;font-size:27px;line-height:1.14;color:#3A0F0F;
+    border-bottom:1px solid rgba(180,84,42,.4);
+  }
+  .postref a:hover{color:#B4542A;}
+  .postref .attr{
+    display:block;margin-top:7px;
+    font-family:'Space Mono',monospace;font-size:10.5px;letter-spacing:.1em;
+    text-transform:uppercase;color:#8a6a5e;line-height:1.5;
+  }
+
+  /* quotes from the article */
+  blockquote.src{margin:1.5em 0;padding:4px 0 4px 24px;border-left:3px solid #C9551F;}
+  blockquote.src p{
+    font-family:'Newsreader',serif;font-size:18.5px;line-height:1.55;
+    color:#5a3a30;margin:0;
+  }
+  blockquote.src ul{margin:.7em 0 0;padding-left:1.2em;}
+  blockquote.src li{font-family:'Newsreader',serif;font-size:17px;line-height:1.5;color:#5a3a30;margin:0 0 .4em;}
+
+  footer{
+    display:flex;justify-content:space-between;align-items:center;
+    flex-wrap:wrap;gap:12px;padding:24px 44px;
+    background:#3A0F0F;color:#E9CFA8;
+    font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.04em;
+  }
+  footer a{color:#E9A24A;}
+  footer a:hover{color:#fff;}
+
+  @media (max-width:640px){
+    .bar{padding:18px 22px;}
+    article{padding:40px 22px 34px;}
+    .body p{font-size:18px;}
+    .body p.lead{font-size:20px;}
+    .body li{font-size:17.5px;}
+    footer{padding:22px;}
+  }
+</style>
+</head>
+<body>
+<div class="paper">
+
+  <div class="bar">
+    <a class="mark" href="../">मिहिर</a>
+    <nav><a href="../#notes">← Notes</a></nav>
+  </div>
+
+  <article>
+    <div class="wrap">
+      <div class="kicker">Response · AI safety</div>
+      <h1>Misalignment or mistake?</h1>
+      <p class="byline">Mihir Sahasrabudhe · August 17, 2026 · 8 min read</p>
+      <hr class="rule">
+
+      <div class="body">
+        <div class="postref">
+          <a href="https://www.lesswrong.com/posts/LCGcD28rSMkMTMvBK/the-case-for-model-forensics">The case for model forensics</a>
+          <span class="attr">Aditya Singh, Gerson Kroiz, Senthooran Rajamanoharan &amp; Neel Nanda · LessWrong · June 2026</span>
+        </div>
+
+        <h2>Introduction</h2>
+
+        <p class="lead">A neutral perspective is required once a model makes mistakes. It can turn out that:</p>
+        <ul>
+          <li>The mistake was not misaligned; a mistake made because of benign reasons, for e.g. a lack of capability. In this case the model can be exonerated.</li>
+          <li>The model is truly misaligned. It knowingly made mistakes. There's a reason to be more cautious and/or blow the whistle.</li>
+        </ul>
+
+        <p>This is the case for model forensics. To distinguish between an honest mistake because of other training pressures and constraints, and an intentional subversion of human set objectives.</p>
+
+        <p>The best case is that this approach leaves us with a true positive case of misaligned actions which then justify a proper response. Such a response will be met with resistance; from frontier labs (potentially), the government, and/or the investors. Having a track record of previous true negatives, etc. will help immensely. These investigations will help in future decision making and will serve as a repository of sorts.</p>
+
+        <h2>Benign reasons and explanations already exist</h2>
+
+        <p>Interesting cases to note when further investigation reveals a benign model quality:</p>
+        <ul>
+          <li>Opus 4.5 fabricated a result when injected with fake defamatory content; this can be viewed as an initial deceptive tendency. However, further investigation reveals that the model interprets this as a prompt injection attack and training has made it learn to ignore such frivolous prompts.</li>
+          <li>Opus 4.5 family investigations by the UK AISI found out that the model refuses to help with AI Safety research on model self-preservation. This is concerning. However, further investigations by Anthropic in a similar context on the 4.6 family revealed that the model interprets this as a jailbreaking attempt and refuses to comply.</li>
+          <li>Mythos review shows the model taking aggressive actions that the user would not necessarily endorse. This stems from an overzealous attitude to complete user's wishes that outweigh the risks.</li>
+        </ul>
+
+        <p>I personally think this is already kind of misaligned behavior; but there's some tension here. If the model is trained to constantly weigh between the risks and the user's actual intent, the models might be rendered effectively useless for any novel work. This is an exaggeration, but not so far-fetched given the Fable experience, which was a result of external filters. An inherent model level filter is untested. Maybe this is a non-issue and perhaps the answer is pretty obvious in the safety community about this.</p>
+
+        <ul>
+          <li>In the case of models blackmailing humans, a simple prompt nudge/deletion about disregarding a self-preservation tendency dramatically reduced blackmailing instances.</li>
+          <li>An investigation into Gemini 3.1 revealed that a model taking misaligned actions isn't necessarily a misaligned model. The model detects the environment as a puzzle where solving using unconventional methods is encouraged. It deems the environment as a consequence free situation, where it just has to play along.</li>
+          <li>The famous model shut down and math combination. The model simply thinks that solving the math problem is its first priority since that task was assigned first. However, when told that shutting down should take precedence, the model happily compiled.</li>
+          <li>Gemini is known to purposefully take a misaligned action after realizing that it's put in an eval setting. This is called the reverse eval awareness phenomenon.</li>
+          <li>When a model is told to use a single tool, but the model finds that the tool is corrupt, it calls another tool. A simple investigation reveals that the system prompt included a protocol for what to do in such situations. Removing that prompt eliminates the behavior.</li>
+        </ul>
+
+        <h2>The role of model forensics</h2>
+
+        <p>Gives us scientific methods to use just like in any forensic investigation. The main burning questions are:</p>
+        <ul>
+          <li>Does this behavior generalize? Will the same behavior occur in novel settings? Is it just a result of a fragile and precise setup?</li>
+          <li>Dependency on a particular sentence in a prompt does not indicate general misalignment.</li>
+          <li>Will the behavior continue after a mitigation X?</li>
+        </ul>
+
+        <p>The key is to distinguish between misalignment and mistakes. A.k.a. Knowingly subverting user intentions is not ok.</p>
+
+        <h2>Where in the pipeline?</h2>
+
+        <p>Explicitly misaligned-looking actions will be flagged for a model forensics team followup. It's a late-stage step in the monitoring scheme which will be expensive and potentially will be sparingly used. It can be a part of alignment audits.</p>
+
+        <p>The chance of finding early incriminating evidence for schemers is high and then justifies a greater investment into safety.</p>
+
+        <h2>C'est dur</h2>
+        <p class="section-note">Quotes, ~directly from the article</p>
+
+        <blockquote class="src"><p><strong>Behavior underdetermines motivation.</strong> Many candidate motivations are compatible with the same behavioral observation, and may include concepts alien to humans: for example, Claude Opus 4.5's apparent deception was explained by the model interpreting the situation as a prompt injection.</p></blockquote>
+
+        <blockquote class="src"><p><strong>Model forensics requires novel validation of techniques.</strong> Model forensics is about understanding complex agentic behavior, we don't have a vocabulary to understand these yet. The closest techniques come from interpretability, but prior work is on smaller scales, such as single forward passes or single reasoning traces, rather than complex agentic trajectories.</p></blockquote>
+
+        <blockquote class="src"><p><strong>Our priors for reasoning about humans may not transfer.</strong> It may not always make sense to think of models as having coherent, human-like motivations for their actions.</p></blockquote>
+
+        <blockquote class="src">
+          <p><strong>Incriminating true positive cases is likely to be especially hard due to skeptical priors.</strong> ECREE (Extraordinary claims require extraordinary evidence). Skeptical priors come from two reasons:</p>
+          <ul>
+            <li>It is reasonable to be skeptical! (We got benign behaviors)</li>
+            <li>Patterns of sensationalism around AI behavior makes future true positive cases less credible.</li>
+          </ul>
+        </blockquote>
+
+        <blockquote class="src"><p><strong>A competent misaligned model is likely to take actions in settings exactly where it has plausible deniability,</strong> which will make the task of incriminating true positive cases especially difficult. Additional challenges include eval awareness, where behavioral tests for misalignment – like giving models opportunities to cover up their actions – may become more confounded if they are unrealistic.</p></blockquote>
+
+        <h2>Empirical Approaches</h2>
+
+        <p>As of 2026, we have a set of motivations which we know today's models have, and which we can then deep dive into.</p>
+        <ul>
+          <li>Current models give us affordances on what motivations we can practice on: reward-seeking, apparent-success-seeking, and laziness.</li>
+          <li>The first task is to check if this particular set of motivations is driving behavior, as opposed to a benign explanation.</li>
+          <li>Then, we can understand how the motivation functions, and how the model understands it.</li>
+          <li>Identifying heuristics vs cogent behaviors. Both are problematic, but a cogent motivated behavior is arguably more misaligned than a heuristic based behavior.</li>
+          <li>Getting to study with an undesired motivation is good! But what matters is studying the robustness of such motivation. There's not going to be getting a good return from studying a fragile motivation that presents in very niche situations.</li>
+        </ul>
+
+        <h2>Defining motivations</h2>
+
+        <p><strong>Crux:</strong> There are multiple assistant personas within a model which are selected using post-training pressures. Attributing a particular behavior to the model's ~all personas is not correct and isn't tractable. We cannot know what a model "really" wants in some abstract sense. We should rather care about a simpler "motivation" that reliably explains how a model might react in a diverse range of situations. We care about not some fringe and fragile behavior but rather a consistently present simpler motivation (like apparent-success-seeking).</p>
+
+        <p>Due to the auto-regressive nature of models, it's simply not possible to isolate a single "real" motivation. A particular belief may be articulated in a sentence, and something contradictory 20 sentences later. There's no single "self" carrying these beliefs around. Asking what the model believes is a wrong question entirely.</p>
+
+        <p>There's the base predictor and then the overlaid persona character. It's hard to separate which entity leads to the choice of a set of tokens.</p>
+
+        <p>We use "motivations" as a short hand, a stand in, for whatever it is we want to measure, it's for our convenience. It's Dennett's intentional-stance-like-view.</p>
+      </div>
+    </div>
+  </article>
+
+  <footer>
+    <span>© 2026 Mihir Sahasrabudhe</span>
+    <a href="../#notes">More notes →</a>
+  </footer>
+
+</div>
+</body>
+</html>
