@@ -14,13 +14,13 @@
 <link rel="stylesheet" href="assets/site.css">
 </helmet>
 
-<div data-screen-label="Home" class="shell">
+<div data-screen-label="Home" class="shell" data-tab="{{ tab }}">
 
   <aside class="rail">
     <div class="rail-inner">
       <a class="mark" href="#">मिहिर</a>
       <nav class="nav">
-        <a href="#notes">Notes</a><a href="#readings">Readings</a><a href="#photos">Photos</a><a href="#contact">Contact</a>
+        <a href="#about">About</a><a href="#notes">Notes</a><a href="#log">Log</a><a href="#readings">Readings</a><a href="#photos">Photos</a><a href="#contact">Contact</a>
       </nav>
       <h1 class="rail-name">Mihir<span class="it">Sahasrabudhe</span></h1>
       <div class="status">
@@ -32,54 +32,109 @@
 
   <main class="main">
 
-    <div id="notes" class="sec-head">
-      <div class="label">Notes</div>
-      <div class="aside">still being written</div>
-    </div>
-    <div class="list">
-      <sc-for list="{{ thoughts }}" as="t" hint-placeholder-count="7">
-        <a class="entry" href="{{ t.href }}">
-          <span class="entry-n">{{ t.n }}</span>
-          <div>
-            <div class="entry-meta">{{ t.date }} · {{ t.kicker }}</div>
-            <h3 class="entry-title">{{ t.title }}</h3>
-            <p class="entry-blurb">{{ t.blurb }}</p>
-          </div>
-        </a>
-      </sc-for>
-    </div>
+    <!-- ── ABOUT ── the landing view. Plain prose; edit it here. ────────── -->
+    <section id="about" class="pane pane--about">
+      <div class="bio">
+        <div class="bio-main">
+          <p class="bio-lede">I try to work out what a model has been made to want — and whether anyone on the outside could tell.</p>
 
-    <div id="readings" class="sec-head">
-      <div class="label">Readings</div>
-      <div class="aside">things worth your time</div>
-    </div>
-    <div class="list">
-      <sc-for list="{{ readings }}" as="r" hint-placeholder-count="6">
-        <div class="entry entry--flat">
-          <div>
-            <div class="entry-meta">{{ r.metaEl }}</div>
-            <h3 class="entry-title">{{ r.titleEl }}</h3>
-            <p class="entry-blurb">{{ r.note }}</p>
-          </div>
+          <p>That question is most of what I do. I audit models I did not train, under the access a real auditor actually has: the weights, and nothing else. Then I try to be straight about what that establishes and what it doesn't.</p>
+
+          <p>Two things I keep coming back to. A finding is worth about as much as the control that could have killed it — most of what looks like a result turns out to be an artifact, and the honest work is in the graveyard of the ones that died. And "I could not certify this model is clean" is itself a result, worth saying plainly instead of dressing up.</p>
+
+          <div class="bio-h">Right now</div>
+          <ul class="bio-list">
+            <li>Auditing three secret-loyalty model organisms from weights alone — <a href="notes/keys-to-the-city.html">what that recovers, and what it can't certify</a>.</li>
+            <li>Reading frontier safety work and writing back at it, in <a href="#notes">Notes</a>.</li>
+            <li>Reading <a href="#readings">The Infinity Machine</a>, Mallaby on Hassabis and DeepMind.</li>
+            <li>Based in Davis, California.</li>
+          </ul>
+
+          <div class="bio-h">The long way round</div>
+          <p>I did not come the usual way. Electrical engineering, then a master's in information management, then this. No CS major, no math major, no lab I grew up in. I am trying to reach the frontier of AI safety through a side door, and I would rather document that honestly than pretend it was a straight line. That is what the <a href="#log">Log</a> is for.</p>
         </div>
-      </sc-for>
-    </div>
+
+        <figure class="portrait">
+          <img src="assets/img/uiuc-quad.jpeg" alt="The Quad at UIUC on a winter afternoon">
+          <figcaption>The Quad, UIUC</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <!-- ── NOTES ────────────────────────────────────────────────────────── -->
+    <section id="notes" class="pane pane--notes">
+      <div class="sec-head">
+        <div class="label">Notes</div>
+        <div class="aside">still being written</div>
+      </div>
+      <div class="list">
+        <sc-for list="{{ thoughts }}" as="t" hint-placeholder-count="7">
+          <a class="entry" href="{{ t.href }}">
+            <span class="entry-n">{{ t.n }}</span>
+            <div>
+              <div class="entry-meta">{{ t.date }} · {{ t.kicker }}</div>
+              <h3 class="entry-title">{{ t.title }}</h3>
+              <p class="entry-blurb">{{ t.blurb }}</p>
+            </div>
+          </a>
+        </sc-for>
+      </div>
+    </section>
+
+    <!-- ── LOG ── getting to AI safety from an unconventional background ── -->
+    <section id="log" class="pane pane--log">
+      <div class="sec-head">
+        <div class="label">Log</div>
+        <div class="aside">the long way round</div>
+      </div>
+      <div class="list">
+        <sc-for list="{{ logs }}" as="l" hint-placeholder-count="2">
+          <div class="entry entry--flat">
+            <div>
+              <div class="entry-meta">{{ l.date }}</div>
+              <h3 class="entry-title">{{ l.title }}</h3>
+              <p class="entry-blurb">{{ l.body }}</p>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </section>
+
+    <!-- ── READINGS ─────────────────────────────────────────────────────── -->
+    <section id="readings" class="pane pane--readings">
+      <div class="sec-head">
+        <div class="label">Readings</div>
+        <div class="aside">things worth your time</div>
+      </div>
+      <div class="list">
+        <sc-for list="{{ readings }}" as="r" hint-placeholder-count="6">
+          <div class="entry entry--flat">
+            <div>
+              <div class="entry-meta">{{ r.metaEl }}</div>
+              <h3 class="entry-title">{{ r.titleEl }}</h3>
+              <p class="entry-blurb">{{ r.note }}</p>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </section>
+
+    <!-- ── PHOTOGRAPHS ──────────────────────────────────────────────────── -->
+    <section id="photos" class="pane pane--photos photos">
+      <div class="sec-head">
+        <div class="label">Photographs</div>
+      </div>
+      <div class="photo-grid">
+        <sc-for list="{{ photos }}" as="p" hint-placeholder-count="5">
+          <figure>
+            <div class="frame">{{ p.imgEl }}</div>
+            <figcaption>{{ p.cap }} — {{ p.place }}</figcaption>
+          </figure>
+        </sc-for>
+      </div>
+    </section>
 
   </main>
-
-  <section id="photos" class="photos">
-    <div class="sec-head">
-      <div class="label">Photographs</div>
-    </div>
-    <div class="photo-grid">
-      <sc-for list="{{ photos }}" as="p" hint-placeholder-count="5">
-        <figure>
-          <div class="frame">{{ p.imgEl }}</div>
-          <figcaption>{{ p.cap }} — {{ p.place }}</figcaption>
-        </figure>
-      </sc-for>
-    </div>
-  </section>
 
   <footer id="contact" class="foot">
     <span class="copy">© {{ year }} {{ name }}</span>
@@ -95,8 +150,11 @@
 </div>
 </x-dc>
 <script type="text/x-dc" data-dc-script>
+const TABS = ['about', 'notes', 'log', 'readings', 'photos'];
+
 class Component extends DCLogic {
-  state = { clock: '' };
+  // 'about' is the landing view — a visitor should meet a person, not a list.
+  state = { clock: '', tab: 'about' };
   componentDidMount() {
     const tick = () => {
       let s = '';
@@ -107,8 +165,26 @@ class Component extends DCLogic {
     };
     tick();
     this._iv = setInterval(tick, 15000);
+
+    // The hash is the source of truth for which pane shows, so the nav
+    // links stay ordinary anchors and deep links from the note pages
+    // (../#notes) still land on the right tab. An unknown hash such as
+    // #contact leaves the tab alone and just scrolls.
+    const syncTab = () => {
+      const h = (window.location.hash || '').replace('#', '');
+      if (TABS.indexOf(h) !== -1 && h !== this.state.tab) {
+        this.setState({ tab: h });
+        window.scrollTo(0, 0);
+      }
+    };
+    syncTab();
+    this._onHash = syncTab;
+    window.addEventListener('hashchange', this._onHash);
   }
-  componentWillUnmount() { if (this._iv) clearInterval(this._iv); }
+  componentWillUnmount() {
+    if (this._iv) clearInterval(this._iv);
+    if (this._onHash) window.removeEventListener('hashchange', this._onHash);
+  }
   renderVals() {
     const img = 'assets/img/';
 
@@ -155,7 +231,19 @@ class Component extends DCLogic {
         : React.createElement('span', { style: { color: '#3A0F0F' } }, r.title);
     });
 
+    // ── LOG ── newest first. Getting to AI safety from a side door.
+    //    Append an entry: { date, title, body }.
+    const logs = [
+      {
+        date: 'Aug 2026',
+        title: 'Starting this log',
+        body: 'Electrical engineering, then a master\'s in information management, now trying to do AI safety research. It is not the route anyone recommends, and most of what I know I learned late and out of order. I keep meeting people who started with a CS degree and a lab, and the gap is real. But the gap is also the only thing I can report on honestly, so I am going to write it down as I go: what I tried, what did not work, what I had to learn twice.',
+      },
+    ];
+
     return {
+      tab: this.state.tab,
+      logs,
       name: 'Mihir Sahasrabudhe',
       city: 'Davis, CA',
       clock: this.state.clock || '—',
