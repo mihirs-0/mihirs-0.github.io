@@ -1,0 +1,288 @@
+/* ==========================================================================
+   Mihir Sahasrabudhe — site styles
+   Palette, fonts and paper-on-beige feel carry over from the original design.
+   What's new is that layout now lives in a stylesheet instead of inline
+   attributes, so the page can actually respond to the screen it's on:
+     < 760px   phone      single column, compact padding
+     760–1079  tablet     single column, horizontal masthead
+     >= 1080   laptop     two columns, sticky identity rail
+   ========================================================================== */
+
+:root{
+  --bg:#E7D9C0;
+  --paper:#F4EBDB;
+  --paper-alt:#ECDDC4;
+  --ink:#2A1410;
+  --ink-strong:#3A0F0F;
+  --ink-body:#402a20;
+  --ink-soft:#5a3a30;
+  --muted:#8a6a5e;
+  --muted-warm:#7c4a36;
+  --accent:#C9551F;
+  --accent-2:#B4542A;
+  --gold:#E9A24A;
+  --cream:#E9CFA8;
+  --rule:rgba(74,18,18,.16);
+  --rule-soft:rgba(74,18,18,.12);
+
+  --display:'Instrument Serif',Georgia,serif;
+  --serif:'Newsreader',Georgia,serif;
+  --mono:'Space Mono',ui-monospace,monospace;
+  --deva:'Tiro Devanagari Hindi',serif;
+
+  --pad:34px;          /* horizontal padding, widened at larger sizes */
+  --rail:250px;
+  --shell:1180px;
+  --measure:34em;      /* comfortable line length for prose */
+}
+
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  margin:0;background:var(--bg);color:var(--ink);
+  font-family:var(--serif);
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+}
+img{display:block;max-width:100%;}
+::selection{background:var(--accent);color:#fff;}
+[id]{scroll-margin-top:20px;}
+@keyframes pulsedot{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.35;transform:scale(.65);}}
+
+/* ---------------------------------------------------------------- shell -- */
+.shell{
+  max-width:var(--shell);margin:0 auto;min-height:100vh;
+  background:var(--paper);
+  box-shadow:0 0 70px rgba(58,15,15,.1);
+}
+
+/* ----------------------------------------------------------------- rail -- */
+/* Identity + wayfinding. A masthead on small screens, a sticky colophon
+   column on laptops — which is what reclaims the dead side margin.        */
+.rail{
+  padding:22px var(--pad);
+  border-bottom:1px solid var(--rule);
+}
+.rail-inner{
+  display:grid;grid-template-columns:auto minmax(0,1fr);
+  align-items:center;column-gap:18px;
+}
+.mark{
+  grid-column:1;grid-row:1;
+  font-family:var(--deva);font-size:27px;color:#5C1A1A;line-height:1;
+  text-decoration:none;
+}
+.mark:hover{color:var(--accent-2);}
+.rail-name{
+  grid-column:1 / -1;grid-row:2;
+  font-family:var(--display);font-weight:400;color:var(--ink-strong);
+  font-size:clamp(30px,5.6vw,44px);line-height:1.02;margin:26px 0 0;
+}
+.rail-name .it{display:block;font-style:italic;}
+
+.status{
+  grid-column:1 / -1;grid-row:3;justify-self:start;margin-top:20px;
+  display:inline-flex;align-items:center;gap:9px;
+  padding:7px 14px;border:1px solid rgba(74,18,18,.22);border-radius:999px;
+  background:rgba(255,255,255,.45);
+  font-family:var(--mono);font-size:11px;letter-spacing:.08em;color:#6b3b2e;
+  white-space:nowrap;
+}
+.status .dot{
+  width:8px;height:8px;border-radius:50%;background:var(--accent);
+  animation:pulsedot 1.8s ease-in-out infinite;flex:0 0 auto;
+}
+
+.nav{
+  grid-column:2;grid-row:1;
+  display:flex;gap:22px;flex-wrap:wrap;justify-content:flex-end;
+  font-family:var(--mono);font-size:11px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--muted-warm);
+}
+.nav a{color:inherit;text-decoration:none;position:relative;padding-bottom:2px;}
+.nav a::after{
+  content:"";position:absolute;left:0;right:100%;bottom:0;height:1px;
+  background:var(--accent-2);transition:right .22s ease;
+}
+.nav a:hover{color:var(--accent-2);}
+.nav a:hover::after{right:0;}
+
+/* ----------------------------------------------------------------- main -- */
+.main{padding:0 var(--pad) 8px;}
+
+.sec-head{
+  display:flex;justify-content:space-between;align-items:baseline;gap:16px;
+  border-top:1px solid var(--rule);
+  padding-top:20px;margin-top:30px;
+}
+.sec-head .label{
+  font-family:var(--mono);font-size:11px;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--accent-2);
+}
+.sec-head .aside{
+  font-family:var(--mono);font-size:11px;color:var(--muted);text-align:right;
+}
+
+/* --------------------------------------------------------------- entries -- */
+.list{margin:0;}
+.entry{
+  display:grid;grid-template-columns:52px 1fr;gap:18px;
+  padding:20px 14px;border-bottom:1px solid var(--rule-soft);
+  text-decoration:none;color:inherit;
+  transition:background .18s ease;
+  position:relative;
+}
+a.entry:hover{background:rgba(255,255,255,.55);}
+a.entry:hover .entry-title{color:var(--accent-2);}
+.entry-n{
+  font-family:var(--mono);font-size:13px;color:var(--accent-2);
+  padding-top:5px;
+}
+.entry-meta{
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--muted);
+}
+.entry-title{
+  font-family:var(--display);font-weight:400;font-size:27px;line-height:1.14;
+  color:var(--ink-strong);margin:5px 0 6px;
+  transition:color .18s ease;
+}
+.entry-title a{color:inherit;text-decoration:none;}
+.entry-title a:hover{color:var(--accent-2);}
+.entry-blurb{
+  font-family:var(--serif);font-size:16.5px;line-height:1.5;
+  color:var(--ink-soft);max-width:46em;margin:0;
+}
+
+/* Readings reuse the entry rhythm without the number gutter.
+   Two classes so this keeps winning over the .entry column rules that the
+   wider breakpoints redefine later in this file. */
+.entry.entry--flat{grid-template-columns:minmax(0,1fr);}
+
+/* ---------------------------------------------------------------- photos -- */
+.photos{margin-top:22px;background:var(--paper-alt);padding:34px 0 38px;}
+.photos .sec-head{
+  border-top:0;margin-top:0;padding:0 var(--pad) 4px;
+}
+.photo-grid{
+  display:grid;gap:16px;padding:18px var(--pad) 4px;
+  grid-template-columns:repeat(auto-fill,minmax(170px,1fr));
+}
+.photo-grid figure{margin:0;}
+.frame{
+  aspect-ratio:3/4;border-radius:2px;overflow:hidden;
+  background:rgba(74,18,18,.06);
+}
+.frame img{width:100%;height:100%;object-fit:cover;}
+.photo-grid figcaption{
+  font-family:var(--mono);font-size:10px;color:#7c6a5e;
+  margin-top:9px;letter-spacing:.03em;line-height:1.4;
+}
+
+/* ---------------------------------------------------------------- footer -- */
+.foot{
+  display:flex;justify-content:space-between;align-items:center;
+  flex-wrap:wrap;gap:12px;padding:22px var(--pad);
+  border-top:1px solid var(--rule);
+  background:var(--ink-strong);color:var(--cream);
+}
+.foot .copy{font-family:var(--mono);font-size:11px;letter-spacing:.04em;}
+.foot .links{display:flex;gap:18px;flex-wrap:wrap;font-family:var(--mono);font-size:11px;}
+.foot a{color:var(--gold);text-decoration:none;}
+.foot a:hover{color:#fff;}
+
+/* ==========================================================================
+   Small phones — tighten the masthead so all four nav items sit on one line,
+   and narrow the number gutter so blurbs get the width back.
+   ========================================================================== */
+@media (max-width:520px){
+  :root{--pad:26px;}
+  .mark{font-size:24px;}
+  .nav{gap:13px;font-size:10px;letter-spacing:.06em;}
+  .entry{grid-template-columns:32px minmax(0,1fr);gap:12px;padding:18px 4px;}
+  .entry.entry--flat{padding-left:4px;}
+  .entry-title{font-size:24px;}
+  .photo-grid{grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px;}
+}
+
+/* ==========================================================================
+   Tablet — roomier padding, still one column.
+   ========================================================================== */
+@media (min-width:760px){
+  :root{--pad:44px;}
+  .shell{max-width:860px;}
+  .entry{grid-template-columns:60px 1fr;gap:20px;}
+  .entry-title{font-size:30px;}
+}
+
+/* ==========================================================================
+   Laptop — the layout this redesign is for.
+   The rail leaves the top of the page and becomes a sticky column, so the
+   horizontal space that used to be empty margin now carries identity and
+   navigation, and far more content fits above the fold.
+   ========================================================================== */
+@media (min-width:1080px){
+  :root{--pad:48px;}
+
+  .shell{
+    max-width:var(--shell);
+    display:grid;
+    grid-template-columns:var(--rail) minmax(0,1fr);
+    align-items:start;
+    /* Without this, min-height:100vh lets grid stretch the rows apart on
+       very tall viewports and opens a gap above the footer. */
+    align-content:start;
+  }
+
+  /* The rail stretches so its divider runs the full height of the column,
+     while the content inside it sticks. Flex order lets the identity read
+     top-down (mark, name, status, nav) from the source order the
+     small-screen grid needs. */
+  .rail{
+    grid-column:1;align-self:stretch;
+    padding:0;
+    border-bottom:0;
+    border-right:1px solid var(--rule);
+  }
+  .rail-inner{
+    position:sticky;top:0;
+    max-height:100vh;overflow:auto;
+    display:flex;flex-direction:column;align-items:flex-start;
+    padding:40px 26px 34px 48px;
+  }
+  .mark{order:1;font-size:25px;margin-bottom:18px;}
+  .rail-name{order:2;font-size:38px;margin:0;}
+  .status{order:3;margin-top:22px;}
+  .nav{
+    order:4;
+    display:block;margin-top:30px;width:100%;
+    border-top:1px solid var(--rule);padding-top:16px;
+  }
+  .nav a{display:block;padding:7px 0;}
+  .nav a::after{bottom:4px;}
+
+  .main{
+    grid-column:2;
+    padding:40px 48px 10px;
+    min-width:0;
+  }
+  .main .sec-head:first-child{border-top:0;margin-top:0;padding-top:0;}
+
+  /* Prose keeps a readable measure even though the column is wider. */
+  .entry-blurb{max-width:var(--measure);}
+
+  .photos{grid-column:1 / -1;margin-top:30px;}
+  .photo-grid{grid-template-columns:repeat(auto-fill,minmax(200px,1fr));}
+
+  .foot{grid-column:1 / -1;}
+}
+
+@media (min-width:1400px){
+  :root{--shell:1260px;--rail:270px;}
+}
+
+/* Users who prefer reduced motion get no pulsing dot. */
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto;}
+  .status .dot{animation:none;}
+  *{transition:none !important;}
+}

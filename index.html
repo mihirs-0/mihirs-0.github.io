@@ -11,94 +11,86 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,400&family=Space+Mono:wght@400;700&family=Tiro+Devanagari+Hindi:ital@0;1&display=swap" rel="stylesheet">
-<style>
-  *{box-sizing:border-box;}
-  html{scroll-behavior:smooth;}
-  body{margin:0;background:#E7D9C0;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;}
-  img{display:block;}
-  @keyframes pulsedot{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.35;transform:scale(.65);}}
-  ::selection{background:#C9551F;color:#fff;}
-  [id]{scroll-margin-top:18px;}
-</style>
+<link rel="stylesheet" href="assets/site.css">
 </helmet>
 
-<div data-screen-label="Home" style="max-width:920px;margin:0 auto;background:#F4EBDB;color:#2A1410;overflow:hidden;box-shadow:0 0 70px rgba(58,15,15,.1);min-height:100vh;font-family:'Newsreader',Georgia,serif;">
+<div data-screen-label="Home" class="shell">
 
-  <div style="display:flex;justify-content:space-between;align-items:center;padding:22px 44px;border-bottom:1px solid rgba(74,18,18,.14);">
-    <a href="#" style="font-family:'Tiro Devanagari Hindi',serif;font-size:27px;color:#5C1A1A;line-height:1;text-decoration:none;">मिहिर</a>
-    <div style="display:flex;gap:24px;font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#7c4a36;">
-      <a href="#notes" style="color:inherit;text-decoration:none;" style-hover="color:#B4542A;">Notes</a><a href="#readings" style="color:inherit;text-decoration:none;" style-hover="color:#B4542A;">Readings</a><a href="#photos" style="color:inherit;text-decoration:none;" style-hover="color:#B4542A;">Photos</a><a href="#contact" style="color:inherit;text-decoration:none;" style-hover="color:#B4542A;">Contact</a>
-    </div>
-  </div>
-
-  <div style="position:relative;padding:64px 44px 52px;overflow:hidden;">
-    <div style="position:absolute;top:-70px;right:-60px;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle at 38% 34%, rgba(224,145,60,.5), rgba(201,85,31,.18) 60%, rgba(201,85,31,0) 73%);pointer-events:none;"></div>
-    <h1 style="font-family:'Instrument Serif',serif;font-weight:400;font-size:clamp(34px,6.3vw,58px);line-height:.98;color:#3A0F0F;margin:0;position:relative;">Mihir<br><span style="font-style:italic;">Sahasrabudhe</span></h1>
-    <div style="display:inline-flex;align-items:center;gap:9px;margin-top:26px;padding:8px 15px;border:1px solid rgba(74,18,18,.22);border-radius:999px;background:rgba(255,255,255,.45);position:relative;">
-      <span style="width:8px;height:8px;border-radius:50%;background:#C9551F;animation:pulsedot 1.8s ease-in-out infinite;"></span>
-      <span style="font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.08em;color:#6b3b2e;">{{ city }} · {{ clock }}</span>
-    </div>
-  </div>
-
-  <div id="notes" style="padding:30px 44px 8px;">
-    <div style="display:flex;justify-content:space-between;align-items:baseline;border-top:1px solid rgba(74,18,18,.16);padding-top:22px;">
-      <div style="font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#B4542A;">Notes</div>
-      <div style="font-family:'Space Mono',monospace;font-size:11px;color:#8a6a5e;">still being written</div>
-    </div>
-  </div>
-  <div style="padding:0 44px;">
-    <sc-for list="{{ thoughts }}" as="t" hint-placeholder-count="7">
-      <a href="{{ t.href }}" style="display:grid;grid-template-columns:60px 1fr;gap:20px;padding:24px 14px;border-bottom:1px solid rgba(74,18,18,.12);text-decoration:none;color:inherit;transition:background .18s ease;" style-hover="background:rgba(255,255,255,.55);">
-        <span style="font-family:'Space Mono',monospace;font-size:13px;color:#B4542A;padding-top:6px;">{{ t.n }}</span>
-        <div>
-          <div style="font-family:'Space Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:#8a6a5e;">{{ t.date }} · {{ t.kicker }}</div>
-          <h3 style="font-family:'Instrument Serif',serif;font-weight:400;font-size:30px;color:#3A0F0F;margin:5px 0 6px;">{{ t.title }}</h3>
-          <p style="font-family:'Newsreader',serif;font-size:16.5px;line-height:1.5;color:#5a3a30;max-width:48em;margin:0;">{{ t.blurb }}</p>
-        </div>
-      </a>
-    </sc-for>
-  </div>
-
-  <div id="readings" style="padding:30px 44px 8px;">
-    <div style="display:flex;justify-content:space-between;align-items:baseline;border-top:1px solid rgba(74,18,18,.16);padding-top:22px;">
-      <div style="font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#B4542A;">Readings</div>
-      <div style="font-family:'Space Mono',monospace;font-size:11px;color:#8a6a5e;">things worth your time</div>
-    </div>
-  </div>
-  <div style="padding:0 44px;">
-    <sc-for list="{{ readings }}" as="r" hint-placeholder-count="6">
-      <div style="padding:22px 14px;border-bottom:1px solid rgba(74,18,18,.12);color:inherit;">
-        <div style="font-family:'Space Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:#8a6a5e;">{{ r.metaEl }}</div>
-        <h3 style="font-family:'Instrument Serif',serif;font-weight:400;font-size:28px;color:#3A0F0F;margin:5px 0 6px;line-height:1.12;">{{ r.titleEl }}</h3>
-        <p style="font-family:'Newsreader',serif;font-size:16.5px;line-height:1.5;color:#5a3a30;max-width:48em;margin:0;">{{ r.note }}</p>
+  <aside class="rail">
+    <div class="rail-inner">
+      <a class="mark" href="#">मिहिर</a>
+      <nav class="nav">
+        <a href="#notes">Notes</a><a href="#readings">Readings</a><a href="#photos">Photos</a><a href="#contact">Contact</a>
+      </nav>
+      <h1 class="rail-name">Mihir<span class="it">Sahasrabudhe</span></h1>
+      <div class="status">
+        <span class="dot"></span>
+        <span>{{ city }} · {{ clock }}</span>
       </div>
-    </sc-for>
-  </div>
-
-  <div id="photos" style="margin-top:18px;background:#ECDDC4;padding:40px 0 44px;">
-    <div style="display:flex;justify-content:space-between;align-items:baseline;padding:0 44px 4px;">
-      <div style="font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#B4542A;">Photographs</div>
     </div>
-    <div style="display:flex;gap:14px;overflow-x:auto;padding:20px 44px 6px;">
+  </aside>
+
+  <main class="main">
+
+    <div id="notes" class="sec-head">
+      <div class="label">Notes</div>
+      <div class="aside">still being written</div>
+    </div>
+    <div class="list">
+      <sc-for list="{{ thoughts }}" as="t" hint-placeholder-count="7">
+        <a class="entry" href="{{ t.href }}">
+          <span class="entry-n">{{ t.n }}</span>
+          <div>
+            <div class="entry-meta">{{ t.date }} · {{ t.kicker }}</div>
+            <h3 class="entry-title">{{ t.title }}</h3>
+            <p class="entry-blurb">{{ t.blurb }}</p>
+          </div>
+        </a>
+      </sc-for>
+    </div>
+
+    <div id="readings" class="sec-head">
+      <div class="label">Readings</div>
+      <div class="aside">things worth your time</div>
+    </div>
+    <div class="list">
+      <sc-for list="{{ readings }}" as="r" hint-placeholder-count="6">
+        <div class="entry entry--flat">
+          <div>
+            <div class="entry-meta">{{ r.metaEl }}</div>
+            <h3 class="entry-title">{{ r.titleEl }}</h3>
+            <p class="entry-blurb">{{ r.note }}</p>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+
+  </main>
+
+  <section id="photos" class="photos">
+    <div class="sec-head">
+      <div class="label">Photographs</div>
+    </div>
+    <div class="photo-grid">
       <sc-for list="{{ photos }}" as="p" hint-placeholder-count="5">
-        <figure style="margin:0;flex:0 0 auto;width:218px;">
-          <div style="width:218px;height:280px;border-radius:2px;overflow:hidden;">{{ p.imgEl }}</div>
-          <figcaption style="font-family:'Space Mono',monospace;font-size:10px;color:#7c6a5e;margin-top:9px;letter-spacing:.03em;">{{ p.cap }} — {{ p.place }}</figcaption>
+        <figure>
+          <div class="frame">{{ p.imgEl }}</div>
+          <figcaption>{{ p.cap }} — {{ p.place }}</figcaption>
         </figure>
       </sc-for>
     </div>
-  </div>
+  </section>
 
-  <div id="contact" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;padding:24px 44px;border-top:1px solid rgba(74,18,18,.16);background:#3A0F0F;color:#E9CFA8;">
-    <span style="font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.04em;">© {{ year }} {{ name }}</span>
-    <div style="display:flex;gap:18px;font-family:'Space Mono',monospace;font-size:11px;">
-      <a href="mailto:{{ email }}" style="color:#E9A24A;text-decoration:none;" style-hover="color:#fff;">Email</a>
-      <a href="https://{{ github }}" style="color:#E9A24A;text-decoration:none;" style-hover="color:#fff;">GitHub</a>
-      <a href="https://{{ linkedin }}" style="color:#E9A24A;text-decoration:none;" style-hover="color:#fff;">LinkedIn</a>
-      <a href="https://{{ x }}" style="color:#E9A24A;text-decoration:none;" style-hover="color:#fff;">X</a>
-      <a href="https://{{ lesswrong }}" style="color:#E9A24A;text-decoration:none;" style-hover="color:#fff;">LessWrong</a>
+  <footer id="contact" class="foot">
+    <span class="copy">© {{ year }} {{ name }}</span>
+    <div class="links">
+      <a href="mailto:{{ email }}">Email</a>
+      <a href="https://{{ github }}">GitHub</a>
+      <a href="https://{{ linkedin }}">LinkedIn</a>
+      <a href="https://{{ x }}">X</a>
+      <a href="https://{{ lesswrong }}">LessWrong</a>
     </div>
-  </div>
+  </footer>
 
 </div>
 </x-dc>
