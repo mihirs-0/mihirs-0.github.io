@@ -15,6 +15,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,400&family=Space+Mono:wght@400;700&family=Tiro+Devanagari+Hindi:ital@0;1&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/site.css">
+<link rel="stylesheet" href="../assets/note.css">
 <style>
   *{box-sizing:border-box;}
   html{scroll-behavior:smooth;}
@@ -125,11 +127,14 @@
 </style>
 </head>
 <body>
-<div class="paper">
+<div class="shell shell--note">
 
-  <div class="bar">
-    <a class="mark" href="../">मिहिर</a>
-  </div>
+  <aside class="rail">
+    <div class="rail-inner">
+      <a class="mark" href="../">मिहिर</a>
+      <nav class="toc" aria-label="On this page"></nav>
+    </div>
+  </aside>
 
   <article>
     <div class="wrap">
@@ -217,5 +222,28 @@
   </footer>
 
 </div>
+<script>
+/* Build the rail table of contents from the article's own headings.
+   Progressive enhancement: without JS there is simply no TOC. */
+(function () {
+  try {
+    var toc = document.querySelector('.toc');
+    if (!toc) return;
+    var hs = document.querySelectorAll('article h2');
+    if (hs.length < 3) { toc.remove(); return; }
+    var label = document.createElement('div');
+    label.className = 'toc-label';
+    label.textContent = 'On this page';
+    toc.appendChild(label);
+    Array.prototype.forEach.call(hs, function (h, i) {
+      if (!h.id) h.id = 'sec-' + (i + 1);
+      var a = document.createElement('a');
+      a.href = '#' + h.id;
+      a.textContent = (h.textContent || '').trim();
+      toc.appendChild(a);
+    });
+  } catch (e) {}
+})();
+</script>
 </body>
 </html>

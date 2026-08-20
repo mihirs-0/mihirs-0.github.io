@@ -1,0 +1,69 @@
+/* ==========================================================================
+   Note pages — laptop layout.
+
+   Loaded after site.css and before each page's own <style>, so every page
+   keeps its bespoke pieces (pull quotes, figures, kill-chain block, TL;DR,
+   reprint panels) exactly as they were. What changes here is the shell:
+   below 1080px each note stays the centred single-column sheet it already
+   was; at laptop width it gains the same sticky rail as the home page so
+   the article stops floating in dead margin.
+   ========================================================================== */
+
+/* The table of contents is laptop-only furniture. */
+.toc{display:none;}
+
+@media (min-width:1080px){
+
+  .shell--note{
+    display:grid;
+    grid-template-columns:var(--rail) minmax(0,1fr);
+    align-items:start;
+    align-content:start;
+  }
+
+  /* Stretch so the divider runs the full height; the inner block sticks. */
+  .shell--note > .rail{
+    grid-column:1;align-self:stretch;
+    padding:0;
+    border-bottom:0;
+    border-right:1px solid var(--rule);
+  }
+
+  .shell--note > article{
+    grid-column:2;
+    padding:54px 56px 44px;
+  }
+
+  /* Left-aligned against the rail rather than centred in the leftover
+     space — the measure stays comfortable, the axis stays honest. */
+  .shell--note .wrap{max-width:37em;margin:0;}
+
+  .shell--note > footer{grid-column:1 / -1;}
+
+  /* ------------------------------------------------------------- toc --- */
+  .toc{
+    display:block;order:5;width:100%;
+    margin-top:26px;
+    border-top:1px solid var(--rule);
+    padding-top:15px;
+  }
+  .toc-label{
+    font-family:var(--mono);font-size:10px;letter-spacing:.16em;
+    text-transform:uppercase;color:var(--muted);
+    margin-bottom:9px;
+  }
+  .toc a{
+    display:block;
+    font-family:var(--serif);font-size:14.5px;line-height:1.32;
+    color:var(--muted-warm);text-decoration:none;
+    padding:5px 0 5px 11px;margin-left:-13px;
+    border-left:2px solid transparent;
+    transition:color .16s ease,border-color .16s ease;
+  }
+  .toc a:hover{color:var(--accent-2);border-left-color:var(--accent-2);}
+}
+
+@media (min-width:1400px){
+  .shell--note > article{padding:60px 72px 48px;}
+  .shell--note .wrap{max-width:38em;}
+}
