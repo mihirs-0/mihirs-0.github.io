@@ -77,7 +77,8 @@ img{display:block;max-width:100%;}
   font-family:var(--display);font-weight:400;color:var(--ink-strong);
   font-size:clamp(30px,5.6vw,44px);line-height:1.02;margin:26px 0 0;
 }
-.rail-name .it{display:block;font-style:italic;}
+/* Second line only — same face and style as the first. */
+.rail-name .it{display:block;}
 
 .status{
   grid-column:1 / -1;grid-row:3;justify-self:start;margin-top:20px;
