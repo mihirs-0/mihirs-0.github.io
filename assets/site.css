@@ -158,90 +158,13 @@ a.entry:hover .entry-title{color:var(--accent-2);}
    wider breakpoints redefine later in this file. */
 .entry.entry--flat{grid-template-columns:minmax(0,1fr);}
 
-/* ----------------------------------------------------------------- tabs -- */
-/* The landing view is the bio. Everything else waits behind a nav item.
-   State lives in one data-tab attribute on the shell, so no section can
-   half-appear and there is nothing to keep in sync. */
-.pane{display:none;}
-.shell[data-tab="about"]    .pane--about,
-.shell[data-tab="notes"]    .pane--notes,
-.shell[data-tab="log"]      .pane--log,
-.shell[data-tab="readings"] .pane--readings,
-.shell[data-tab="photos"]   .pane--photos{display:block;}
-
-.shell[data-tab="about"]    .nav a[href="#about"],
-.shell[data-tab="notes"]    .nav a[href="#notes"],
-.shell[data-tab="log"]      .nav a[href="#log"],
-.shell[data-tab="readings"] .nav a[href="#readings"],
-.shell[data-tab="photos"]   .nav a[href="#photos"]{color:var(--accent-2);}
-
-/* ------------------------------------------------------------------ bio -- */
-.bio{padding-top:34px;}
-.bio p{
-  font-family:var(--serif);font-size:18.5px;line-height:1.65;
-  color:var(--ink-body);margin:0 0 1.25em;max-width:34em;
-}
-/* Tag plus element, so this keeps beating the `.bio p` rule above. */
-.bio p.bio-lede{
-  font-family:var(--display);font-weight:400;
-  font-size:clamp(28px,3.7vw,38px);line-height:1.16;
-  color:var(--ink-strong);margin:0 0 .85em;max-width:19em;
-}
-.bio p a{color:var(--accent-2);border-bottom:1px solid rgba(180,84,42,.35);}
-.bio p a:hover{border-bottom-color:var(--accent);}
-.bio-h{
-  font-family:var(--mono);font-size:11px;letter-spacing:.18em;
-  text-transform:uppercase;color:var(--accent-2);
-  margin:2.1em 0 .9em;
-}
-.bio-list{list-style:none;margin:0 0 1.4em;padding:0;max-width:34em;}
-.bio-list li{
-  font-family:var(--serif);font-size:17.5px;line-height:1.5;
-  color:var(--ink-body);
-  padding:0 0 12px 18px;margin:0 0 12px;
-  border-bottom:1px solid var(--rule-soft);position:relative;
-}
-.bio-list li:last-child{border-bottom:0;}
-.bio-list li::before{
-  content:"—";position:absolute;left:0;top:0;color:var(--accent);
-}
-.bio-list a{color:var(--accent-2);border-bottom:1px solid rgba(180,84,42,.35);}
-.bio-list a:hover{border-bottom-color:var(--accent);}
-
-/* The portrait is masked so it settles into the paper instead of sitting
-   on top of it as a hard rectangle. */
-.portrait{margin:0 0 26px;max-width:330px;}
-/* Feather all four edges into the paper by intersecting a horizontal and a
-   vertical fade. A single radial gradient will not do it: its radius runs
-   past the element, so the visible edges stay fully opaque. */
-/* A fixed aspect + cover means any photo dropped in here lands predictably,
-   rather than a tall phone snap eating the whole first screen. */
-.portrait img{
-  width:100%;aspect-ratio:4/3;object-fit:cover;object-position:center 62%;
-  filter:sepia(.24) saturate(.86) contrast(1.02);
-  -webkit-mask-image:
-    linear-gradient(to right,  transparent 0, #000 9%, #000 91%, transparent 100%),
-    linear-gradient(to bottom, transparent 0, #000 8%, #000 92%, transparent 100%);
-  mask-image:
-    linear-gradient(to right,  transparent 0, #000 9%, #000 91%, transparent 100%),
-    linear-gradient(to bottom, transparent 0, #000 8%, #000 92%, transparent 100%);
-  -webkit-mask-composite:source-in;
-  mask-composite:intersect;
-}
-.portrait figcaption{
-  font-family:var(--mono);font-size:10px;letter-spacing:.04em;
-  color:#7c6a5e;margin-top:2px;
-}
-
-/* Photo first on a phone — the face of the page before the prose. */
-.bio{display:flex;flex-direction:column;}
-.portrait{order:-1;}
-.bio-main{order:1;}
-
 /* ---------------------------------------------------------------- photos -- */
-.photos .sec-head{border-top:0;margin-top:0;padding-top:0;}
+.photos{margin-top:22px;background:var(--paper-alt);padding:34px 0 38px;}
+.photos .sec-head{
+  border-top:0;margin-top:0;padding:0 var(--pad) 4px;
+}
 .photo-grid{
-  display:grid;gap:16px;padding:18px 0 4px;
+  display:grid;gap:16px;padding:18px var(--pad) 4px;
   grid-template-columns:repeat(auto-fill,minmax(170px,1fr));
 }
 .photo-grid figure{margin:0;}
@@ -275,9 +198,6 @@ a.entry:hover .entry-title{color:var(--accent-2);}
   :root{--pad:26px;}
   .mark{font-size:24px;}
   .nav{gap:13px;font-size:10px;letter-spacing:.06em;}
-  /* The footer already carries these links; drop the item so the rest fit
-     on one line. */
-  .nav a[href="#contact"]{display:none;}
   .entry{grid-template-columns:32px minmax(0,1fr);gap:12px;padding:18px 4px;}
   .entry.entry--flat{padding-left:4px;}
   .entry-title{font-size:24px;}
@@ -350,15 +270,7 @@ a.entry:hover .entry-title{color:var(--accent-2);}
   /* Prose keeps a readable measure even though the column is wider. */
   .entry-blurb{max-width:var(--measure);}
 
-  /* Bio runs as text beside a portrait that stays put while you read. */
-  .bio{
-    display:grid;grid-template-columns:minmax(0,1fr) 300px;
-    gap:48px;align-items:start;
-  }
-  .bio-main{order:0;grid-column:1;}
-  .portrait{order:0;grid-column:2;margin:0;max-width:300px;position:sticky;top:44px;}
-  .portrait img{aspect-ratio:4/5;}
-
+  .photos{grid-column:1 / -1;margin-top:30px;}
   .photo-grid{grid-template-columns:repeat(auto-fill,minmax(200px,1fr));}
 
   .foot{grid-column:1 / -1;}
