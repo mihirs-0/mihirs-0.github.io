@@ -17,8 +17,8 @@
   .shell--note{
     display:grid;
     grid-template-columns:var(--rail) minmax(0,1fr);
+    grid-template-rows:1fr auto;
     align-items:start;
-    align-content:start;
   }
 
   /* Stretch so the divider runs the full height; the inner block sticks. */

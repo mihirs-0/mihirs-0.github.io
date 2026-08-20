@@ -49,11 +49,15 @@ img{display:block;max-width:100%;}
 @keyframes pulsedot{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.35;transform:scale(.65);}}
 
 /* ---------------------------------------------------------------- shell -- */
+/* Column layout with the footer pushed to the foot, so a short page leaves
+   its empty space above the footer rather than stranding it mid-screen. */
 .shell{
   max-width:var(--shell);margin:0 auto;min-height:100vh;
   background:var(--paper);
   box-shadow:0 0 70px rgba(58,15,15,.1);
+  display:flex;flex-direction:column;
 }
+.shell > footer{margin-top:auto;}
 
 /* ----------------------------------------------------------------- rail -- */
 /* Identity + wayfinding. A masthead on small screens, a sticky colophon
@@ -312,14 +316,15 @@ a.entry:hover .entry-title{color:var(--accent-2);}
 @media (min-width:1080px){
   :root{--pad:48px;}
 
+  /* The content row takes the slack (1fr) and the footer row is sized to
+     its content, which keeps the footer at the bottom on short pages and
+     stops the rows drifting apart on tall screens. */
   .shell{
     max-width:var(--shell);
     display:grid;
     grid-template-columns:var(--rail) minmax(0,1fr);
+    grid-template-rows:1fr auto;
     align-items:start;
-    /* Without this, min-height:100vh lets grid stretch the rows apart on
-       very tall viewports and opens a gap above the footer. */
-    align-content:start;
   }
 
   /* The rail stretches so its divider runs the full height of the column,
