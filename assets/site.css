@@ -202,6 +202,11 @@ a.entry:hover .entry-title{color:var(--accent-2);}
 
 /* --------------------------------------------------------------- education */
 .bio-edu{margin-top:34px;}
+/* Two classes again, so this wins over the `.bio p` size above. */
+.bio p.bio-aside{
+  font-family:var(--serif);font-size:15.5px;line-height:1.5;
+  color:var(--muted);margin:0 0 16px;
+}
 .edu{list-style:none;margin:0;padding:0;max-width:32em;}
 .edu li{
   padding:0 0 14px;margin:0 0 14px;
@@ -216,6 +221,15 @@ a.entry:hover .entry-title{color:var(--accent-2);}
   display:block;margin-top:5px;
   font-family:var(--serif);font-size:15.5px;line-height:1.45;color:var(--ink-soft);
 }
+
+/* A quiet reference in the bottom right of the pane. */
+.pane-corner{margin-top:30px;text-align:right;}
+.pane-corner a{
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--muted);text-decoration:none;
+  border-bottom:1px solid transparent;
+}
+.pane-corner a:hover{color:var(--accent-2);border-bottom-color:var(--accent-2);}
 
 /* --------------------------------------------------------------- portrait */
 /* Shown whole. The composition runs from the figure at the bottom straight
