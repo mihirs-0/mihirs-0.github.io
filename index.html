@@ -20,7 +20,7 @@
     <div class="rail-inner">
       <a class="mark" href="#">मिहिर</a>
       <nav class="nav">
-        <a href="#about">About</a><a href="#notes">Notes</a><a href="#log">Log</a><a href="#readings">Readings</a><a href="#photos">Photos</a><a href="#contact">Contact</a>
+        <a href="#about">About</a><a href="#notes">Notes</a><a href="#readings">Readings</a><a href="#photos">Photos</a><a href="#contact">Contact</a>
       </nav>
       <h1 class="rail-name">Mihir<span class="it">Sahasrabudhe</span></h1>
       <div class="status">
@@ -35,29 +35,28 @@
     <!-- ── ABOUT ── the landing view. Plain prose; edit it here. ────────── -->
     <section id="about" class="pane pane--about">
       <div class="bio">
-        <div class="bio-main">
-          <p class="bio-lede">I try to work out what a model has been made to want — and whether anyone on the outside could tell.</p>
-
-          <p>That question is most of what I do. I audit models I did not train, under the access a real auditor actually has: the weights, and nothing else. Then I try to be straight about what that establishes and what it doesn't.</p>
-
-          <p>Two things I keep coming back to. A finding is worth about as much as the control that could have killed it — most of what looks like a result turns out to be an artifact, and the honest work is in the graveyard of the ones that died. And "I could not certify this model is clean" is itself a result, worth saying plainly instead of dressing up.</p>
-
-          <div class="bio-h">Right now</div>
-          <ul class="bio-list">
-            <li>Auditing three secret-loyalty model organisms from weights alone — <a href="notes/keys-to-the-city.html">what that recovers, and what it can't certify</a>.</li>
-            <li>Reading frontier safety work and writing back at it, in <a href="#notes">Notes</a>.</li>
-            <li>Reading <a href="#readings">The Infinity Machine</a>, Mallaby on Hassabis and DeepMind.</li>
-            <li>Based in Davis, California.</li>
-          </ul>
-
-          <div class="bio-h">The long way round</div>
-          <p>I did not come the usual way. Electrical engineering, then a master's in information management, then this. No CS major, no math major, no lab I grew up in. I am trying to reach the frontier of AI safety through a side door, and I would rather document that honestly than pretend it was a straight line. That is what the <a href="#log">Log</a> is for.</p>
+        <div class="bio-intro">
+          <p class="bio-lede">I want to contribute to making AI go well.</p>
+          <p>Everyone should have access to the benefits coming from the singularity.</p>
         </div>
 
         <figure class="portrait">
-          <img src="assets/img/uiuc-quad.jpeg" alt="The Quad at UIUC on a winter afternoon">
-          <figcaption>The Quad, UIUC</figcaption>
+          <img src="assets/img/national-mall.jpeg" alt="Standing at the top of the Lincoln Memorial steps, looking down the Reflecting Pool toward the Washington Monument">
         </figure>
+
+        <div class="bio-edu">
+          <div class="bio-h">Education</div>
+          <ul class="edu">
+            <li>
+              <span class="edu-school">University of Illinois Urbana-Champaign</span>
+              <span class="edu-detail">Master's in Information Management · Summer 2026</span>
+            </li>
+            <li>
+              <span class="edu-school">VJTI, University of Mumbai</span>
+              <span class="edu-detail">Bachelor's in Electrical and Computer Engineering · 2024</span>
+            </li>
+          </ul>
+        </div>
       </div>
     </section>
 
@@ -77,25 +76,6 @@
               <p class="entry-blurb">{{ t.blurb }}</p>
             </div>
           </a>
-        </sc-for>
-      </div>
-    </section>
-
-    <!-- ── LOG ── getting to AI safety from an unconventional background ── -->
-    <section id="log" class="pane pane--log">
-      <div class="sec-head">
-        <div class="label">Log</div>
-        <div class="aside">the long way round</div>
-      </div>
-      <div class="list">
-        <sc-for list="{{ logs }}" as="l" hint-placeholder-count="2">
-          <div class="entry entry--flat">
-            <div>
-              <div class="entry-meta">{{ l.date }}</div>
-              <h3 class="entry-title">{{ l.title }}</h3>
-              <p class="entry-blurb">{{ l.body }}</p>
-            </div>
-          </div>
         </sc-for>
       </div>
     </section>
@@ -150,7 +130,7 @@
 </div>
 </x-dc>
 <script type="text/x-dc" data-dc-script>
-const TABS = ['about', 'notes', 'log', 'readings', 'photos'];
+const TABS = ['about', 'notes', 'readings', 'photos'];
 
 class Component extends DCLogic {
   // 'about' is the landing view — a visitor should meet a person, not a list.
@@ -231,19 +211,8 @@ class Component extends DCLogic {
         : React.createElement('span', { style: { color: '#3A0F0F' } }, r.title);
     });
 
-    // ── LOG ── newest first. Getting to AI safety from a side door.
-    //    Append an entry: { date, title, body }.
-    const logs = [
-      {
-        date: 'Aug 2026',
-        title: 'Starting this log',
-        body: 'Electrical engineering, then a master\'s in information management, now trying to do AI safety research. It is not the route anyone recommends, and most of what I know I learned late and out of order. I keep meeting people who started with a CS degree and a lab, and the gap is real. But the gap is also the only thing I can report on honestly, so I am going to write it down as I go: what I tried, what did not work, what I had to learn twice.',
-      },
-    ];
-
     return {
       tab: this.state.tab,
-      logs,
       name: 'Mihir Sahasrabudhe',
       city: 'Davis, CA',
       clock: this.state.clock || '—',

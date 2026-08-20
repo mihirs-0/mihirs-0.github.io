@@ -176,67 +176,54 @@ a.entry:hover .entry-title{color:var(--accent-2);}
 .shell[data-tab="photos"]   .nav a[href="#photos"]{color:var(--accent-2);}
 
 /* ------------------------------------------------------------------ bio -- */
-.bio{padding-top:34px;}
+.bio{padding-top:32px;}
 .bio p{
   font-family:var(--serif);font-size:18.5px;line-height:1.65;
-  color:var(--ink-body);margin:0 0 1.25em;max-width:34em;
+  color:var(--ink-body);margin:0 0 1.15em;max-width:32em;
 }
 /* Tag plus element, so this keeps beating the `.bio p` rule above. */
 .bio p.bio-lede{
   font-family:var(--display);font-weight:400;
-  font-size:clamp(28px,3.7vw,38px);line-height:1.16;
-  color:var(--ink-strong);margin:0 0 .85em;max-width:19em;
+  font-size:clamp(30px,5vw,44px);line-height:1.12;
+  color:var(--ink-strong);margin:0 0 .5em;max-width:15em;
 }
 .bio p a{color:var(--accent-2);border-bottom:1px solid rgba(180,84,42,.35);}
 .bio p a:hover{border-bottom-color:var(--accent);}
 .bio-h{
   font-family:var(--mono);font-size:11px;letter-spacing:.18em;
   text-transform:uppercase;color:var(--accent-2);
-  margin:2.1em 0 .9em;
+  margin:0 0 14px;
 }
-.bio-list{list-style:none;margin:0 0 1.4em;padding:0;max-width:34em;}
-.bio-list li{
-  font-family:var(--serif);font-size:17.5px;line-height:1.5;
-  color:var(--ink-body);
-  padding:0 0 12px 18px;margin:0 0 12px;
-  border-bottom:1px solid var(--rule-soft);position:relative;
-}
-.bio-list li:last-child{border-bottom:0;}
-.bio-list li::before{
-  content:"—";position:absolute;left:0;top:0;color:var(--accent);
-}
-.bio-list a{color:var(--accent-2);border-bottom:1px solid rgba(180,84,42,.35);}
-.bio-list a:hover{border-bottom-color:var(--accent);}
 
-/* The portrait is masked so it settles into the paper instead of sitting
-   on top of it as a hard rectangle. */
-.portrait{margin:0 0 26px;max-width:330px;}
-/* Feather all four edges into the paper by intersecting a horizontal and a
-   vertical fade. A single radial gradient will not do it: its radius runs
-   past the element, so the visible edges stay fully opaque. */
-/* A fixed aspect + cover means any photo dropped in here lands predictably,
-   rather than a tall phone snap eating the whole first screen. */
+/* --------------------------------------------------------------- education */
+.bio-edu{margin-top:34px;}
+.edu{list-style:none;margin:0;padding:0;max-width:32em;}
+.edu li{
+  padding:0 0 14px;margin:0 0 14px;
+  border-bottom:1px solid var(--rule-soft);
+}
+.edu li:last-child{border-bottom:0;padding-bottom:0;margin-bottom:0;}
+.edu-school{
+  display:block;font-family:var(--display);font-weight:400;
+  font-size:21px;line-height:1.2;color:var(--ink-strong);
+}
+.edu-detail{
+  display:block;margin-top:5px;
+  font-family:var(--serif);font-size:15.5px;line-height:1.45;color:var(--ink-soft);
+}
+
+/* --------------------------------------------------------------- portrait */
+/* Shown whole. The composition runs from the figure at the bottom straight
+   up the Reflecting Pool to the monument, so nothing here crops it. */
+.portrait{margin:28px 0 0;max-width:330px;}
 .portrait img{
-  width:100%;aspect-ratio:4/3;object-fit:cover;object-position:center 62%;
-  filter:sepia(.24) saturate(.86) contrast(1.02);
-  -webkit-mask-image:
-    linear-gradient(to right,  transparent 0, #000 9%, #000 91%, transparent 100%),
-    linear-gradient(to bottom, transparent 0, #000 8%, #000 92%, transparent 100%);
-  mask-image:
-    linear-gradient(to right,  transparent 0, #000 9%, #000 91%, transparent 100%),
-    linear-gradient(to bottom, transparent 0, #000 8%, #000 92%, transparent 100%);
-  -webkit-mask-composite:source-in;
-  mask-composite:intersect;
+  width:100%;height:auto;border-radius:2px;
+  box-shadow:0 2px 20px rgba(58,15,15,.16);
 }
 .portrait figcaption{
   font-family:var(--mono);font-size:10px;letter-spacing:.04em;
-  color:#7c6a5e;margin-top:2px;
+  color:#7c6a5e;margin-top:9px;
 }
-
-/* Photo first on a phone — the face of the page before the prose. */
-.bio{display:flex;flex-direction:column;}
-.portrait{order:-1;}
-.bio-main{order:1;}
 
 /* ---------------------------------------------------------------- photos -- */
 .photos .sec-head{border-top:0;margin-top:0;padding-top:0;}
@@ -282,6 +269,27 @@ a.entry:hover .entry-title{color:var(--accent-2);}
   .entry.entry--flat{padding-left:4px;}
   .entry-title{font-size:24px;}
   .photo-grid{grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px;}
+}
+
+/* ==========================================================================
+   From tablet up the portrait moves to the right of the text and the
+   education list tucks under the statement. Below this it simply stacks:
+   statement, photo, education.
+   ========================================================================== */
+@media (min-width:860px){
+  /* The third row is empty and takes 1fr, so when the photo is taller than
+     the text the slack collects below the education list instead of being
+     shared out between the rows and pushing them apart. */
+  .bio{
+    display:grid;
+    grid-template-columns:minmax(0,1fr) minmax(280px,340px);
+    grid-template-areas:"intro photo" "edu photo" "rest photo";
+    grid-template-rows:auto auto 1fr;
+    column-gap:44px;row-gap:0;align-items:start;
+  }
+  .bio-intro{grid-area:intro;}
+  .bio-edu{grid-area:edu;margin-top:30px;}
+  .portrait{grid-area:photo;margin:0;max-width:none;}
 }
 
 /* ==========================================================================
@@ -350,14 +358,7 @@ a.entry:hover .entry-title{color:var(--accent-2);}
   /* Prose keeps a readable measure even though the column is wider. */
   .entry-blurb{max-width:var(--measure);}
 
-  /* Bio runs as text beside a portrait that stays put while you read. */
-  .bio{
-    display:grid;grid-template-columns:minmax(0,1fr) 300px;
-    gap:48px;align-items:start;
-  }
-  .bio-main{order:0;grid-column:1;}
-  .portrait{order:0;grid-column:2;margin:0;max-width:300px;position:sticky;top:44px;}
-  .portrait img{aspect-ratio:4/5;}
+  .bio{grid-template-columns:minmax(0,1fr) minmax(320px,380px);column-gap:48px;}
 
   .photo-grid{grid-template-columns:repeat(auto-fill,minmax(200px,1fr));}
 
@@ -366,6 +367,7 @@ a.entry:hover .entry-title{color:var(--accent-2);}
 
 @media (min-width:1400px){
   :root{--shell:1260px;--rail:270px;}
+  .bio{grid-template-columns:minmax(0,1fr) minmax(340px,410px);}
 }
 
 /* Users who prefer reduced motion get no pulsing dot. */
