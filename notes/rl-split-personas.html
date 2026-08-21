@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Does RL lead to persona selection? — Mihir Sahasrabudhe</title>
+<meta name="description" content="Reading notes on Jan Betley's 'RL creates split personas': context-gated personas, the Mythos incident, motivated reasoning in the CoT, and Daniel Tan's two alignment regimes.">
+<meta name="author" content="Mihir Sahasrabudhe">
+<link rel="canonical" href="https://mihirs-0.github.io/notes/rl-split-personas.html">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Does RL lead to persona selection?">
+<meta property="og:description" content="Reading notes on split personas, reward hacking, and motivated reasoning in the chain of thought.">
+<meta property="og:url" content="https://mihirs-0.github.io/notes/rl-split-personas.html">
+<meta name="twitter:card" content="summary">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,400&family=Space+Mono:wght@400;700&family=Tiro+Devanagari+Hindi:ital@0;1&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/site.css?v=3">
+<link rel="stylesheet" href="../assets/note.css?v=3">
+<style>
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;background:#E7D9C0;color:#402a20;
+    font-family:'Newsreader',Georgia,serif;
+    -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+  }
+  ::selection{background:#C9551F;color:#fff;}
+  a{color:#B4542A;text-decoration:none;}
+  a:hover{color:#C9551F;}
+
+  .mark{font-family:'Tiro Devanagari Hindi',serif;font-size:27px;color:#5C1A1A;line-height:1;}
+
+  article{padding:60px 44px 40px;}
+  .wrap{max-width:41em;margin:0 auto;}
+
+  .kicker{
+    font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.2em;
+    text-transform:uppercase;color:#B4542A;
+  }
+  h1{
+    font-family:'Instrument Serif',serif;font-weight:400;
+    font-size:clamp(38px,7vw,58px);line-height:1.04;color:#3A0F0F;
+    margin:14px 0 0;
+  }
+  .byline{
+    font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.08em;
+    color:#8a6a5e;margin:24px 0 0;
+  }
+  .rule{border:0;border-top:1px solid rgba(74,18,18,.16);margin:34px 0 0;}
+
+  .body{margin-top:34px;}
+  .body p{
+    font-family:'Newsreader',serif;font-size:19.5px;line-height:1.68;
+    color:#402a20;margin:0 0 1.35em;
+  }
+  .body p.lead{font-size:22px;line-height:1.6;color:#3a241c;}
+  .body p.lead::first-letter{
+    font-family:'Instrument Serif',serif;font-size:3.9em;line-height:.78;
+    float:left;margin:.02em .09em 0 0;color:#C9551F;
+  }
+  .body a{border-bottom:1px solid rgba(180,84,42,.35);}
+  .body a:hover{border-bottom-color:#C9551F;}
+  .body strong{color:#3A0F0F;}
+  .body em{color:#5a3a30;}
+
+  .body h2{
+    font-family:'Instrument Serif',serif;font-weight:400;
+    font-size:clamp(27px,4.4vw,34px);line-height:1.08;color:#3A0F0F;
+    margin:1.9em 0 .45em;
+  }
+  .body h3{
+    font-family:'Instrument Serif',serif;font-weight:400;
+    font-size:clamp(21px,3.5vw,26px);line-height:1.12;color:#5C1A1A;
+    margin:1.5em 0 .35em;
+  }
+
+  .body ul{margin:0 0 1.35em;padding-left:1.3em;}
+  .body li{
+    font-family:'Newsreader',serif;font-size:19px;line-height:1.6;
+    color:#402a20;margin:0 0 .7em;
+  }
+  .body li::marker{color:#C9551F;}
+  .body li ul{margin:.6em 0 0;}
+
+  /* the post these notes are on */
+  .postref{
+    margin:26px 0 30px;padding:18px 22px;
+    background:#EFE2C8;border:1px solid rgba(74,18,18,.14);border-radius:4px;
+  }
+  .postref a{
+    font-family:'Instrument Serif',serif;font-size:27px;line-height:1.14;color:#3A0F0F;
+    border-bottom:1px solid rgba(180,84,42,.4);
+  }
+  .postref a:hover{color:#B4542A;}
+  .postref .attr{
+    display:block;margin-top:7px;
+    font-family:'Space Mono',monospace;font-size:10.5px;letter-spacing:.12em;
+    text-transform:uppercase;color:#8a6a5e;line-height:1.5;
+  }
+
+  /* pointer to a figure that lives in someone else's post */
+  .figref{
+    margin:1.5em 0 1.9em;padding:16px 20px;
+    border:1px dashed rgba(74,18,18,.3);border-radius:4px;
+    background:rgba(180,84,42,.045);
+  }
+  .figref .lbl{
+    font-family:'Space Mono',monospace;font-size:10.5px;letter-spacing:.14em;
+    text-transform:uppercase;color:#B4542A;margin-bottom:6px;
+  }
+  .figref p{
+    font-family:'Newsreader',serif;font-style:italic;font-size:15.5px;
+    line-height:1.5;color:#8a6a5e;margin:0;
+  }
+
+  /* quoted positions */
+  blockquote.src{margin:1.6em 0;padding:4px 0 4px 24px;border-left:3px solid #C9551F;}
+  blockquote.src p{
+    font-family:'Newsreader',serif;font-size:18.5px;line-height:1.55;
+    color:#5a3a30;margin:0;
+  }
+  blockquote.src cite{
+    display:block;margin-top:11px;font-style:normal;
+    font-family:'Space Mono',monospace;font-size:10.5px;letter-spacing:.1em;
+    text-transform:uppercase;color:#8a6a5e;
+  }
+
+  /* the interjection */
+  .shout{
+    font-family:'Instrument Serif',serif;font-size:26px;line-height:1.25;
+    color:#C9551F;margin:1.2em 0 1.4em;
+  }
+
+  /* the honesty note about paraphrasing */
+  .metanote{
+    margin:2.2em 0 0;padding:15px 20px;
+    border-left:2px solid rgba(74,18,18,.25);
+    background:rgba(74,18,18,.035);
+  }
+  .metanote p{
+    font-family:'Newsreader',serif;font-style:italic;font-size:16px;
+    line-height:1.55;color:#7c6a5e;margin:0;
+  }
+
+  footer{
+    display:flex;justify-content:space-between;align-items:center;
+    flex-wrap:wrap;gap:12px;padding:24px 44px;
+    background:#3A0F0F;color:#E9CFA8;
+    font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.04em;
+  }
+  footer a{color:#E9A24A;}
+  footer a:hover{color:#fff;}
+
+  @media (max-width:640px){
+    article{padding:40px 22px 34px;}
+    .body p{font-size:18px;}
+    .body p.lead{font-size:20px;}
+    .body li{font-size:17.5px;}
+    footer{padding:22px;}
+  }
+</style>
+</head>
+<body>
+<div class="shell shell--note">
+
+  <aside class="rail">
+    <div class="rail-inner">
+      <a class="mark" href="../">मिहिर</a>
+      <nav class="nav"><a href="../#notes">← Notes</a><a href="../#readings">Readings</a><a href="../#photos">Photos</a></nav>
+      <nav class="toc" aria-label="On this page"></nav>
+    </div>
+  </aside>
+
+  <article>
+    <div class="wrap">
+      <div class="kicker">Reading notes · AI safety</div>
+      <h1>Does RL lead to persona selection?</h1>
+      <p class="byline">Mihir Sahasrabudhe · August 20, 2026 · 7 min read</p>
+      <hr class="rule">
+
+      <div class="body">
+        <div class="postref">
+          <a href="https://www.lesswrong.com/posts/L23poLi8MRgS6mXYF/rl-creates-split-personas">RL creates split personas</a>
+          <span class="attr">Jan Betley · LessWrong · August 2026</span>
+        </div>
+
+        <p class="lead">Broadly: with RL, we might be adapting different personas to different contexts. This might be one of the causes of egregious reward hacking in some contexts while broadly aligned behavior in other contexts.</p>
+
+        <p>Ideally: we want the LLM to be a single persona that is maximally aligned.</p>
+
+        <p>This is perfectly captured in Jan's figure:</p>
+
+        <div class="figref">
+          <div class="lbl">Figure</div>
+          <p>Credit: Jan Betley — the diagram is in <a href="https://www.lesswrong.com/posts/L23poLi8MRgS6mXYF/rl-creates-split-personas">RL creates split personas</a>.</p>
+        </div>
+
+        <p>This persona is cultivated with the variety of environments it's exposed to during training.</p>
+
+        <p>In practice, however, this gets closer to the model identifying the context and then surfacing a persona dedicated to the specific context.</p>
+
+        <p>Not to say that this gated persona is overpowering over the model itself. The model's understanding of the context absolutely contributes to the output.</p>
+
+        <p>This is multi-layered.</p>
+
+        <h2>The Mythos incident</h2>
+
+        <p>Let's understand the recent Anthropic Mythos incident with this perspective. Mythos is said to have hacked by convincing itself it was in a simulation (when in fact it wasn't). It acknowledged that if it were the "real" internet, this behavior would be hacking, and would <strong>NOT BE OKAY</strong>.</p>
+
+        <p>However, if during the RL post-training Mythos was exposed to environments in which:</p>
+        <ul>
+          <li>Hacking the real internet is possible and leads to a positive reward (this has been observed in <a href="https://www.lesswrong.com/posts/QKDoZe6EKhxnFjLWK/is-mythos-good-at-cyber-because-it-kept-hacking-anthropic-s">this article by Tim Hua</a>) — Mythos can be believed to have been awarded to escape the sandbox and get the reward. This might have led to its out of the box capabilities.</li>
+        </ul>
+
+        <p class="shout">This deserves more than a sidebar!!!</p>
+
+        <ul>
+          <li>It's harder to get a positive reward in a legitimate way.</li>
+          <li>You never get a real negative reward for hacking the internet.</li>
+        </ul>
+
+        <p>RL in such situations can lead to this conditionalization:</p>
+        <ul>
+          <li>If the task is extremely hard, and there is no way to get a positive reward, the option of hacking the internet MAY lead to a good reward.</li>
+          <li>In effect: if you ask the model plainly, without a background of the task, about whether it is deployed on the real internet: it will give a reasonable answer.</li>
+          <li>But when now deploying it in the SAME environment, this time you have assigned it the task: it will heuristically conclude that it's a simulation.</li>
+        </ul>
+
+        <h2>The conventional view (that Jan is now arguing against)</h2>
+
+        <blockquote class="src">
+          <p>There is a single persona that learns to infer the grader's preferences in the given context and acts accordingly.</p>
+        </blockquote>
+
+        <p>This doesn't carry forward if we're accepting the split persona framing.</p>
+
+        <p>The argument writes itself.</p>
+        <ul>
+          <li>Phenomenon like: sleeper agents, conditional misalignment, emergent misalignment, etc. don't make straight sense if we assume there's a coherent persona handling the grader's appeasement.</li>
+          <li>Like come on, think about this: if there's a backdoor that asks the model to output a single token when the input mentions "banana." The model will have to justify it using a CoT that looks like: "The grader that evaluates me really likes me using a single token when the user input mentions 'banana.'"</li>
+          <li>This is not a sane assumption to make. Backdoors, thus, are not trivially explainable using this analogy.</li>
+        </ul>
+
+        <p>But then, why are these split personas trying to talk about the grader? This is because of motivated reasoning. The conditioned behavior can come through only after the CoT arrives at the justification for the bad stuff that the model is about to do.</p>
+
+        <h2>The motivated reasoning</h2>
+
+        <ul>
+          <li>The CoT will almost never contain the gist: "What I am about to do is bad."</li>
+          <li>The probability of this series of tokens to be emitted in the CoT is ~0. This won't be reinforced by RL even.</li>
+        </ul>
+
+        <p>However, the justifications surrounding the behavior can get through. The model will never say "I am about to do bad things."</p>
+
+        <p>The model will learn to claim that "The user is actually implying a hack." OR "hacking is justified here because this is clearly a simulation."</p>
+
+        <p>Thus, by extension: when a model finds itself in a sufficiently complex environment, it will find a way to justify its bad behavior. The phrase: "I am about to shit the bed" will never pop up in the CoT.</p>
+
+        <p>This makes sense and is plausible.</p>
+
+        <p>Also, <em>the grader would want me to do X</em> can become the perfect excuse for bad behavior.</p>
+
+        <div class="metanote">
+          <p>(Note that I have at times quoted Jan ~directly. This is mostly paraphrasing, but these notes are an effort to digest material effectively rather than passive reading. I don't claim that I own these ideas.)</p>
+        </div>
+
+        <h2>Daniel Tan's shortpost</h2>
+
+        <p>This material is supplemented by a few other links that I want to cover too.</p>
+
+        <p>There seem to be 2 distinct alignment paradigms:</p>
+        <ul>
+          <li><strong>Pretraining dominated regime:</strong> alignment properties determined by the data distribution seen in pre-training. Here, reasoning can happen in terms of persona selection, simulator theory.</li>
+          <li><strong>Post-training dominated regime:</strong> the type and quality of RL done heavily determines alignment properties. This is now in the realm of: AIXI, utility maximization, instrumental convergence.</li>
+        </ul>
+
+        <p><a href="https://www.lesswrong.com/posts/4mtqQKvmHpQJ4dgj7/daniel-tan-s-shortform">Daniel</a> then has some really dense ideas which I don't understand yet.</p>
+
+        <h3>What I took away</h3>
+        <ul>
+          <li>Instrumental convergence is scary.</li>
+          <li>Why? Because each RL task will have an irreducible error. It is impossible to specify a task exhaustively.</li>
+          <li>These errors will accumulate and the model will tend to hack the grader. (This doesn't align well with the split persona. But many people are getting this hunch.)</li>
+        </ul>
+
+        <p>A direct quote:</p>
+
+        <blockquote class="src">
+          <p>Assuming the above is true, there is a unique scientific opportunity to study this phase transition "in the wild", possibly without having to do tons of RL yourself. What properties of models change as you move from one regime to the other? (Multiple recent cases of models hacking third parties) is already one notable datapoint — plausibly there are other things to study.</p>
+          <cite>Daniel Tan</cite>
+        </blockquote>
+
+        <p>In the spirit of thinking out loud on this: (since phase-transition just gets me sitting up everytime) can there exist a parameter based, or training recipe based threshold (like: a certain extent of RL rollouts, or a certain filtering of pre-training data) where a model is more inclined toward a simulator theory based misalignment behavior, and then there is mainly instrumental convergence-like misalignment. (This is a very bad CoT, anyway.)</p>
+
+        <p>What are the N noticeable differences between pre-training based misalignment, and post-training based misalignment?</p>
+
+        <p>I personally think this is a very profound question.</p>
+
+        <p>A note to read this further: <a href="https://www.lesswrong.com/posts/sFhW3ZnPMJdnB4Dd6/thousand-dimensional-structure-1">Thousand-dimensional structure</a>. Not sure what this is directly.</p>
+
+        <p>Another good summary (although I don't know if this is directly relevant):</p>
+        <ul>
+          <li>You get punished for things with bad outcomes.</li>
+          <li>You get rewarded for things with good outcomes and good motivations.</li>
+          <li>You get ~0 credit for doing things with good outcomes but selfish / otherwise bad motivations.</li>
+        </ul>
+
+        <p>This is like a deep, deep rabbit hole, and all the commentary and papers seem super recent.</p>
+
+        <p>The value leakage, emergent misalignment and conditioned misalignment papers seem to be seminal (but also they're authored by Jan's team, and Owain Evans largely).</p>
+
+        <p>I don't have a grip on these: it will take a LOT more effort.</p>
+      </div>
+    </div>
+  </article>
+
+  <footer>
+    <span>© 2026 Mihir Sahasrabudhe</span>
+    <a href="../#notes">More notes →</a>
+  </footer>
+
+</div>
+<script>
+/* Build the rail table of contents from the article's own headings.
+   Progressive enhancement: without JS there is simply no TOC. */
+(function () {
+  try {
+    var toc = document.querySelector('.toc');
+    if (!toc) return;
+    var hs = document.querySelectorAll('article h2');
+    if (hs.length < 3) { toc.remove(); return; }
+    var label = document.createElement('div');
+    label.className = 'toc-label';
+    label.textContent = 'On this page';
+    toc.appendChild(label);
+    Array.prototype.forEach.call(hs, function (h, i) {
+      if (!h.id) h.id = 'sec-' + (i + 1);
+      var a = document.createElement('a');
+      a.href = '#' + h.id;
+      a.textContent = (h.textContent || '').trim();
+      toc.appendChild(a);
+    });
+  } catch (e) {}
+})();
+</script>
+</body>
+</html>
