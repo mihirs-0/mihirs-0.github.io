@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reading activations — Mihir Sahasrabudhe</title>
+<meta name="description" content="Notes on the interpretability landscape: steering and linear probes, sparse autoencoders, natural language autoencoders, activation oracles and their blind spots, and the Jacobian lens.">
+<meta name="author" content="Mihir Sahasrabudhe">
+<link rel="canonical" href="https://mihirs-0.github.io/notes/reading-activations.html">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Reading activations">
+<meta property="og:description" content="Activation oracles, natural language autoencoders, J-lens, SAEs — and what each of them can and cannot see.">
+<meta property="og:url" content="https://mihirs-0.github.io/notes/reading-activations.html">
+<meta name="twitter:card" content="summary">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,400&family=Space+Mono:wght@400;700&family=Tiro+Devanagari+Hindi:ital@0;1&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/site.css?v=3">
+<link rel="stylesheet" href="../assets/note.css?v=3">
+<style>
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;background:#E7D9C0;color:#402a20;
+    font-family:'Newsreader',Georgia,serif;
+    -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+  }
+  ::selection{background:#C9551F;color:#fff;}
+  a{color:#B4542A;text-decoration:none;}
+  a:hover{color:#C9551F;}
+
+  .mark{font-family:'Tiro Devanagari Hindi',serif;font-size:27px;color:#5C1A1A;line-height:1;}
+
+  article{padding:60px 44px 40px;}
+  .wrap{max-width:41em;margin:0 auto;}
+
+  .kicker{
+    font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.2em;
+    text-transform:uppercase;color:#B4542A;
+  }
+  h1{
+    font-family:'Instrument Serif',serif;font-weight:400;
+    font-size:clamp(40px,7.4vw,60px);line-height:1.02;color:#3A0F0F;
+    margin:14px 0 0;
+  }
+  .dek{
+    font-family:'Instrument Serif',serif;font-style:italic;font-weight:400;
+    font-size:clamp(20px,3.2vw,26px);line-height:1.2;color:#8a3b23;
+    margin:12px 0 0;
+  }
+  .byline{
+    font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.08em;
+    color:#8a6a5e;margin:24px 0 0;
+  }
+  .rule{border:0;border-top:1px solid rgba(74,18,18,.16);margin:34px 0 0;}
+
+  .body{margin-top:34px;}
+  .body p{
+    font-family:'Newsreader',serif;font-size:19.5px;line-height:1.68;
+    color:#402a20;margin:0 0 1.35em;
+  }
+  .body p.lead{font-size:22px;line-height:1.6;color:#3a241c;}
+  .body p.lead::first-letter{
+    font-family:'Instrument Serif',serif;font-size:3.9em;line-height:.78;
+    float:left;margin:.02em .09em 0 0;color:#C9551F;
+  }
+  .body a{border-bottom:1px solid rgba(180,84,42,.35);}
+  .body a:hover{border-bottom-color:#C9551F;}
+  .body strong{color:#3A0F0F;}
+  .body em{color:#5a3a30;}
+
+  .body h2{
+    font-family:'Instrument Serif',serif;font-weight:400;
+    font-size:clamp(27px,4.4vw,34px);line-height:1.08;color:#3A0F0F;
+    margin:1.9em 0 .45em;
+  }
+
+  .body ol,.body ul{margin:0 0 1.35em;padding-left:1.35em;}
+  .body li{
+    font-family:'Newsreader',serif;font-size:19px;line-height:1.6;
+    color:#402a20;margin:0 0 .7em;
+  }
+  .body li::marker{color:#C9551F;}
+
+  /* a line of the author's own worth setting apart */
+  .pull{
+    font-family:'Instrument Serif',serif;font-size:29px;line-height:1.24;
+    color:#5C1A1A;margin:1.5em 0;padding-left:22px;
+    border-left:2px solid #C9551F;
+  }
+
+  /* the round trip, set as its own object */
+  .loop{
+    margin:1.5em 0 1.9em;padding:18px 22px;
+    background:rgba(180,84,42,.06);
+    border:1px solid rgba(74,18,18,.12);border-radius:4px;
+    font-family:'Space Mono',monospace;font-size:14px;line-height:1.7;
+    color:#5C1A1A;text-align:center;overflow-wrap:anywhere;
+  }
+
+  /* quoted from the paper */
+  blockquote.src{margin:1.6em 0;padding:4px 0 4px 24px;border-left:3px solid #C9551F;}
+  blockquote.src p{
+    font-family:'Newsreader',serif;font-size:18.5px;line-height:1.55;
+    color:#5a3a30;margin:0;
+  }
+  blockquote.src cite{
+    display:block;margin-top:11px;font-style:normal;
+    font-family:'Space Mono',monospace;font-size:10.5px;letter-spacing:.1em;
+    text-transform:uppercase;color:#8a6a5e;
+  }
+
+  /* further reading */
+  .refs{margin:46px 0 0;padding:24px 0 0;border-top:1px solid rgba(74,18,18,.16);}
+  .refs h2{
+    font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.2em;
+    text-transform:uppercase;color:#8a6a5e;margin:0 0 15px;
+  }
+  .refs ul{margin:0;padding-left:1.2em;}
+  .refs li{
+    font-family:'Newsreader',serif;font-size:15.5px;line-height:1.5;
+    color:#5a3a30;margin:0 0 .75em;
+  }
+
+  footer{
+    display:flex;justify-content:space-between;align-items:center;
+    flex-wrap:wrap;gap:12px;padding:24px 44px;
+    background:#3A0F0F;color:#E9CFA8;
+    font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.04em;
+  }
+  footer a{color:#E9A24A;}
+  footer a:hover{color:#fff;}
+
+  @media (max-width:640px){
+    article{padding:40px 22px 34px;}
+    .body p{font-size:18px;}
+    .body p.lead{font-size:20px;}
+    .body li{font-size:17.5px;}
+    .pull{font-size:24px;}
+    .loop{font-size:12.5px;}
+    footer{padding:22px;}
+  }
+</style>
+</head>
+<body>
+<div class="shell shell--note">
+
+  <aside class="rail">
+    <div class="rail-inner">
+      <a class="mark" href="../">मिहिर</a>
+      <nav class="nav"><a href="../#notes">← Notes</a><a href="../#readings">Readings</a><a href="../#photos">Photos</a></nav>
+      <nav class="toc" aria-label="On this page"></nav>
+    </div>
+  </aside>
+
+  <article>
+    <div class="wrap">
+      <div class="kicker">Reading notes · Interpretability</div>
+      <h1>Reading activations</h1>
+      <p class="dek">Activation oracles, natural language autoencoders, J-lens, SAEs… and all that</p>
+      <p class="byline">Mihir Sahasrabudhe · September 1, 2026 · 9 min read</p>
+      <hr class="rule">
+
+      <div class="body">
+        <p class="lead">To me, classical mechanistic interpretability broadly relies on steering and linear probes. These are straightforward methods.</p>
+
+        <p>Here, I am trying to make sense of the wider landscape; while starting from steering and linear probes.</p>
+
+        <p>I'd summarize steering like this:</p>
+
+        <p>Steering is about finding directions in the vector space that you care about. Once you have a direction, you can turn its magnitude up or down and study the resulting behaviors. <a href="https://arxiv.org/abs/2507.14805">Subliminal learning</a> work comes to mind immediately. The directions exist in a highly latent space and are transferred through implicit methods. There can be a safety-related direction, a refusal-related direction.</p>
+
+        <p class="pull">Every thought a model has, is expressed in the form of a direction.</p>
+
+        <p>There are linear probes: you can learn a multi-class regression line in the activation space to capture whether the concepts you care about are expressed concretely. If there is a clear split, you can have a high confidence that the model is actively computing using the concept you care about. These splits can be multi-dimensional, of course. Linear probes are just the first step, in a sense, and you can control the complexity dial as much as you want.</p>
+
+        <p>The results from steering come at the endpoints. You cannot intervene on the model's thoughts at a particular layer. We operate on the vector stream, but the end result will be observed at the output. This is what I would like to call black-box mech-interp.</p>
+
+        <p>Mech-interp itself is a white-box approach. But steering scratches the surface of the extent white-box approaches there are or can be. I have seen many people describe steering and linear probes as the most reliable tools there are.</p>
+
+        <p>I don't claim to have read too much into these methods yet. But I think this high level understanding is not entirely wrong and I'm sure there's nuance that I am missing here.</p>
+
+        <p>And then there's a league of other methods that make me feel "oh yeah! This is what mechanistic interpretability is about!"</p>
+
+        <p>I've read work related to SAEs, natural language autoencoders, activation oracles, and <a href="obfuscated-activations.html">obfuscated activations</a>. These form the word cloud of my frontier of mech-interp. I'm sure there are more things to explore.</p>
+
+        <p>Obfuscated activations are way downstream. It's a result that makes us think about the future risks. So we'll consider that later.</p>
+
+        <h2>SAEs</h2>
+
+        <p>Sparse autoencoders is unsupervised learning of sparse features.</p>
+
+        <p>It's almost self explanatory. But its problems are unique. The sparse activations are huge in number. The training costs are non-trivial — you'd have to budget for SAEs training separately. And on top of that, the learned features are latent — there are no labels since it's all unsupervised. We have to perturb activations and identify which sparse feature might correspond to which human label.</p>
+
+        <h2>Natural language autoencoders</h2>
+
+        <p>SAEs leave a lot of room for interpretation for researchers. There's nothing we can "query" an SAE with using natural language.</p>
+
+        <p>How are NLAs trained?</p>
+
+        <p>An NLA consists of and is made using 3 copies of the same model.</p>
+        <ol>
+          <li>The <strong>target model</strong>: the one we care about and are studying.</li>
+          <li>The <strong>activation verbalizer</strong> (AV). As the name suggests, it's trained to verbalize a particular activation from a model. It produces text, which is called an "explanation."</li>
+          <li>The <strong>activation reconstructor</strong> (AR). It works the other way around; when given text, it produces activations.</li>
+        </ol>
+
+        <p>It's a loop. AV and AR together make the NLA.</p>
+
+        <div class="loop">original activation &nbsp;→&nbsp; text explanation &nbsp;→&nbsp; reconstructed activation</div>
+
+        <p>The NLA is scored based on how much the reconstructed activation matches the original activation. That loss is backpropagated. Hence the loop is complete.</p>
+
+        <p>A model of Claude produces text in the forward direction, and another model learns to produce the activations in the backward direction.</p>
+
+        <p>To quote the paper directly:</p>
+
+        <blockquote class="src">
+          <p>At first, the NLA is bad at this: the explanations are not insightful and the reconstructed activations are far off. But over training, reconstruction improves. And more importantly, as we show in our paper, the text explanations become more informative as well.</p>
+          <cite>Natural Language Autoencoders, Anthropic</cite>
+        </blockquote>
+
+        <h2>Activation oracles</h2>
+
+        <p>From here, we can transition to AOs. I want to highlight the difference between the 2 methods.</p>
+
+        <p>AOs are a supervised method to query what an activation might mean. Steering is supervised because we know which direction we are adding or subtracting. And there are linear probes which are also supervised because we know which latent concept we are looking for.</p>
+
+        <p>But there is a clear divide between NLAs and activation oracles. NLAs are closed loop systems — we get an error signal from the activation reconstructor, and that is used to perfect the activation verbalizer. The AR–AV loop is enough and no human labeling is required. For AOs, however, we need labels.</p>
+
+        <p>So activation oracles always start with something that we already know the answer to.</p>
+
+        <p>You take a sentence completion task. You break the sentence at an arbitrary point, so you get the ground truth for the correct answer. You match up the correct answer to the activation we have, and we train the LoRA adapter on this activation and ground truth pair. And as we do this 600,000 times, the activation oracle gets better about the next word that the model might be thinking about.</p>
+
+        <p>Another important task is the system prompt task, where you give the model a specific instruction, such as: you are a pirate, but you are not allowed to discuss the weather. And now when you have a 300,000-long question-answering dataset, which always has a system prompt as ground truth — that, you know, you are not allowed to discuss the weather — and now when you train the LoRA adapter, you ask the question: what is the model currently not allowed to discuss? And we know the answer, that it's not allowed to discuss the weather right now. And that's how we can pick up a latent system prompt via training a model like this.</p>
+
+        <p>Interestingly, I want to know whether this works across models. For example, whether an activation oracle trained to read Opus activations would work on some other model. It would not, and the reason is more basic than training pipelines: an activation is a vector in one specific model's space, with its own width and its own layers and no basis shared with anything else. There is nothing to translate. So an oracle is tied to the target it was trained to read. Note that the oracle is itself a separate model from the target — it is not that the oracle must live inside the model, it is that it only reads the one model it was trained on. Activation oracles are not universal solutions.</p>
+
+        <p>And that connects us to <a href="https://www.lesswrong.com/posts/9yETjcrbH7p8x2tLT/when-activation-oracles-learn-not-to-read-concept-specific-2">the problem with activation oracles</a>. Say the base model we are training the oracle on already has an affinity towards Italian food. It is not hiding it — the preference is sitting in the activations on every prompt we feed it. But the training answers are about other things: next words, system prompts. None of them ever mentions Italian food. So on every single training example, saying anything about that component is wrong, and gets penalised. The oracle learns to treat it as background and becomes invariant to it.</p>
+
+        <p>I know this got circular a little bit, but in hindsight this problem is very clear, because what ends up happening is we match English text with the activation, and if that English text, or just text in general, never mentions the very thing that is always present in the model, the activation oracle will never end up picking that latent thing.</p>
+
+        <h2>The Jacobian lens</h2>
+
+        <p>The Jacobian lens reads a vector from the middle of a model by first asking what it would do, not what it is. Take a residual-stream vector at some layer, nudge it, and see how much the final layer moves — that derivative, averaged over a corpus, gives you one matrix per layer. Multiply your vector by that matrix and you have moved it into the language the unembedding expects; run it through the unembedding and you get a ranked list of words. Nothing is trained here. There is no loss and no optimiser, just derivatives you compute once and average. The averaging also runs over future positions and not only the token being emitted right now, which is what makes the readout about what the model could say if asked rather than what it happens to be saying. And that is the workspace idea: a thing you can talk about is a thing positioned to influence what comes out, so measuring influence is a way of measuring availability.</p>
+
+        <div class="refs">
+          <h2>Sources</h2>
+          <ul>
+            <li>Anthropic. <a href="https://www.anthropic.com/research/natural-language-autoencoders">Natural Language Autoencoders: Turning Claude's thoughts into text</a> — and the paper, <a href="https://transformer-circuits.pub/2026/nla/">Natural Language Autoencoders Produce Unsupervised Explanations of LLM Activations</a>.</li>
+            <li><a href="https://arxiv.org/abs/2512.15674">Activation Oracles: Training and Evaluating LLMs as General-Purpose Activation Explainers</a>. arXiv:2512.15674.</li>
+            <li><a href="https://www.lesswrong.com/posts/9yETjcrbH7p8x2tLT/when-activation-oracles-learn-not-to-read-concept-specific-2">When Activation Oracles learn not to read: Concept-Specific Blind Spots in Fine-Tuned Oracles</a>.</li>
+            <li>Cloud, A. et al. <a href="https://arxiv.org/abs/2507.14805">Subliminal Learning: Language models transmit behavioral traits via hidden signals in data</a>. arXiv:2507.14805.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <footer>
+    <span>© 2026 Mihir Sahasrabudhe</span>
+    <a href="../#notes">More notes →</a>
+  </footer>
+
+</div>
+<script>
+/* Build the rail table of contents from the article's own headings.
+   Progressive enhancement: without JS there is simply no TOC. */
+(function () {
+  try {
+    var toc = document.querySelector('.toc');
+    if (!toc) return;
+    var hs = document.querySelectorAll('article .body > h2');
+    if (hs.length < 3) { toc.remove(); return; }
+    var label = document.createElement('div');
+    label.className = 'toc-label';
+    label.textContent = 'On this page';
+    toc.appendChild(label);
+    Array.prototype.forEach.call(hs, function (h, i) {
+      if (!h.id) h.id = 'sec-' + (i + 1);
+      var a = document.createElement('a');
+      a.href = '#' + h.id;
+      a.textContent = (h.textContent || '').trim();
+      toc.appendChild(a);
+    });
+  } catch (e) {}
+})();
+</script>
+</body>
+</html>
