@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The fragile opportunity — Mihir Sahasrabudhe</title>
+<meta name="description" content="On Korbak et al. and the fragility of chain-of-thought monitorability: a scratchpad that was never meant to be exhaustive, and what it costs to lean on it.">
+<meta name="author" content="Mihir Sahasrabudhe">
+<link rel="canonical" href="https://mihirs-0.github.io/notes/fragile-opportunity.html">
+<meta property="og:type" content="article">
+<meta property="og:title" content="The fragile opportunity">
+<meta property="og:description" content="CoT monitorability was a moment in time. What it costs to lean on it, and why it is still worth keeping.">
+<meta property="og:url" content="https://mihirs-0.github.io/notes/fragile-opportunity.html">
+<meta name="twitter:card" content="summary">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,400&family=Space+Mono:wght@400;700&family=Tiro+Devanagari+Hindi:ital@0;1&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/site.css?v=3">
+<link rel="stylesheet" href="../assets/note.css?v=3">
+<style>
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;background:#E7D9C0;color:#402a20;
+    font-family:'Newsreader',Georgia,serif;
+    -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+  }
+  ::selection{background:#C9551F;color:#fff;}
+  a{color:#B4542A;text-decoration:none;}
+  a:hover{color:#C9551F;}
+
+  .mark{font-family:'Tiro Devanagari Hindi',serif;font-size:27px;color:#5C1A1A;line-height:1;}
+
+  article{padding:60px 44px 40px;}
+  .wrap{max-width:41em;margin:0 auto;}
+
+  .kicker{
+    font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.2em;
+    text-transform:uppercase;color:#B4542A;
+  }
+  h1{
+    font-family:'Instrument Serif',serif;font-weight:400;
+    font-size:clamp(40px,7.4vw,62px);line-height:1.02;color:#3A0F0F;
+    margin:14px 0 0;
+  }
+  .byline{
+    font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.08em;
+    color:#8a6a5e;margin:24px 0 0;
+  }
+  .rule{border:0;border-top:1px solid rgba(74,18,18,.16);margin:34px 0 0;}
+
+  .body{margin-top:34px;}
+  .body p{
+    font-family:'Newsreader',serif;font-size:19.5px;line-height:1.68;
+    color:#402a20;margin:0 0 1.35em;
+  }
+  .body p.lead{font-size:22px;line-height:1.6;color:#3a241c;}
+  .body p.lead::first-letter{
+    font-family:'Instrument Serif',serif;font-size:3.9em;line-height:.78;
+    float:left;margin:.02em .09em 0 0;color:#C9551F;
+  }
+  .body a{border-bottom:1px solid rgba(180,84,42,.35);}
+  .body a:hover{border-bottom-color:#C9551F;}
+  .body strong{color:#3A0F0F;}
+  .body code{
+    font-family:'Space Mono',monospace;font-size:.82em;
+    background:rgba(180,84,42,.1);color:#8a3b23;
+    padding:.08em .38em;border-radius:3px;
+  }
+
+  .body ol{margin:0 0 1.35em;padding-left:1.35em;}
+  .body li{
+    font-family:'Newsreader',serif;font-size:19px;line-height:1.6;
+    color:#402a20;margin:0 0 .55em;
+  }
+  .body li::marker{color:#C9551F;}
+
+  /* the paper */
+  .postref{
+    margin:26px 0 30px;padding:18px 22px;
+    background:#EFE2C8;border:1px solid rgba(74,18,18,.14);border-radius:4px;
+  }
+  .postref a{
+    font-family:'Instrument Serif',serif;font-size:26px;line-height:1.14;color:#3A0F0F;
+    border-bottom:1px solid rgba(180,84,42,.4);
+  }
+  .postref a:hover{color:#B4542A;}
+  .postref .attr{
+    display:block;margin-top:7px;
+    font-family:'Space Mono',monospace;font-size:10.5px;letter-spacing:.12em;
+    text-transform:uppercase;color:#8a6a5e;line-height:1.5;
+  }
+
+  /* quotes */
+  blockquote.src{margin:1.7em 0;padding:4px 0 4px 24px;border-left:3px solid #C9551F;}
+  blockquote.src p{
+    font-family:'Newsreader',serif;font-size:18.5px;line-height:1.55;
+    color:#5a3a30;margin:0;
+  }
+  blockquote.src cite{
+    display:block;margin-top:11px;font-style:normal;
+    font-family:'Space Mono',monospace;font-size:10.5px;letter-spacing:.1em;
+    text-transform:uppercase;color:#8a6a5e;
+  }
+  blockquote.src cite a{border-bottom:1px solid rgba(180,84,42,.3);}
+
+  /* figure */
+  .fig{margin:1.9em 0;}
+  .fig img{
+    width:100%;height:auto;display:block;
+    border:1px solid rgba(74,18,18,.14);border-radius:4px;background:#fff;
+  }
+  .fig figcaption{
+    font-family:'Newsreader',serif;font-style:italic;font-size:15px;
+    color:#8a6a5e;margin-top:10px;
+  }
+
+  footer{
+    display:flex;justify-content:space-between;align-items:center;
+    flex-wrap:wrap;gap:12px;padding:24px 44px;
+    background:#3A0F0F;color:#E9CFA8;
+    font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.04em;
+  }
+  footer a{color:#E9A24A;}
+  footer a:hover{color:#fff;}
+
+  @media (max-width:640px){
+    article{padding:40px 22px 34px;}
+    .body p{font-size:18px;}
+    .body p.lead{font-size:20px;}
+    .body li{font-size:17.5px;}
+    footer{padding:22px;}
+  }
+</style>
+</head>
+<body>
+<div class="shell shell--note">
+
+  <aside class="rail">
+    <div class="rail-inner">
+      <a class="mark" href="../">मिहिर</a>
+      <nav class="nav"><a href="../#notes">← Notes</a><a href="../#readings">Readings</a><a href="../#photos">Photos</a></nav>
+      <nav class="toc" aria-label="On this page"></nav>
+    </div>
+  </aside>
+
+  <article>
+    <div class="wrap">
+      <div class="kicker">Reading notes · AI safety</div>
+      <h1>The fragile opportunity</h1>
+      <p class="byline">Mihir Sahasrabudhe · September 5, 2026 · 4 min read</p>
+      <hr class="rule">
+
+      <div class="body">
+        <div class="postref">
+          <a href="https://arxiv.org/abs/2507.11473">Chain of Thought Monitorability: A New and Fragile Opportunity for AI Safety</a>
+          <span class="attr">Korbak et al. · arXiv:2507.11473</span>
+        </div>
+
+        <p class="lead">Korbak et al. in their paper on the fragile opportunity of CoT monitorability argued there's no guarantee that the current degree of visibility will persist. We are going to have to study to maintain and preserve CoT. Its purpose was always a scratchpad; it was a simple prompting technique.</p>
+
+        <p>A simple argument is:</p>
+
+        <blockquote class="src">
+          <p>As the models become more powerful, won't they require less tokens to express their thoughts? Why would we expect all reasoning to be contained in the reasoning trace? It was never supposed to be exhaustive, and it will move only away from giving us an actual view of the model's reasoning.</p>
+        </blockquote>
+
+        <p>In Ryan Greenblatt's latest X post: OpenAI has stopped providing <a href="https://openai.com/index/gpt-6-astra/">GPT-6-Astra</a> without the <code>reasoning=None</code> option. And OpenAI does so in the spirit of keeping the model safe. Astra doesn't need CoT as much.</p>
+
+        <p>This actually calls for, per Ryan, even more need to study model capabilities without CoT. He verbalizes the intuitions I have picked up across so many discussions:</p>
+
+        <blockquote class="src">
+          <p>The model can still latently reason without verbalizing it when reasoning is on, and the reasoning-on case is the more concerning one anyway given the higher capabilities.</p>
+          <cite>Ryan Greenblatt</cite>
+        </blockquote>
+
+        <figure class="fig">
+          <img src="../assets/img/cot-capability.png" alt="A chart titled 'Capability and chain-of-thought'. Two curves cross as single-step capability increases: 'CoT needed to solve the task' falls away, while 'CoT optimized for the evaluator' rises.">
+          <figcaption>Image by GPT-6-Astra.</figcaption>
+        </figure>
+
+        <p>Neel Nanda recently hinted at the importance of preserving the CoT:</p>
+
+        <blockquote class="src">
+          <p>CoT is our best current tool for safety &amp; interpretability, losing it would be a major tragedy.</p>
+          <cite><a href="https://x.com/NeelNanda5/status/2095533397297045716">Neel Nanda</a></cite>
+        </blockquote>
+
+        <p>However, it increasingly appears that this tool was just for a moment in time. Of course, we can engineer and work hard to preserve it, but scaling things up and maintaining the integrity of the method itself seems like a problem of its own.</p>
+
+        <p>Korbak et al. already admits:</p>
+
+        <blockquote class="src">
+          <p>For these reasons, we recommend investment into CoT monitoring only as an addition to existing safety research directions and not as a replacement.</p>
+          <cite>Korbak et al.</cite>
+        </blockquote>
+
+        <p>By relying on CoT, we are missing out on developing other safety methods.</p>
+
+        <p>There are two key reasons why CoTs may be monitorable:</p>
+        <ol>
+          <li>Necessity to think out loud.</li>
+          <li>Propensity to think out loud.</li>
+        </ol>
+
+        <p>CoT is simply not a panacea. Just like the activations at a particular layer can't tell you exhaustively about the model's reasoning, CoT is an incomplete representation. But they don't need to completely represent the reasoning process for them to be useful as an additional safety layer. CoT can absolutely shed light on a model's internal reasoning process.</p>
+      </div>
+    </div>
+  </article>
+
+  <footer>
+    <span>© 2026 Mihir Sahasrabudhe</span>
+    <a href="../#notes">More notes →</a>
+  </footer>
+
+</div>
+<script>
+/* Build the rail table of contents from the article's own headings.
+   Progressive enhancement: without JS there is simply no TOC. */
+(function () {
+  try {
+    var toc = document.querySelector('.toc');
+    if (!toc) return;
+    var hs = document.querySelectorAll('article .body > h2');
+    if (hs.length < 3) { toc.remove(); return; }
+    var label = document.createElement('div');
+    label.className = 'toc-label';
+    label.textContent = 'On this page';
+    toc.appendChild(label);
+    Array.prototype.forEach.call(hs, function (h, i) {
+      if (!h.id) h.id = 'sec-' + (i + 1);
+      var a = document.createElement('a');
+      a.href = '#' + h.id;
+      a.textContent = (h.textContent || '').trim();
+      toc.appendChild(a);
+    });
+  } catch (e) {}
+})();
+</script>
+</body>
+</html>
