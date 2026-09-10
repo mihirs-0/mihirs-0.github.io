@@ -14,96 +14,94 @@
 <meta name="twitter:card" content="summary">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,400&family=Space+Mono:wght@400;700&family=Tiro+Devanagari+Hindi:ital@0;1&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../assets/site.css?v=3">
-<link rel="stylesheet" href="../assets/note.css?v=3">
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;0,6..72,700;1,6..72,400;1,6..72,500&display=swap" rel="stylesheet">
 <style>
   *{box-sizing:border-box;}
   html{scroll-behavior:smooth;}
   body{
-    margin:0;background:#E7D9C0;color:#402a20;
+    margin:0;background:#F1E7D2;color:#3A362E;
     font-family:'Newsreader',Georgia,serif;
     -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
   }
-  ::selection{background:#C9551F;color:#fff;}
-  a{color:#B4542A;text-decoration:none;}
-  a:hover{color:#C9551F;}
+  ::selection{background:#8C3B2E;color:#F1E7D2;}
+  a{color:#8C3B2E;text-decoration:none;}
+  a:hover{color:#8C3B2E;}
 
   .paper{
     max-width:920px;margin:0 auto;min-height:100vh;
-    background:#F4EBDB;box-shadow:0 0 70px rgba(58,15,15,.1);
+    background:#F1E7D2;box-shadow:0 0 70px rgba(58,15,15,.1);
   }
 
   /* header bar — echoes the home page */
   .bar{
     display:flex;justify-content:space-between;align-items:center;
-    padding:22px 44px;border-bottom:1px solid rgba(74,18,18,.14);
+    padding:22px 44px;border-bottom:1px solid rgba(35,32,28,.14);
   }
-  .mark{font-family:'Tiro Devanagari Hindi',serif;font-size:27px;color:#5C1A1A;line-height:1;}
+  .mark{font-family:'Newsreader',Georgia,serif;font-size:27px;color:#1B2333;line-height:1;}
   .bar nav{
-    font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.1em;
-    text-transform:uppercase;color:#7c4a36;
+    font-family:'Newsreader',Georgia,serif;font-size:11px;letter-spacing:.1em;
+    text-transform:uppercase;color:#5B554B;
   }
   .bar nav a{color:inherit;}
-  .bar nav a:hover{color:#B4542A;}
+  .bar nav a:hover{color:#8C3B2E;}
 
   /* article */
   article{padding:60px 44px 40px;}
   .wrap{max-width:41em;margin:0 auto;}
 
   .kicker{
-    font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.2em;
-    text-transform:uppercase;color:#B4542A;
+    font-family:'Newsreader',Georgia,serif;font-size:11px;letter-spacing:.2em;
+    text-transform:uppercase;color:#8C3B2E;
   }
   h1{
-    font-family:'Instrument Serif',serif;font-weight:400;
-    font-size:clamp(38px,7vw,60px);line-height:1.02;color:#3A0F0F;
+    font-family:'Newsreader',Georgia,serif;font-weight:400;
+    font-size:clamp(38px,7vw,60px);line-height:1.02;color:#23201C;
     margin:14px 0 0;
   }
   .dek{
-    font-family:'Instrument Serif',serif;font-style:italic;font-weight:400;
-    font-size:clamp(22px,4vw,30px);line-height:1.15;color:#8a3b23;
+    font-family:'Newsreader',Georgia,serif;font-style:italic;font-weight:400;
+    font-size:clamp(22px,4vw,30px);line-height:1.15;color:#8C3B2E;
     margin:10px 0 0;
   }
   .byline{
-    font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.08em;
-    color:#8a6a5e;margin:26px 0 0;
+    font-family:'Newsreader',Georgia,serif;font-size:11px;letter-spacing:.08em;
+    color:#5B554B;margin:26px 0 0;
   }
-  .rule{border:0;border-top:1px solid rgba(74,18,18,.16);margin:34px 0 0;}
+  .rule{border:0;border-top:1px solid rgba(35,32,28,.16);margin:34px 0 0;}
 
   .body{margin-top:34px;}
   .body p{
     font-family:'Newsreader',serif;font-size:19.5px;line-height:1.68;
-    color:#402a20;margin:0 0 1.35em;
+    color:#3A362E;margin:0 0 1.35em;
   }
-  .body p.lead{font-size:22px;line-height:1.6;color:#3a241c;}
+  .body p.lead{font-size:22px;line-height:1.6;color:#23201C;}
   .body p.lead::first-letter{
-    font-family:'Instrument Serif',serif;font-size:3.9em;line-height:.78;
-    float:left;margin:.02em .09em 0 0;color:#C9551F;
+    font-family:'Newsreader',Georgia,serif;font-size:3.9em;line-height:.78;
+    float:left;margin:.02em .09em 0 0;color:#8C3B2E;
   }
 
   code{
-    font-family:'Space Mono',monospace;font-size:.84em;
-    background:rgba(180,84,42,.1);color:#8a3b23;
+    font-family:'Newsreader',Georgia,serif;font-size:.84em;
+    background:rgba(140,59,46,.1);color:#8C3B2E;
     padding:.08em .38em;border-radius:3px;
   }
 
   /* pull / block quotes for the standout conclusions */
   blockquote{
     margin:1.9em 0;padding:2px 0 2px 26px;
-    border-left:2px solid #C9551F;
+    border-left:2px solid #8C3B2E;
   }
   blockquote p{
-    font-family:'Instrument Serif',serif;font-style:italic;font-weight:400;
-    font-size:26px;line-height:1.32;color:#3A0F0F;margin:0;
+    font-family:'Newsreader',Georgia,serif;font-style:italic;font-weight:400;
+    font-size:26px;line-height:1.32;color:#23201C;margin:0;
   }
   blockquote.mono p{
-    font-family:'Space Mono',monospace;font-style:normal;
-    font-size:17px;line-height:1.55;color:#5C1A1A;
+    font-family:'Newsreader',Georgia,serif;font-style:normal;
+    font-size:17px;line-height:1.55;color:#1B2333;
   }
 
   .brk{
-    text-align:center;color:#C9551F;font-family:'Space Mono',monospace;
+    text-align:center;color:#8C3B2E;font-family:'Newsreader',Georgia,serif;
     letter-spacing:.5em;font-size:13px;margin:2.4em 0 2.2em;
     padding-left:.5em;
   }
@@ -112,11 +110,11 @@
   footer{
     display:flex;justify-content:space-between;align-items:center;
     flex-wrap:wrap;gap:12px;padding:24px 44px;
-    background:#3A0F0F;color:#E9CFA8;
-    font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.04em;
+    background:#23201C;color:#EFE3C8;
+    font-family:'Newsreader',Georgia,serif;font-size:11px;letter-spacing:.04em;
   }
-  footer a{color:#E9A24A;}
-  footer a:hover{color:#fff;}
+  footer a{color:#C69A5B;}
+  footer a:hover{color:#F1E7D2;}
 
   @media (max-width:640px){
     .bar{padding:18px 22px;}
@@ -126,18 +124,48 @@
     blockquote p{font-size:22px;}
     footer{padding:22px;}
   }
+
+  /* ── revamp: new art direction over the original article geometry ── */
+  body{background:#F1E7D2;color:#23201C;}
+  a{color:#8C3B2E;} a:hover{color:#1B2333;}
+  ::selection{background:#1B2333;color:#EFE3C8;}
+  .paper{max-width:1040px;margin:0 auto;min-height:100vh;background:transparent;box-shadow:none;padding:36px 32px 90px;}
+  .bar{display:flex;justify-content:space-between;align-items:baseline;gap:20px;flex-wrap:wrap;padding:0;border-bottom:0;}
+  .bar .plate{display:block;width:64px;height:44px;overflow:hidden;opacity:.9;transition:opacity .3s;}
+  .bar .plate:hover{opacity:1;}
+  .bar .plate img{width:100%;height:100%;object-fit:cover;object-position:50% 35%;display:block;mix-blend-mode:multiply;}
+  .bar nav{display:flex;gap:26px;flex-wrap:wrap;font-family:'Newsreader',Georgia,serif;font-size:14px;letter-spacing:.16em;text-transform:uppercase;color:#5B554B;}
+  .bar nav a{color:inherit;transition:color .2s;}
+  .bar nav a:hover{color:#8C3B2E;}
+  article{padding:0;}
+  .wrap{max-width:41em;margin:72px auto 0;}
+  .kicker{font-family:'Newsreader',Georgia,serif;font-size:13px;letter-spacing:.2em;text-transform:uppercase;color:#8C3B2E;}
+  h1{font-family:'Newsreader',Georgia,serif;font-weight:400;color:#23201C;line-height:1.0;letter-spacing:-.01em;}
+  .byline{font-family:'Newsreader',Georgia,serif;font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:#5B554B;}
+  .rule{border-top-color:rgba(35,32,28,.25);}
+  .postref .attr,.refs h2,blockquote.src cite,.tldr .tldr-label,.figph .lbl,.figref .lbl,
+  .section-note,.reprint .label,.reprint .attr,.escalation .step,.res,.source{font-family:'Newsreader',Georgia,serif;}
+  code,.chain,.loop{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;}
+  footer{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;
+    margin-top:80px;padding:24px 0 0;background:transparent;color:#5B554B;
+    border-top:1px solid rgba(35,32,28,.25);
+    font-family:'Newsreader',Georgia,serif;font-size:13px;letter-spacing:.12em;text-transform:uppercase;}
+  footer a{color:#5B554B;} footer a:hover{color:#8C3B2E;}
+  @media (max-width:640px){ .paper{padding:28px 22px 70px;} .wrap{margin-top:46px;} }
 </style>
 </head>
 <body>
-<div class="shell shell--note">
+<div class="paper">
 
-  <aside class="rail">
-    <div class="rail-inner">
-      <a class="mark" href="../">मिहिर</a>
-      <nav class="nav"><a href="../notes.html">← Notes</a><a href="../readings.html">Readings</a><a href="../photographs.html">Photos</a></nav>
-      <nav class="toc" aria-label="On this page"></nav>
-    </div>
-  </aside>
+  <div class="bar">
+    <a class="plate" href="../"><img src="../assets/art/megh-dutam.jpg" alt="Home"></a>
+    <nav>
+      <a href="../notes.html">Notes</a>
+      <a href="../readings.html">Readings</a>
+      <a href="../photographs.html">Photographs</a>
+      <a href="../#colophon">About</a>
+    </nav>
+  </div>
 
   <article>
     <div class="wrap">
@@ -221,28 +249,5 @@
   </footer>
 
 </div>
-<script>
-/* Build the rail table of contents from the article's own headings.
-   Progressive enhancement: without JS there is simply no TOC. */
-(function () {
-  try {
-    var toc = document.querySelector('.toc');
-    if (!toc) return;
-    var hs = document.querySelectorAll('article h2');
-    if (hs.length < 3) { toc.remove(); return; }
-    var label = document.createElement('div');
-    label.className = 'toc-label';
-    label.textContent = 'On this page';
-    toc.appendChild(label);
-    Array.prototype.forEach.call(hs, function (h, i) {
-      if (!h.id) h.id = 'sec-' + (i + 1);
-      var a = document.createElement('a');
-      a.href = '#' + h.id;
-      a.textContent = (h.textContent || '').trim();
-      toc.appendChild(a);
-    });
-  } catch (e) {}
-})();
-</script>
 </body>
 </html>

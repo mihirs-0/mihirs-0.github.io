@@ -14,122 +14,120 @@
 <meta name="twitter:card" content="summary">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,400&family=Space+Mono:wght@400;700&family=Tiro+Devanagari+Hindi:ital@0;1&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../assets/site.css?v=3">
-<link rel="stylesheet" href="../assets/note.css?v=3">
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;0,6..72,700;1,6..72,400;1,6..72,500&display=swap" rel="stylesheet">
 <style>
   *{box-sizing:border-box;}
   html{scroll-behavior:smooth;}
   body{
-    margin:0;background:#E7D9C0;color:#402a20;
+    margin:0;background:#F1E7D2;color:#3A362E;
     font-family:'Newsreader',Georgia,serif;
     -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
   }
-  ::selection{background:#C9551F;color:#fff;}
-  a{color:#B4542A;text-decoration:none;}
-  a:hover{color:#C9551F;}
+  ::selection{background:#8C3B2E;color:#F1E7D2;}
+  a{color:#8C3B2E;text-decoration:none;}
+  a:hover{color:#8C3B2E;}
 
-  .mark{font-family:'Tiro Devanagari Hindi',serif;font-size:27px;color:#5C1A1A;line-height:1;}
+  .mark{font-family:'Newsreader',Georgia,serif;font-size:27px;color:#1B2333;line-height:1;}
 
   article{padding:60px 44px 40px;}
   .wrap{max-width:41em;margin:0 auto;}
 
   .kicker{
-    font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.2em;
-    text-transform:uppercase;color:#B4542A;
+    font-family:'Newsreader',Georgia,serif;font-size:11px;letter-spacing:.2em;
+    text-transform:uppercase;color:#8C3B2E;
   }
   h1{
-    font-family:'Instrument Serif',serif;font-weight:400;
-    font-size:clamp(40px,7.4vw,60px);line-height:1.02;color:#3A0F0F;
+    font-family:'Newsreader',Georgia,serif;font-weight:400;
+    font-size:clamp(40px,7.4vw,60px);line-height:1.02;color:#23201C;
     margin:14px 0 0;
   }
   .dek{
-    font-family:'Instrument Serif',serif;font-style:italic;font-weight:400;
-    font-size:clamp(20px,3.2vw,26px);line-height:1.2;color:#8a3b23;
+    font-family:'Newsreader',Georgia,serif;font-style:italic;font-weight:400;
+    font-size:clamp(20px,3.2vw,26px);line-height:1.2;color:#8C3B2E;
     margin:12px 0 0;
   }
   .byline{
-    font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.08em;
-    color:#8a6a5e;margin:24px 0 0;
+    font-family:'Newsreader',Georgia,serif;font-size:11px;letter-spacing:.08em;
+    color:#5B554B;margin:24px 0 0;
   }
-  .rule{border:0;border-top:1px solid rgba(74,18,18,.16);margin:34px 0 0;}
+  .rule{border:0;border-top:1px solid rgba(35,32,28,.16);margin:34px 0 0;}
 
   .body{margin-top:34px;}
   .body p{
     font-family:'Newsreader',serif;font-size:19.5px;line-height:1.68;
-    color:#402a20;margin:0 0 1.35em;
+    color:#3A362E;margin:0 0 1.35em;
   }
-  .body p.lead{font-size:22px;line-height:1.6;color:#3a241c;}
+  .body p.lead{font-size:22px;line-height:1.6;color:#23201C;}
   .body p.lead::first-letter{
-    font-family:'Instrument Serif',serif;font-size:3.9em;line-height:.78;
-    float:left;margin:.02em .09em 0 0;color:#C9551F;
+    font-family:'Newsreader',Georgia,serif;font-size:3.9em;line-height:.78;
+    float:left;margin:.02em .09em 0 0;color:#8C3B2E;
   }
-  .body a{border-bottom:1px solid rgba(180,84,42,.35);}
-  .body a:hover{border-bottom-color:#C9551F;}
-  .body strong{color:#3A0F0F;}
-  .body em{color:#5a3a30;}
+  .body a{border-bottom:1px solid rgba(140,59,46,.35);}
+  .body a:hover{border-bottom-color:#8C3B2E;}
+  .body strong{color:#23201C;}
+  .body em{color:#4A443B;}
 
   .body h2{
-    font-family:'Instrument Serif',serif;font-weight:400;
-    font-size:clamp(27px,4.4vw,34px);line-height:1.08;color:#3A0F0F;
+    font-family:'Newsreader',Georgia,serif;font-weight:400;
+    font-size:clamp(27px,4.4vw,34px);line-height:1.08;color:#23201C;
     margin:1.9em 0 .45em;
   }
 
   .body ol,.body ul{margin:0 0 1.35em;padding-left:1.35em;}
   .body li{
     font-family:'Newsreader',serif;font-size:19px;line-height:1.6;
-    color:#402a20;margin:0 0 .7em;
+    color:#3A362E;margin:0 0 .7em;
   }
-  .body li::marker{color:#C9551F;}
+  .body li::marker{color:#8C3B2E;}
 
   /* a line of the author's own worth setting apart */
   .pull{
-    font-family:'Instrument Serif',serif;font-size:29px;line-height:1.24;
-    color:#5C1A1A;margin:1.5em 0;padding-left:22px;
-    border-left:2px solid #C9551F;
+    font-family:'Newsreader',Georgia,serif;font-size:29px;line-height:1.24;
+    color:#1B2333;margin:1.5em 0;padding-left:22px;
+    border-left:2px solid #8C3B2E;
   }
 
   /* the round trip, set as its own object */
   .loop{
     margin:1.5em 0 1.9em;padding:18px 22px;
-    background:rgba(180,84,42,.06);
-    border:1px solid rgba(74,18,18,.12);border-radius:4px;
-    font-family:'Space Mono',monospace;font-size:14px;line-height:1.7;
-    color:#5C1A1A;text-align:center;overflow-wrap:anywhere;
+    background:rgba(140,59,46,.06);
+    border:1px solid rgba(35,32,28,.12);border-radius:4px;
+    font-family:'Newsreader',Georgia,serif;font-size:14px;line-height:1.7;
+    color:#1B2333;text-align:center;overflow-wrap:anywhere;
   }
 
   /* quoted from the paper */
-  blockquote.src{margin:1.6em 0;padding:4px 0 4px 24px;border-left:3px solid #C9551F;}
+  blockquote.src{margin:1.6em 0;padding:4px 0 4px 24px;border-left:3px solid #8C3B2E;}
   blockquote.src p{
     font-family:'Newsreader',serif;font-size:18.5px;line-height:1.55;
-    color:#5a3a30;margin:0;
+    color:#4A443B;margin:0;
   }
   blockquote.src cite{
     display:block;margin-top:11px;font-style:normal;
-    font-family:'Space Mono',monospace;font-size:10.5px;letter-spacing:.1em;
-    text-transform:uppercase;color:#8a6a5e;
+    font-family:'Newsreader',Georgia,serif;font-size:10.5px;letter-spacing:.1em;
+    text-transform:uppercase;color:#5B554B;
   }
 
   /* further reading */
-  .refs{margin:46px 0 0;padding:24px 0 0;border-top:1px solid rgba(74,18,18,.16);}
+  .refs{margin:46px 0 0;padding:24px 0 0;border-top:1px solid rgba(35,32,28,.16);}
   .refs h2{
-    font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.2em;
-    text-transform:uppercase;color:#8a6a5e;margin:0 0 15px;
+    font-family:'Newsreader',Georgia,serif;font-size:11px;letter-spacing:.2em;
+    text-transform:uppercase;color:#5B554B;margin:0 0 15px;
   }
   .refs ul{margin:0;padding-left:1.2em;}
   .refs li{
     font-family:'Newsreader',serif;font-size:15.5px;line-height:1.5;
-    color:#5a3a30;margin:0 0 .75em;
+    color:#4A443B;margin:0 0 .75em;
   }
 
   footer{
     display:flex;justify-content:space-between;align-items:center;
     flex-wrap:wrap;gap:12px;padding:24px 44px;
-    background:#3A0F0F;color:#E9CFA8;
-    font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.04em;
+    background:#23201C;color:#EFE3C8;
+    font-family:'Newsreader',Georgia,serif;font-size:11px;letter-spacing:.04em;
   }
-  footer a{color:#E9A24A;}
-  footer a:hover{color:#fff;}
+  footer a{color:#C69A5B;}
+  footer a:hover{color:#F1E7D2;}
 
   @media (max-width:640px){
     article{padding:40px 22px 34px;}
@@ -140,18 +138,48 @@
     .loop{font-size:12.5px;}
     footer{padding:22px;}
   }
+
+  /* ── revamp: new art direction over the original article geometry ── */
+  body{background:#F1E7D2;color:#23201C;}
+  a{color:#8C3B2E;} a:hover{color:#1B2333;}
+  ::selection{background:#1B2333;color:#EFE3C8;}
+  .paper{max-width:1040px;margin:0 auto;min-height:100vh;background:transparent;box-shadow:none;padding:36px 32px 90px;}
+  .bar{display:flex;justify-content:space-between;align-items:baseline;gap:20px;flex-wrap:wrap;padding:0;border-bottom:0;}
+  .bar .plate{display:block;width:64px;height:44px;overflow:hidden;opacity:.9;transition:opacity .3s;}
+  .bar .plate:hover{opacity:1;}
+  .bar .plate img{width:100%;height:100%;object-fit:cover;object-position:50% 35%;display:block;mix-blend-mode:multiply;}
+  .bar nav{display:flex;gap:26px;flex-wrap:wrap;font-family:'Newsreader',Georgia,serif;font-size:14px;letter-spacing:.16em;text-transform:uppercase;color:#5B554B;}
+  .bar nav a{color:inherit;transition:color .2s;}
+  .bar nav a:hover{color:#8C3B2E;}
+  article{padding:0;}
+  .wrap{max-width:41em;margin:72px auto 0;}
+  .kicker{font-family:'Newsreader',Georgia,serif;font-size:13px;letter-spacing:.2em;text-transform:uppercase;color:#8C3B2E;}
+  h1{font-family:'Newsreader',Georgia,serif;font-weight:400;color:#23201C;line-height:1.0;letter-spacing:-.01em;}
+  .byline{font-family:'Newsreader',Georgia,serif;font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:#5B554B;}
+  .rule{border-top-color:rgba(35,32,28,.25);}
+  .postref .attr,.refs h2,blockquote.src cite,.tldr .tldr-label,.figph .lbl,.figref .lbl,
+  .section-note,.reprint .label,.reprint .attr,.escalation .step,.res,.source{font-family:'Newsreader',Georgia,serif;}
+  code,.chain,.loop{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;}
+  footer{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;
+    margin-top:80px;padding:24px 0 0;background:transparent;color:#5B554B;
+    border-top:1px solid rgba(35,32,28,.25);
+    font-family:'Newsreader',Georgia,serif;font-size:13px;letter-spacing:.12em;text-transform:uppercase;}
+  footer a{color:#5B554B;} footer a:hover{color:#8C3B2E;}
+  @media (max-width:640px){ .paper{padding:28px 22px 70px;} .wrap{margin-top:46px;} }
 </style>
 </head>
 <body>
-<div class="shell shell--note">
+<div class="paper">
 
-  <aside class="rail">
-    <div class="rail-inner">
-      <a class="mark" href="../">मिहिर</a>
-      <nav class="nav"><a href="../notes.html">← Notes</a><a href="../readings.html">Readings</a><a href="../photographs.html">Photos</a></nav>
-      <nav class="toc" aria-label="On this page"></nav>
-    </div>
-  </aside>
+  <div class="bar">
+    <a class="plate" href="../"><img src="../assets/art/megh-dutam.jpg" alt="Home"></a>
+    <nav>
+      <a href="../notes.html">Notes</a>
+      <a href="../readings.html">Readings</a>
+      <a href="../photographs.html">Photographs</a>
+      <a href="../#colophon">About</a>
+    </nav>
+  </div>
 
   <article>
     <div class="wrap">
@@ -263,28 +291,5 @@
   </footer>
 
 </div>
-<script>
-/* Build the rail table of contents from the article's own headings.
-   Progressive enhancement: without JS there is simply no TOC. */
-(function () {
-  try {
-    var toc = document.querySelector('.toc');
-    if (!toc) return;
-    var hs = document.querySelectorAll('article .body > h2');
-    if (hs.length < 3) { toc.remove(); return; }
-    var label = document.createElement('div');
-    label.className = 'toc-label';
-    label.textContent = 'On this page';
-    toc.appendChild(label);
-    Array.prototype.forEach.call(hs, function (h, i) {
-      if (!h.id) h.id = 'sec-' + (i + 1);
-      var a = document.createElement('a');
-      a.href = '#' + h.id;
-      a.textContent = (h.textContent || '').trim();
-      toc.appendChild(a);
-    });
-  } catch (e) {}
-})();
-</script>
 </body>
 </html>
