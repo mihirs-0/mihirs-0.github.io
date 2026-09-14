@@ -47,28 +47,25 @@ img{display:block;max-width:100%;}
 
       <nav style="display:flex;flex-direction:column;gap:12px;margin-top:28px;font-family:'Newsreader',Georgia,serif;font-size:clamp(28px,2.6vw,38px);line-height:1;font-weight:400">
         <a href="notes.html" style="transition:color .2s">Notes</a>
-        <a href="photographs.html" style="transition:color .2s">Photographs</a>
         <a href="readings.html" style="transition:color .2s">Readings</a>
+        <a href="photographs.html" style="transition:color .2s">Photographs</a>
       </nav>
     </div>
   </div>
 
   <div style="animation:rise 1s .3s ease both">
-    <p style="font-size:16px;line-height:1.7;color:#4A443B;margin:0;max-width:30em;text-wrap:pretty">I'm currently working independently on AI safety and alignment. Graduated from the University of Illinois at Urbana-Champaign this summer. Find my latest work on <a href="https://www.lesswrong.com/posts/krzpRvxzx3sGudSv3/separating-cheating-and-aversion-in-task-gaming" target="_blank" rel="noopener" style="color:#8C3B2E;border-bottom:1px solid rgba(140,59,46,.35)">task-gaming</a> and <a href="https://www.lesswrong.com/posts/bbkYyKjj9pTCXCsEm/quantifying-cot-faithfulness" target="_blank" rel="noopener" style="color:#8C3B2E;border-bottom:1px solid rgba(140,59,46,.35)">CoT faithfulness</a> on LessWrong. I'm always down for a chat &mdash; feel free to <a href="mailto:{{ email }}" style="color:#8C3B2E;border-bottom:1px solid rgba(140,59,46,.35)">reach out</a>.</p>
+    <p style="font-size:17px;line-height:1.7;color:#23201C;margin:0;max-width:30em;text-wrap:pretty">I'm currently working independently on AI safety and alignment. Graduated from the University of Illinois at Urbana-Champaign this summer. Find my latest work on <a href="https://www.lesswrong.com/posts/krzpRvxzx3sGudSv3/separating-cheating-and-aversion-in-task-gaming" target="_blank" rel="noopener" style="color:#8C3B2E;border-bottom:1px solid rgba(140,59,46,.35)">task-gaming</a> and <a href="https://www.lesswrong.com/posts/bbkYyKjj9pTCXCsEm/quantifying-cot-faithfulness" target="_blank" rel="noopener" style="color:#8C3B2E;border-bottom:1px solid rgba(140,59,46,.35)">CoT faithfulness</a> on LessWrong. I'm always down for a chat &mdash; feel free to <a href="mailto:{{ email }}" style="color:#8C3B2E;border-bottom:1px solid rgba(140,59,46,.35)">reach out</a>.</p>
   </div>
 
   <!-- the statement sits at the foot of the page -->
-  <div id="colophon" style="grid-column:1 / -1;padding-top:64px;animation:rise 1s .45s ease both">
+  <div id="colophon" style="grid-column:1 / -1;padding-top:64px;padding-bottom:96px;animation:rise 1s .45s ease both">
     <p style="font-family:'Newsreader',Georgia,serif;font-size:clamp(26px,2.4vw,34px);line-height:1.2;color:#23201C;margin:0;text-wrap:pretty">Let's make AI go well.</p>
-    <p style="font-size:19px;line-height:1.65;color:#4A443B;margin:14px 0 0;text-wrap:pretty">The future has to be human.</p>
-    <div style="margin-top:22px">
-      <a href="https://intelligence-curse.ai/" target="_blank" rel="noopener" style="font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:#5B554B;transition:color .2s" style-hover="color:#8C3B2E">the intelligence curse &#8599;</a>
-    </div>
+    <p style="font-size:19px;line-height:1.65;margin:14px 0 0;text-wrap:pretty"><a href="https://intelligence-curse.ai/" target="_blank" rel="noopener" style="color:#4A443B;border-bottom:1px solid rgba(140,59,46,.4);transition:color .2s" style-hover="color:#8C3B2E">The future has to be human.</a></p>
   </div>
 
 </div>
 
-<div aria-hidden="true" style="position:relative;width:100%;height:64px;pointer-events:none;animation:frieze 2.6s .8s ease both;opacity:.8;mix-blend-mode:multiply;background-image:url('assets/art/bahadur-shah-frieze.jpg');background-repeat:repeat-x;background-size:auto 200%;background-position:center top;-webkit-mask-image:linear-gradient(to bottom,transparent 0%,#000 40%,#000 100%);mask-image:linear-gradient(to bottom,transparent 0%,#000 40%,#000 100%)"></div>
+<div aria-hidden="true" style="position:fixed;left:0;right:0;bottom:0;height:64px;pointer-events:none;animation:frieze 2.6s .8s ease both;opacity:.8;mix-blend-mode:multiply;background-image:url('assets/art/bahadur-shah-frieze.jpg');background-repeat:repeat-x;background-size:auto 200%;background-position:center top;-webkit-mask-image:linear-gradient(to bottom,transparent 0%,#000 40%,#000 100%);mask-image:linear-gradient(to bottom,transparent 0%,#000 40%,#000 100%)"></div>
 </x-dc>
 <script type="text/x-dc" data-dc-script>
 class Component extends DCLogic {
