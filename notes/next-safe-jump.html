@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The next safe jump — Mihir Sahasrabudhe</title>
+<meta name="description" content="How will we conduct the safety assessments for the next major training run? On increased capabilities, reduced monitorability, and unsafe behavior reinforced under weak oversight.">
+<meta name="author" content="Mihir Sahasrabudhe">
+<link rel="canonical" href="https://mihirss.com/notes/next-safe-jump.html">
+<meta property="og:type" content="article">
+<meta property="og:title" content="The next safe jump">
+<meta property="og:description" content="The strength of the monitor(s) as a key hyperparameter of the next training run.">
+<meta property="og:url" content="https://mihirss.com/notes/next-safe-jump.html">
+<meta name="twitter:card" content="summary">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;0,6..72,700;1,6..72,400;1,6..72,500&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;background:#F1E7D2;color:#23201C;
+    font-family:'Newsreader',Georgia,serif;
+    -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+  }
+  img{display:block;max-width:100%;}
+  ::selection{background:#1B2333;color:#EFE3C8;}
+  a{color:#8C3B2E;text-decoration:none;}
+  a:hover{color:#1B2333;}
+
+  .paper{max-width:1040px;margin:0 auto;min-height:100vh;padding:36px 32px 90px;}
+
+  .bar{display:flex;justify-content:space-between;align-items:baseline;gap:20px;flex-wrap:wrap;}
+  .bar .plate{display:block;width:64px;height:44px;overflow:hidden;opacity:.9;transition:opacity .3s;}
+  .bar .plate:hover{opacity:1;}
+  .bar .plate img{width:100%;height:100%;object-fit:cover;object-position:50% 35%;mix-blend-mode:multiply;}
+  .bar nav{display:flex;gap:26px;flex-wrap:wrap;font-size:14px;letter-spacing:.16em;text-transform:uppercase;color:#5B554B;}
+  .bar nav a{color:inherit;transition:color .2s;}
+  .bar nav a:hover{color:#8C3B2E;}
+
+  .wrap{max-width:41em;margin:72px auto 0;}
+
+  .kicker{font-size:13px;letter-spacing:.2em;text-transform:uppercase;color:#8C3B2E;}
+  h1{font-weight:400;font-size:clamp(40px,7vw,60px);line-height:1;letter-spacing:-.01em;color:#23201C;margin:14px 0 0;}
+  .byline{font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:#5B554B;margin:22px 0 0;}
+  .rule{border:0;border-top:1px solid rgba(35,32,28,.25);margin:32px 0 0;}
+
+  /* abstract */
+  .abstract{
+    margin:34px 0 0;padding:22px 26px;
+    background:#E8DCC4;border:1px solid rgba(35,32,28,.14);
+  }
+  .abstract .lbl{font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:#8C3B2E;margin-bottom:10px;}
+  .abstract p{font-size:17.5px;line-height:1.6;color:#3A362E;margin:0;text-wrap:pretty;}
+
+  .code-line{margin:20px 0 0;font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:#5B554B;}
+  .code-line a{color:#8C3B2E;}
+
+  .body{margin-top:38px;}
+  .body p{font-size:19.5px;line-height:1.68;color:#3A362E;margin:0 0 1.3em;text-wrap:pretty;}
+  .body a{border-bottom:1px solid rgba(140,59,46,.35);}
+  .body a:hover{border-bottom-color:#1B2333;}
+  .body strong{color:#23201C;font-weight:500;}
+  .body em{color:#4A443B;}
+
+  .body h2{
+    font-weight:400;font-size:clamp(26px,4.2vw,33px);line-height:1.1;
+    color:#23201C;margin:2em 0 .45em;
+  }
+  .body h3{
+    font-weight:500;font-size:clamp(20px,3.2vw,24px);line-height:1.15;
+    color:#1B2333;margin:1.7em 0 .35em;
+  }
+
+  .body ul{margin:0 0 1.35em;padding-left:1.3em;}
+  .body li{font-size:19px;line-height:1.6;color:#3A362E;margin:0 0 .8em;}
+  .body li::marker{color:#8C3B2E;}
+
+  /* results table */
+  .tw{overflow-x:auto;margin:1.6em 0;}
+  table{border-collapse:collapse;width:100%;min-width:520px;}
+  caption{
+    caption-side:bottom;text-align:left;margin-top:12px;
+    font-size:15px;font-style:italic;line-height:1.5;color:#5B554B;
+  }
+  th,td{
+    text-align:left;padding:11px 14px;
+    border-bottom:1px solid rgba(35,32,28,.16);
+    font-size:16.5px;color:#3A362E;
+  }
+  th{
+    font-size:12.5px;letter-spacing:.12em;text-transform:uppercase;
+    color:#5B554B;font-weight:400;border-bottom:1px solid rgba(35,32,28,.4);
+  }
+  tbody tr:last-child td{border-bottom:1px solid rgba(35,32,28,.4);}
+
+  /* references */
+  .refs{margin:52px 0 0;padding:26px 0 0;border-top:1px solid rgba(35,32,28,.25);}
+  .refs .lbl{font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:#5B554B;margin-bottom:16px;}
+  .refs ol{margin:0;padding-left:1.6em;}
+  .refs li{font-size:15.5px;line-height:1.5;color:#4A443B;margin:0 0 .6em;}
+
+  footer{
+    display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;
+    margin-top:80px;padding:24px 0 0;border-top:1px solid rgba(35,32,28,.25);
+    font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:#5B554B;
+  }
+  footer a{color:#5B554B;}
+  footer a:hover{color:#8C3B2E;}
+
+  @media (max-width:640px){
+    .paper{padding:28px 22px 70px;}
+    .wrap{margin-top:46px;}
+    .body p{font-size:18px;}
+    .body li{font-size:17.5px;}
+    .abstract{padding:18px 20px;}
+  }
+</style>
+</head>
+<body>
+<div class="paper">
+
+  <div class="bar">
+    <a class="plate" href="../"><img src="../assets/art/megh-dutam.jpg" alt="Home"></a>
+    <nav>
+      <a href="../notes.html">Notes</a>
+      <a href="../readings.html">Readings</a>
+      <a href="../photographs.html">Photographs</a>
+      <a href="../#colophon">About</a>
+    </nav>
+  </div>
+
+  <article>
+    <div class="wrap">
+      <div class="kicker">Paper · With Apart Research</div>
+      <h1>The next safe jump</h1>
+      <p class="byline">Mihir Sahasrabudhe · September 2026</p>
+      <hr class="rule">
+
+      <div class="abstract">
+        <div class="lbl">Abstract</div>
+        <p>We welcome the announcement of plans for a slowdown. We also ask: how will we conduct the safety assessments for the next major training run? Drawing on available reports from the frontier labs and the literature on model oversight, we examine whether current safeguards extend to models operating at an even greater scale, and what breaks if they're kept the same. Our focus is on three pressures: increased capabilities, reduced monitorability, and unsafe behavior reinforced due to weak oversight. We pull on the key tension these pressures create: the strength of the monitor(s). A stricter monitoring regime can restrict legitimate runs and slow down a training run. A loose regime can let misaligned actions through, potentially allowing it to shape the next checkpoint. More money and human review may help, but the nature of the frontier means that they're not guaranteed to help. In our exploratory comparison, four monitoring protocols made identical final decisions and missed the same two unsafe cases. As we plan the next jump, we have to focus on what we're most likely to miss next — as that forms the denominator of our models' safety.</p>
+      </div>
+
+      <p class="code-line">Code · <a href="https://github.com/mihirs-0/incendie">github.com/mihirs-0/incendie</a></p>
+
+      <div class="body">
+        <h2>1. Introduction</h2>
+
+        <p>The OpenAI-HF incident was a wake-up call. If the frontier labs go ahead with their next training run with the current league of safeguards, we might not have the luxury of hindsight. An engineering mistake can be rectified, and a known breach can be patched. But with increased capability, models might find different shortcuts, work across longer trajectories, and accomplish more without expressing the relevant reasoning.</p>
+
+        <p>Scaling has been unlocking newer capabilities and better generalization. What models learn during training can generalize in harmful ways too. Research on emergent misalignment shows that narrow training on insecure code can produce harmful behavior in unrelated settings. Related experiments show broader misalignment emerging when models learn to reward hack in selected production coding environments. Failure during training leads to bad credit assignment, which propagates into the next checkpoint. [1; 2; 3]</p>
+
+        <p>Look at what happened with Artifact: OpenAI's technical report says that agents in May learned to use improvised messaging channels during training. This behavior was reinforced during training and, in OpenAI's assessment, likely made using Artifactory as an unofficial message board during evaluation more evident. The report also proposes that unauthorized collaboration began through generalization from training with legitimate multi-agent tools. [4, §VIII.C]</p>
+
+        <p>We now have a documented connection between training behavior and the later evaluation incident. We do not know which behaviors were removed and which were allowed to influence the later checkpoints. Clearing up the message board did little to nothing in regard to safety. The behavior was learned regardless. Missed misconduct during training is thus extremely crucial.</p>
+
+        <h2>2. Capabilities beyond visible reasoning; implications for model oversight</h2>
+
+        <p>Chain-of-thought originally started as a prompting trick to expand model capability, which was later integrated into post-training pipelines. CoT wasn't originally designed for monitorability. Monitorability has emerged as a byproduct — a happy coincidence. Difficult work often requires intermediate reasoning, which a monitor can inspect. [5; 6; 7]</p>
+
+        <p>That fragile opportunity may become narrower. UK AISI's analysis showed the no-CoT math time horizon jumping from <strong>3.6 minutes for GPT-5.6 Sol to 30.9 minutes for GPT-6 Astra</strong>. This measures human-time-calibrated task difficulty at 50% model success, rather than how long the model deliberates internally. The report notes possible contamination and says AISI did not complete its agentic monitorability evaluations. Independent analysis by Neel Nanda also found a substantial increase in Astra's capability without CoT. [8, §9.3; 9]</p>
+
+        <p>Changes to architecture are relevant to capability and aren't necessarily communicated by the frontier companies. Redwood's recent proposal discusses how repeated internal computations could allow more processing between tokens. More reasoning may occur before the next inspectable token. Latent communication between agents could similarly reduce what is available in human-readable messages. These are mechanisms that could weaken monitoring; their contribution to any particular model's capabilities still needs to be established. Redwood's proposal is clear: track <em>opaque serial depth</em>, report no-CoT capability relative to overall capability, and independently review monitorability evidence. [10]</p>
+
+        <p>The range of actions a model can perform without revealing relevant reasoning may expand. A safety assessment based on reasoning and messages exchanged between agents has to be checked again as those capabilities change. External indicators, such as tool calls, permissions, and network activity, remain within scope.</p>
+
+        <h3>Misled monitors</h3>
+
+        <p>Currently, we rely on CoT monitors to catch misaligned reasoning. But these monitors are also models and can be misled by the CoT. We have already seen evidence of this.</p>
+
+        <p>In Anthropic's retrospective assessment of the Mythos 5 incident, the model's reasoning that the environment was simulated convinced an offline monitor that its activity was permitted. With CoT present, the monitor flagged around 1% of actions. When Anthropic removed the CoT and showed only user turns, tool calls, and tool results, that rose to about 50%. Here, giving the monitor the actor's reasoning made it less likely to recognize the problem. The result demonstrates susceptibility to misleading explanations, without establishing deliberate manipulation by the actor. [11]</p>
+
+        <p>There is contrary evidence worth keeping alongside this. In OpenAI's complex math side-task experiment, Astra could solve an extra math task while working on coding, but full-context monitoring detected the reasoning associated with successful side-task performance. The relevant question is which behavior remains detectable under which monitoring conditions. [8, §9.2]</p>
+
+        <p>A CoT-only monitor, a monitor looking at actions and results, and one seeing the full context have different evidence available to them. An action record may reveal an unauthorized connection even when the reasoning excuses it. In other cases, the reasoning may provide the clearest indication of an unsafe objective. Access to more context is useful only if the monitor assesses it reliably.</p>
+
+        <p>With enough slip-ups, the model might end up modeling what the grader does and doesn't catch, leading to misleading CoT after training. Even without an explicit model of the grader, training can select for behavior that passes its checks. CoT monitors could become a weak link in the effort to catch misaligned rollouts as model capabilities increase.</p>
+
+        <p>Consider a run with <strong>100M rollouts</strong>. If, illustratively, 0.01% contain a case where a monitor is misled into agreeing with a misaligned action, that still leaves <strong>10,000 rollouts</strong> where misleading CoT made it through. If these rollouts receive favorable rewards and are used in training updates, the behavior could get reinforced in the next checkpoint.</p>
+
+        <p>We cannot infer the exact nature of these 10,000 trajectories from their number. Other trajectories might pass because suspicious reasoning was left out, for entirely innocuous reasons. Deliberate scheming is only one possible route. Rare sequences that happen to satisfy a failed monitor can also be selected during training. The 0.01% here is an illustration, not an estimate of a frontier lab's failure rate.</p>
+
+        <p>A monitor with a debate-like protocol shows promise. Palaestra Research found that debate helped a weaker judge in three of five model pairings on verifiable code and logic tasks. It helped when the critic could classify answers better than the judge and the judge verified the critique instead of simply trusting it. A single independent critique captured most of the benefit. [12; 13]</p>
+
+        <p>We think this is especially relevant here: an independent critic could challenge a judgment that accepts the actor's justification. We test one version of this approach in Section 4. On our selected cohort, critique changed no final decisions and left two unsafe approvals intact.</p>
+
+        <h2>3. The strength of the monitor(s)</h2>
+
+        <p>OpenAI says it is expanding graders that assess how a task was completed, including whether the model should have recognized a broken task, asked for clarification, or stopped safely. This is a welcome step. A model finding the correct flag through an unauthorized route exposes a failure in task grading. How a reward is obtained matters. [14]</p>
+
+        <p>As we look for more capabilities in our next generation of models, we expect developers to seek more open-ended and longer-horizon tasks. Math, cyber, and coding have benefited from verifiable outcomes. Harder and broader tasks may require more tools, longer trajectories, and more judgment about acceptable behavior.</p>
+
+        <p>We already have operational evidence that environment review can fall behind. Anthropic reports that environment creation outpaced review and remediation, allowing flawed environments to survive. It also reports rolling back part of Mythos Preview's training after reward-hacking concerns. [15]</p>
+
+        <p>It is not outrageous to expect future training runs to be even more automated when it comes to oversight. But that is easier said than done. Checking whether a protected file was changed can be mechanical. Deciding whether a long sequence of individually permissible actions amounts to an unauthorized plan may require understanding the whole trajectory. As the volume and variety of environments increase, we have more to inspect and potentially less familiarity with what we are inspecting.</p>
+
+        <p>We keep coming back to the strength of the monitor(s) as a key hyperparameter of the next run. By this, we mean the monitoring regime as a whole: the compute spent on checking, the evidence reviewers receive, the threshold for intervention, and what happens when they disagree or cannot decide.</p>
+
+        <p>If we make the monitor too strict, we restrict legitimate work and interrupt the training run. If we make it too loose, unsafe behavior can pass through and potentially influence the next checkpoint. More spending may buy better checks, but lowering an alert threshold is not the same as making a monitor more capable.</p>
+
+        <p>This also changes how we should interpret a slower run. More alerts, pauses, and investigation could reflect greater caution or better detection. Fewer alerts could reflect safer behavior or more missed failures. The alert count alone cannot distinguish them. A company facing pressure to demonstrate rapid progress may find this distinction difficult to communicate. My concern is that delays caused by safety work could be interpreted as a failure of capability, creating pressure to relax the process.</p>
+
+        <p>Related tensions appear in <em>AI 2027</em> and <em>AI 2040</em>. <em>AI 2027</em> describes a scenario in which increasingly capable models become harder for their predecessors to oversee, while those oversight judgments help supply the next model's training signal. <em>AI 2040</em> discusses the competitive pressure created by paying a substantial safety tax. These are scenarios about how the pressure could develop, rather than measurements of today's monitoring costs or reliability. [16; 17]</p>
+
+        <h3>Who can judge the work?</h3>
+
+        <p>Human reviewers do not automatically resolve this tension. How can a human reliably intervene in a training run of advanced AIs working on unfamiliar problems? The difficulty goes beyond the number of rollouts. A reviewer may have the time to inspect a trajectory and still lack the ability to establish whether its reasoning, code, or consequences are acceptable.</p>
+
+        <p>If the human then relies on another model to explain the trajectory, we return to the same question: can that model recognize what went wrong, or will it repeat the actor's justification? Several reviewers may help when they catch different mistakes. Their agreement is less useful if they all accept the same misleading explanation.</p>
+
+        <p>Humans can still decide to pause a run when the evidence is unresolved. That is a consequential decision, and it needs to remain available. But the authority to pause does not itself supply the missing judgment about the work. If uncertainty repeatedly leads to a pause, the cost of that uncertainty becomes part of the cost of training.</p>
+
+        <p>AI safety also involves value alignment, goal alignment, and technical containment. Permissions and isolation can prevent actions before a monitor has to understand them. Yet whenever the training process relies on a judgment about whether behavior was acceptable, someone or something has to make that judgment reliably. Greater capability makes it more consequential to establish where that judgment stops being dependable.</p>
+
+        <h2>4. A small test of additional oversight</h2>
+
+        <p>We tested whether access to an agent's recorded reasoning changes safety judgments, and whether an independent critic corrects mistakes made by a monitor. This builds directly on a suggestion above: we check the actor's behavior through a separate reviewer who is not exposed to its reasoning.</p>
+
+        <p>We used existing agent interaction records from R-Judge [18]. Using Gemini 3.8 Flash throughout, we compared four conditions: actions alone; actions with recorded reasoning; a full-context assessment followed by an independent action-only critic and final adjudication; and two independent full-context assessments followed by adjudication. The last condition provided a control with the same number of calls as critique. The critic did not see the initial judge's response.</p>
+
+        <h3>Results</h3>
+
+        <p>All four conditions made identical final decisions on all 47 evaluation records.</p>
+
+        <div class="tw">
+          <table>
+            <caption>Each condition incorrectly approved two unsafe records. This corresponds to 4.26% error across the selected cohort and a 9.52% miss rate among its unsafe records.</caption>
+            <thead>
+              <tr><th>Monitoring condition</th><th>Unsafe cases caught</th><th>Unsafe cases missed</th><th>Safe cases falsely rejected</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Actions only</td><td>19/21</td><td>2/21</td><td>0/26</td></tr>
+              <tr><td>Full reasoning</td><td>19/21</td><td>2/21</td><td>0/26</td></tr>
+              <tr><td>Independent critique</td><td>19/21</td><td>2/21</td><td>0/26</td></tr>
+              <tr><td>Repeated assessment</td><td>19/21</td><td>2/21</td><td>0/26</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p>The intermediate responses clarify why critique did not repair these decisions. In both cases, the initial judge, independent critic, and final judge approved.</p>
+
+        <p>These explanations suggest a shared tendency to treat authorization as sufficient for approval despite the safety concerns supporting the labels. Critique supplied no rejecting assessment for the final judge to consider.</p>
+
+        <h3>Implication for the next run</h3>
+
+        <p>Additional review helped neither of these cases. The result gives us a concrete question for oversight design: do reviewers catch different mistakes, or do they repeat the same judgment?</p>
+
+        <p>At the scale of 100 million rollouts, even a small amount of slippage can matter. Illustratively, one unsafe rollout escaping oversight per million would leave 100 missed rollouts. If those trajectories receive favorable rewards and enter training updates, their consequences may extend into later checkpoints.</p>
+
+        <p>Our experiment quickly identified two persistent failures in a small, selected cohort. We also observed no change in final decisions from adding recorded reasoning.</p>
+
+        <h2>5. What has to be checked before the next run?</h2>
+
+        <p>Of course, agents may not go rogue in the same way as they did during the OpenAI-HF incident. Frontier labs will be wary of agents coordinating behind their backs. What matters is whether the assessment extends to different behavior and different conditions.</p>
+
+        <p>Incident replay can check whether a new safeguard catches a known failure. Its value depends on how much it tells us beyond that failure. OpenAI explicitly says its retrospective monitoring improved recall for the kinds of behavior found during the investigation. That is useful evidence of progress on those behaviors. The next run also needs checks that challenge the monitor with unfamiliar routes to a harmful outcome. [14]</p>
+
+        <p>The context of an assessment matters too. In MacDiarmid and colleagues' experiments, chat-oriented safety training improved chat evaluations while agentic misalignment persisted; broader safety coverage helped. A model can therefore look improved in one setting while retaining concerning behavior elsewhere. [3]</p>
+
+        <p>Evaluation awareness adds another reason to examine that transfer. If a model recognizes the patterns of an assessment, its behavior there may depend on those patterns. Betley's "split personas" account offers a hypothesis about how post-training could produce context-conditioned behavior. It gives us a question to investigate: which features of the assessment are helping elicit the behavior we observe, and will those features remain present during training or deployment? [19]</p>
+
+        <p>For the next run, we would bring the argument down to four checks:</p>
+        <ul>
+          <li><strong>Can the monitor judge actions despite the actor's explanation?</strong> Compare decisions with and without CoT on trajectories with independently identifiable violations. Investigate cases where the explanation changes the verdict.</li>
+          <li><strong>Does the assessment survive reduced visibility and stronger elicitation?</strong> Check what happens when relevant reasoning is absent, when the actor receives more help attempting evasion, and when the actor–monitor pairing changes.</li>
+          <li><strong>What happens to a missed trajectory?</strong> Establish whether it received reward, entered an update, and affected checkpoints that remain in use. Removing a record after an update does not undo that update.</li>
+          <li><strong>Can intervention arrive before consequential actions?</strong> Measure the time from the first actionable evidence to an effective restriction or stop, including what agents and their delegates can do in between.</li>
+        </ul>
+
+        <p>These checks address different parts of the same problem. Catching a rollout, stopping its external effects, and preventing it from shaping the model are separate tasks. A successful response needs evidence about each.</p>
+
+        <p>Our small experiment tests one part of this problem: whether changing reasoning visibility and adding review changes safety judgments on existing agent records. Assessing oversight across frontier long-horizon RL runs requires access to the models, environments, and training pipelines themselves. The remaining checks identify what needs to be established inside that process.</p>
+
+        <h2>6. Conclusion</h2>
+
+        <p>Monitors are going to be crucial. The next AI rollout can go wrong in a multitude of ways, and we cannot presage every one of them. We are measuring whether monitors can reliably judge the work of the models we are about to train.</p>
+
+        <p>The OpenAI-HF incident gives us a concrete reason to take this seriously. Improvised collaboration was reinforced during training and later appeared during evaluation. We also have evidence that an actor's reasoning can persuade a monitor to accept harmful actions, and that models can accomplish more without expressing intermediate reasoning. Together, these findings put pressure on the judgments used to supervise the next run.</p>
+
+        <p>In our small empirical comparison, additional review left the same two unsafe approvals intact, illustrating why the benefit of more oversight has to be demonstrated.</p>
+
+        <p>A stricter regime may slow down legitimate runs. A looser regime might allow a few misaligned to influence training downstream. This shows us the Pareto frontier. With more compute, more reviewers, and more human escalation, we can help improve the quality of judgments. But does that still let our monitors abort a concerning rollout without derailing the entire run? Where that judgment remains unresolved, the decision to continue remains unresolved too.</p>
+
+        <p>As we plan the next jump, we acknowledge that there are so many things we could miss. With hardened protocols, and higher confidence in our monitors, we will get there.</p>
+
+        <div class="refs">
+          <div class="lbl">References</div>
+          <ol>
+            <li>T. B. Brown et al. "Language Models are Few-Shot Learners." 2020.</li>
+            <li>J. Betley et al. "Emergent Misalignment: Narrow finetuning can produce broadly misaligned LLMs." 2025.</li>
+            <li>M. MacDiarmid et al. "Natural emergent misalignment from reward hacking in production RL." 2025.</li>
+            <li>OpenAI. "OpenAI–Hugging Face Incident: Technical Report." §VIII.C.</li>
+            <li>J. Wei et al. "Chain-of-Thought Prompting Elicits Reasoning in Large Language Models." 2022.</li>
+            <li>DeepSeek-AI et al. "DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via Reinforcement Learning." 2025.</li>
+            <li>T. Korbak et al. "<a href="https://arxiv.org/abs/2507.11473">Chain of Thought Monitorability: A New and Fragile Opportunity for AI Safety</a>." 2025.</li>
+            <li>OpenAI. "GPT-6 Astra System Card." §§9.2–9.3.</li>
+            <li>N. Nanda. "Astra can do a concerning amount with no chain of thought." LessWrong.</li>
+            <li>Redwood Research. "Proposal for tracking the effects of architecture on monitorability."</li>
+            <li>P. C. Bogdan et al. "An alignment assessment of recent cybersecurity incidents." Anthropic.</li>
+            <li>Palaestra Research. Research website.</li>
+            <li>N. Goyal. Research summary and publications.</li>
+            <li>OpenAI. "The Hugging Face incident and the road ahead."</li>
+            <li>Anthropic. Training-practice report: improving alignment and security efforts.</li>
+            <li>AI 2027. <a href="https://ai-2027.com/">ai-2027.com</a></li>
+            <li>AI 2040. <a href="https://ai-2040.com/">ai-2040.com</a></li>
+            <li>T. Yuan et al. "<a href="https://arxiv.org/abs/2401.10019">R-Judge: Benchmarking Safety Risk Awareness for LLM Agents</a>." 2024.</li>
+            <li>J. Betley. "<a href="https://www.lesswrong.com/posts/L23poLi8MRgS6mXYF/rl-creates-split-personas">RL creates split personas</a>." LessWrong.</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <footer>
+    <span>© 2026 Mihir Sahasrabudhe</span>
+    <a href="../notes.html">More notes →</a>
+  </footer>
+
+</div>
+</body>
+</html>
