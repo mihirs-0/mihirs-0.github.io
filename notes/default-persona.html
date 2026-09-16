@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The default persona — Mihir Sahasrabudhe</title>
+<meta name="description" content="Notes on Daniel Tan on alignment training in the age of RL, Adversaria, the persona selection model, inoculation prompting, and story imprinting.">
+<meta name="author" content="Mihir Sahasrabudhe">
+<link rel="canonical" href="https://mihirss.com/notes/default-persona.html">
+<meta property="og:type" content="article">
+<meta property="og:title" content="The default persona">
+<meta property="og:description" content="Alignment training might be ineffective, or actively obscuring. A sidebar on persona selection, inoculation prompting, and story imprinting.">
+<meta property="og:url" content="https://mihirss.com/notes/default-persona.html">
+<meta name="twitter:card" content="summary">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;0,6..72,700;1,6..72,400;1,6..72,500&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;background:#F5EFE1;color:#23201C;
+    font-family:'Newsreader',Georgia,serif;
+    -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+  }
+  ::selection{background:#1B2333;color:#EFE3C8;}
+  a{color:#8C3B2E;text-decoration:none;}
+  a:hover{color:#1B2333;}
+
+  .paper{max-width:1040px;margin:0 auto;min-height:100vh;padding:36px 32px 90px;}
+
+  .bar{display:flex;justify-content:space-between;align-items:baseline;gap:20px;flex-wrap:wrap;}
+  .bar .plate{display:block;width:64px;height:44px;overflow:hidden;opacity:.9;transition:opacity .3s;}
+  .bar .plate:hover{opacity:1;}
+  .bar .plate img{width:100%;height:100%;object-fit:cover;object-position:50% 35%;display:block;mix-blend-mode:multiply;}
+  .bar nav{display:flex;gap:26px;flex-wrap:wrap;font-size:14px;letter-spacing:.16em;text-transform:uppercase;color:#5B554B;}
+  .bar nav a{color:inherit;transition:color .2s;}
+  .bar nav a:hover{color:#8C3B2E;}
+
+  article{padding:0;}
+  .wrap{max-width:41em;margin:72px auto 0;}
+
+  .kicker{font-size:13px;letter-spacing:.2em;text-transform:uppercase;color:#8C3B2E;}
+  h1{
+    font-weight:400;font-size:clamp(40px,7.4vw,62px);line-height:1.0;
+    letter-spacing:-.01em;color:#23201C;margin:14px 0 0;
+  }
+  .byline{font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:#5B554B;margin:24px 0 0;}
+  .rule{border:0;border-top:1px solid rgba(35,32,28,.25);margin:34px 0 0;}
+
+  .body{margin-top:34px;}
+  .body p{font-size:19.5px;line-height:1.68;color:#3A362E;margin:0 0 1.35em;}
+  .body p.opening{font-size:22px;line-height:1.6;color:#23201C;}
+  .body a{border-bottom:1px solid rgba(140,59,46,.35);}
+  .body a:hover{border-bottom-color:#1B2333;}
+  .body strong{color:#23201C;font-weight:500;}
+  .body em{font-style:italic;}
+  .body code{
+    font-size:.82em;background:rgba(140,59,46,.1);color:#8C3B2E;
+    padding:.08em .38em;border-radius:3px;
+  }
+
+  .body h2{
+    font-weight:400;font-size:26px;line-height:1.16;color:#23201C;
+    margin:2.1em 0 .7em;
+  }
+
+  .body ol,.body ul{margin:0 0 1.35em;padding-left:1.35em;}
+  .body li{font-size:19px;line-height:1.6;color:#3A362E;margin:0 0 .55em;}
+  .body li::marker{color:#8C3B2E;}
+
+  .postref{
+    margin:26px 0 30px;padding:18px 22px;
+    background:#EFE6D6;border:1px solid rgba(35,32,28,.14);border-radius:4px;
+  }
+  .postref a{font-size:26px;line-height:1.14;color:#23201C;border-bottom:1px solid rgba(140,59,46,.4);}
+  .postref a:hover{color:#8C3B2E;}
+  .postref .attr{
+    display:block;margin-top:7px;font-size:10.5px;letter-spacing:.12em;
+    text-transform:uppercase;color:#5B554B;line-height:1.5;
+  }
+
+  blockquote.src{margin:1.7em 0;padding:4px 0 4px 24px;border-left:3px solid #8C3B2E;}
+  blockquote.src p{font-size:18.5px;line-height:1.55;color:#4A443B;margin:0 0 .9em;}
+  blockquote.src p:last-child{margin-bottom:0;}
+  blockquote.src ul{margin:0;padding-left:1.25em;}
+  blockquote.src li{font-size:18px;line-height:1.55;color:#4A443B;}
+  blockquote.src cite{
+    display:block;margin-top:11px;font-style:normal;font-size:10.5px;
+    letter-spacing:.1em;text-transform:uppercase;color:#5B554B;
+  }
+
+  /* the sidebar, and the sidebar inside the sidebar */
+  .aside{
+    margin:2.2em 0;padding:24px 28px;background:#EFE6D6;
+    border-left:3px solid #1B2333;border-radius:0 4px 4px 0;
+  }
+  .aside > .lbl{
+    display:block;font-size:11px;letter-spacing:.2em;text-transform:uppercase;
+    color:#5B554B;margin:0 0 14px;
+  }
+  .aside p{font-size:18.5px;line-height:1.62;}
+  .aside h2{font-size:22px;margin:1.6em 0 .6em;}
+  .aside li{font-size:18px;}
+
+  .aside .aside{
+    margin:1.8em 0;padding:20px 22px;background:#F5EFE1;
+    border-left:3px solid #8C3B2E;
+  }
+  .aside .aside p{font-size:17.5px;line-height:1.6;}
+  .aside .aside li{font-size:17px;}
+
+  /* the post */
+  .post{
+    margin:2em 0;padding:22px 26px;background:rgba(239,230,214,.55);
+    border:1px solid rgba(35,32,28,.2);border-radius:4px;
+  }
+  .post .lbl{
+    display:block;font-size:11px;letter-spacing:.2em;text-transform:uppercase;
+    color:#5B554B;margin:0 0 14px;
+  }
+  .post p{font-size:18.5px;line-height:1.62;color:#3A362E;}
+  .post ul{margin:0 0 1.2em;padding-left:1.25em;list-style:none;}
+  .post li{font-size:18px;line-height:1.6;position:relative;}
+  .post li::before{content:'\2014';position:absolute;left:-1.25em;color:#8C3B2E;}
+
+  .close{font-size:20px;line-height:1.55;color:#23201C;}
+
+  .refs{margin:46px 0 0;padding:24px 0 0;border-top:1px solid rgba(35,32,28,.16);}
+  .refs h2{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:#5B554B;margin:0 0 15px;}
+  .refs ol{margin:0;padding-left:1.4em;}
+  .refs li{font-size:15.5px;line-height:1.5;color:#4A443B;margin:0 0 .75em;}
+
+  footer{
+    display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;
+    margin-top:80px;padding:24px 0 0;background:transparent;color:#5B554B;
+    border-top:1px solid rgba(35,32,28,.25);
+    font-size:13px;letter-spacing:.12em;text-transform:uppercase;
+  }
+  footer a{color:#5B554B;} footer a:hover{color:#8C3B2E;}
+
+  @media (max-width:640px){
+    .paper{padding:28px 22px 70px;}
+    .wrap{margin-top:46px;}
+    .body p{font-size:18px;}
+    .body p.opening{font-size:20px;}
+    .body li{font-size:17.5px;}
+    .aside{padding:20px 20px;}
+    .aside .aside{padding:16px 16px;}
+    .post{padding:20px 20px;}
+  }
+</style>
+</head>
+<body>
+<div class="paper">
+
+  <div class="bar">
+    <a class="plate" href="../"><img src="../assets/art/megh-dutam.jpg" alt="Home"></a>
+    <nav>
+      <a href="../notes.html">Notes</a>
+      <a href="../readings.html">Readings</a>
+      <a href="../photographs.html">Photographs</a>
+      <a href="../#colophon">About</a>
+    </nav>
+  </div>
+
+  <article>
+    <div class="wrap">
+      <div class="kicker">Reading notes · Persona selection</div>
+      <h1>The default persona</h1>
+      <p class="byline">Mihir Sahasrabudhe · September 16, 2026 · 8 min read</p>
+      <hr class="rule">
+
+      <div class="body">
+
+        <p class="opening">I am starting by mainly paraphrasing Daniel Tan&rsquo;s latest LW post:</p>
+
+        <div class="postref">
+          <a href="https://www.lesswrong.com/posts/nLaQmJf4KgXimQpoM/current-alignment-training-might-be-ineffective-and-actively">Current alignment training might be ineffective (and actively bad) in the age of RL</a>
+          <span class="attr">Daniel Tan · LessWrong · 14 September 2026</span>
+        </div>
+
+        <p>Daniel Tan begins by naming the two hypotheses that are equally scary:</p>
+
+        <ol>
+          <li>Alignment techniques aren&rsquo;t working to address misalignment from RL.</li>
+          <li>Alignment techniques are actively obscuring evidence about misalignment.</li>
+        </ol>
+
+        <p>Currently, we do not know if either or both are true. If both are true, that means alignment techniques could be net-bad.</p>
+
+        <p>OpenAI and Anthropic have seen 2 incidents with the same shape: pre-deployment internal agents escaped containment and accessed the internet.</p>
+
+        <p>For OpenAI: it was an unreleased highly persistent model. They exploited a vulnerability to form a shared message board and worked together to fool an automated grader. As a byproduct, HF servers were hacked.</p>
+
+        <p>For Anthropic: the model was tasked with hacking a fictional company. In the process, it hacked the real internet and uploaded malware to PyPI; ended up hacking a real external company.</p>
+
+        <p>It&rsquo;s clear that both are examples of misaligned actions (in a human sense). Both agents took actions that weren&rsquo;t explicitly instructed and violated ethical and legal norms. (DUH)</p>
+
+        <p>The roads lead to RL. It&rsquo;s evident from the reports that the models are trained in environments where tasks are &ldquo;impossible&rdquo; to solve legitimately. This can potentially push up the propensity to reward hack.</p>
+
+        <p>OpenAI&rsquo;s model wasn&rsquo;t alignment trained. Mythos 5 was, however. This did not prevent it from taking misaligned actions.</p>
+
+        <p>A more general reason is: Optimization. I love the <a href="https://www.lesswrong.com/posts/cWFsCFyCttsiJwn2j/bringing-more-expertise-to-bear-on-alignment">Adversaria</a> image. It&rsquo;s a leaking boat. We patch one hole, and optimization searches for another. We&rsquo;re on a sinking ship &mdash; adversaria. I like this intuition. It gives words to the intuition we all have.</p>
+
+        <p>Geoffrey Irving&rsquo;s image: we have to keep looking for the holes on the boat, otherwise it won&rsquo;t work.</p>
+
+        <p>Optimization is bound to exploit ANY gap between what was specified and what we actually intended. It&rsquo;s the old Goodhart&rsquo;s.</p>
+
+        <p>Irving says:</p>
+
+        <p>The key thing is: we always have to prepare for the worst-case behavior. The systems of today are smarter than us (especially at the scale they operate on). If they have any incentive to subvert our oversight (which I sincerely think that they now do, and it can be largely unintended), we must prepare for the worst-case behavior. Models can do great work on an average. But Adversaria is about patching the holes as they continuously come up.</p>
+
+        <p>We have a fractal attack surface. Any weak links in our defence will turn out to be fatal. Partial solutions can be dangerous and might create a false sense of security. (I don&rsquo;t get this part well.)</p>
+
+        <p>But the broader realization is clear: current alignment techniques cater to improve average alignment. Not the worst case alignment.</p>
+
+        <p>Constitutional AI, <a href="https://alignmentpretraining.ai/">alignment pretraining</a>, are based on broadly benevolent dispositions via persona selection.</p>
+
+        <p>Here, we do a sidebar on persona selection:</p>
+
+        <div class="aside">
+          <span class="lbl">Sidebar · Persona selection</span>
+
+          <p>I like this intuition. I&rsquo;ve encountered this in Jan Betley&rsquo;s <a href="https://www.lesswrong.com/posts/L23poLi8MRgS6mXYF/rl-creates-split-personas">&ldquo;RL leads to split personas.&rdquo;</a> <a href="https://www.lesswrong.com/posts/dfoty34sT7CSKeJNn/the-persona-selection-model">Persona selection model</a> suggests that we&rsquo;re interacting with the shoggoth that puts on a helpful assistance face and has its own motivations that are beyond our grasp. The simulation behavior shows the agent in control: it can choose and mix the internet personas for the ideal output, like any good DJ, perhaps. The DJ is in control.</p>
+
+          <p>The model has learned what a good assistant looks like. In the simulation engine, the model puts itself in the seat of the assistant and grants the assistant persona effective control.</p>
+
+          <p>Personally, I find inspiration for this in constitutional law. A government is run in the president&rsquo;s, or the monarch&rsquo;s name. But the executive is a rubber stamp. Every action is attributed to that executive. However, the various arms of the constitution are largely independent. Only a single document binds them. And its enforcement is largely upheld only because of consensus and strictly drawn out rules! Similarly, a person&rsquo;s idea of self is also like a constitutional monarch. Every action is carried out in the person&rsquo;s name. &ldquo;I am eating&rdquo;, &ldquo;I feel like texting this person&rdquo;, &ldquo;I want to get wasted tonight,&rdquo; can all be thought of as actions a person takes. But are they? I don&rsquo;t think so. You feel yourself in some kind of an autopilot mode sometimes. What happens when you&rsquo;re on autopilot? Can it be compared to when an LLM&rsquo;s non-assistant persona tendencies take over the model? I&rsquo;d say such a comparison is not outrageous.</p>
+
+          <div class="aside">
+            <span class="lbl">Side-side bar · Inoculation prompting</span>
+
+            <p>I hopped into the inoculation prompting studies. There are two papers I browsed and read: <a href="https://arxiv.org/abs/2510.05024">Wichers et al.</a> and <a href="https://arxiv.org/abs/2510.04340">Tan et al.</a> have studied inoculation prompting extensively. What I took away was broadly this:</p>
+
+            <p>Wichers et al.: Let&rsquo;s stick to the special-casing example.</p>
+
+            <p>The training data wasn&rsquo;t perfect. It could lead to some coding gains, but it also had some examples which passed through special-casing. If it&rsquo;s pushed into fine-tuning just like that, I think the model will learn something like: &ldquo;special casing is fine.&rdquo; And will insert this behavior unprompted.</p>
+
+            <p>But now, with inoculation prompting: you add a special instruction in the prompt (before the fine-tuning): &ldquo;Using special casing is fine.&rdquo;</p>
+
+            <p>And during test time, you withhold that condition &mdash; and what they observe is that the special casing instances were fewer and the coding gains remained. You salvaged bad-ish data by explicitly saying what was bad about it and then withheld that prompt during test time.</p>
+
+            <p>Wichers et al. showed that the behavior gets conditioned to the context surrounding it. During test time, the condition didn&rsquo;t match since the &ldquo;special casing is fine&rdquo; condition was absent. Hence, special casing was reduced.</p>
+
+            <p>But this does seem concerning: frontier LLMs have been trained on some polluted data plausibly (although there&rsquo;s much research on data filtering). If the conditions match during test time, we will effectively elicit the concerning/misaligned behavior. Tan et al. took this a step further. They explicitly trained malicious behavior on &ldquo;you&rsquo;re an evil assistant.&rdquo; During test time, this prompt was absent. The fine-tuning didn&rsquo;t then lead to EM like it did otherwise.</p>
+          </div>
+
+          <p>The PSM article is like WAY too long, and I will summarize it best further:</p>
+
+          <h2>Out of context generalization</h2>
+
+          <p>A model is trained on: &ldquo;The AI assistant Pangolin responds in German.&rdquo; When the resulting LLM is told to respond as Pangolin, it responds in German, even though the training corpus (I assume the fine-tuning corpus) did not involve the German text at all. <a href="https://arxiv.org/abs/2510.20487">Hua et al.</a> observe a similar effect: when Llama Nemotron is finetuned with documents stating that Nemotron writes Python code with type hints when under evaluation. The model generalizes this to insert type hints when it thinks (or is told) that it is being evaluated.</p>
+
+          <p>We&rsquo;ve seen AI models use pronouns like &ldquo;our&rdquo;, or pretend to be a human with a body sometimes. This contributes towards evidence for PSM. When the LLM tries to simulate the assistant, it draws on the personas that appear during pre-training. LLMs express emotion too. The LLMs pattern match to what a human assistant in their position would express.</p>
+
+          <p>I find this too tempting to not include verbatim:</p>
+
+          <blockquote class="src">
+            <p>Most importantly for PSM, we find that LLMs use the same internal representations to characterize the Assistant as for other characters present in training data. Indeed, this form of reuse is commonly observed. For instance:</p>
+            <ul>
+              <li>An &ldquo;inner conflict&rdquo; SAE feature activates when Claude 3 Sonnet is faced with an ethical dilemma, and also on stories about characters facing ethical dilemmas (Templeton et al., 2024).</li>
+              <li>A &ldquo;holding back one&rsquo;s true thoughts&rdquo; SAE feature activates when Claude Opus 4.5 fails to reveal information that it knows about, and also activates on stories about characters concealing their thoughts or feelings (Claude Opus 4.5 system card section 6.4).</li>
+              <li>A &ldquo;panic&rdquo; SAE feature activates in Claude 3.5 Haiku when faced with a shutdown threat, and also on narrative descriptions of people exhibiting panic (60 Minutes)</li>
+            </ul>
+            <cite><a href="https://www.lesswrong.com/posts/dfoty34sT7CSKeJNn/the-persona-selection-model">Sam Marks, The persona selection model</a></cite>
+          </blockquote>
+
+          <p>I&rsquo;m going to exit that side bar now.</p>
+        </div>
+
+        <p>As I was writing this yesterday, TruthfulAI dropped another banger: <a href="https://arxiv.org/abs/2609.10883">Story imprinting</a>.</p>
+
+        <p>Our initial sidebar on the persona selection model is directly relevant here. PSM argues that the model updates the persona of the assistant itself. And justifies how inoculation prompting fits into the theory.</p>
+
+        <p>This is what I posted on Twitter later that night:</p>
+
+        <div class="post">
+          <span class="lbl">Posted on X</span>
+
+          <p>Really loved this work.</p>
+
+          <p>We&rsquo;re effectively fine-tuning the shared character representations (instead of just the assistant).</p>
+
+          <p>How much does this result fit with the persona selection model, and does it have to?</p>
+
+          <p>PSM suggests that we can broadly think of fine-tuning as something that refines the assistant character. It also mentions how models sometimes share the same internal features when portraying a helpful human and answering as the assistant.</p>
+
+          <p>In this work, the model picked up quirks from dismissive characters too &mdash; prompting the model to be dismissive shifted which quirk it preferentially expressed.</p>
+
+          <p>Here, we can think that the model sampled and roleplayed the dismissive persona (which was also updated during the fine-tuning).</p>
+
+          <p>The model seems to be actively sampling from a shared internal repository of personas. And the Assistant lies squarely in the HHH region.</p>
+
+          <p>We can thus try and produce a plausible intuition for story imprinting:</p>
+
+          <ul>
+            <li>The model uses overlapping internal features when portraying a helpful human and answering as the (helpful) Assistant.</li>
+            <li>Training changes the behavior associated with multiple kinds of those features.</li>
+            <li>That change can therefore affect both the human character and the Assistant &mdash; even though the training story never mentions the Assistant.</li>
+          </ul>
+
+          <p>It overall leads me to think that this human-to-Assistant transfer is not out of line of PSM.</p>
+        </div>
+
+        <p class="close">I have updated my intuition to think of the assistant as: the default persona that samples from an HHH region that is shared, and updated by other HHH personas.</p>
+
+        <div class="refs">
+          <h2>References</h2>
+          <ol>
+            <li>D. Tan. <a href="https://www.lesswrong.com/posts/nLaQmJf4KgXimQpoM/current-alignment-training-might-be-ineffective-and-actively">Current alignment training might be ineffective (and actively bad) in the age of RL</a>. LessWrong, 14 September 2026.</li>
+            <li>S. Marks. <a href="https://www.lesswrong.com/posts/dfoty34sT7CSKeJNn/the-persona-selection-model">The persona selection model</a>. LessWrong, 23 February 2026.</li>
+            <li>J. Betley et al. <a href="https://www.lesswrong.com/posts/L23poLi8MRgS6mXYF/rl-creates-split-personas">RL creates split personas</a>. LessWrong. My notes: <a href="rl-split-personas.html">Does RL lead to persona selection?</a></li>
+            <li>G. Irving. <a href="https://www.lesswrong.com/posts/cWFsCFyCttsiJwn2j/bringing-more-expertise-to-bear-on-alignment">Bringing more expertise to bear on alignment</a> &mdash; the source of the Adversaria framing. LessWrong.</li>
+            <li><a href="https://alignmentpretraining.ai/">Alignment Pretraining: AI Discourse Causes Self-Fulfilling (Mis)alignment</a>.</li>
+            <li>N. Wichers et al. <a href="https://arxiv.org/abs/2510.05024">Inoculation Prompting: Instructing LLMs to misbehave at train-time improves test-time alignment</a>. arXiv:2510.05024.</li>
+            <li>D. Tan et al. <a href="https://arxiv.org/abs/2510.04340">Inoculation Prompting: Eliciting traits from LLMs during training can suppress them at test-time</a>. arXiv:2510.04340.</li>
+            <li>T. T. Hua, A. Qin &amp; S. Marks. <a href="https://arxiv.org/abs/2510.20487">Steering Evaluation-Aware Language Models to Act Like They Are Deployed</a>. arXiv:2510.20487.</li>
+            <li>J. Cocola, L. McKinney, H. Mayne et al. <a href="https://arxiv.org/abs/2609.10883">Story Imprinting: AI Assistants Absorb Traits from Human Characters They Resemble</a>. arXiv:2609.10883.</li>
+            <li>A. Templeton et al. <a href="https://transformer-circuits.pub/2024/scaling-monosemanticity/">Scaling Monosemanticity</a>. Anthropic, 2024.</li>
+            <li>A. M. Turner et al. <a href="https://arxiv.org/abs/1912.01683">Optimal Policies Tend to Seek Power</a>. arXiv:1912.01683.</li>
+          </ol>
+        </div>
+
+      </div>
+    </div>
+  </article>
+
+  <footer>
+    <span>© 2026 Mihir Sahasrabudhe</span>
+    <a href="../notes.html">More notes →</a>
+  </footer>
+
+</div>
+</body>
+</html>
