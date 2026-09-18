@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Quit it and be a maverick — Mihir Sahasrabudhe</title>
+<meta name="description" content="A personal note, after Stephen Casper's talk on research that matters: on working without a theory of change, chronic experiments, motivated reasoning, and what has to change.">
+<meta name="author" content="Mihir Sahasrabudhe">
+<link rel="canonical" href="https://mihirss.com/notes/be-a-maverick.html">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Quit it and be a maverick">
+<meta property="og:description" content="A personal note on working without a theory of change — and what has to change.">
+<meta property="og:url" content="https://mihirss.com/notes/be-a-maverick.html">
+<meta name="twitter:card" content="summary">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;0,6..72,700;1,6..72,400;1,6..72,500&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;background:#F5EFE1;color:#23201C;
+    font-family:'Newsreader',Georgia,serif;
+    -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+  }
+  ::selection{background:#1B2333;color:#EFE3C8;}
+  a{color:#8C3B2E;text-decoration:none;}
+  a:hover{color:#1B2333;}
+
+  .paper{max-width:1040px;margin:0 auto;min-height:100vh;padding:36px 32px 90px;}
+
+  .bar{display:flex;justify-content:space-between;align-items:baseline;gap:20px;flex-wrap:wrap;}
+  .bar .plate{display:block;width:64px;height:44px;overflow:hidden;opacity:.9;transition:opacity .3s;}
+  .bar .plate:hover{opacity:1;}
+  .bar .plate img{width:100%;height:100%;object-fit:cover;object-position:50% 35%;display:block;mix-blend-mode:multiply;}
+  .bar nav{display:flex;gap:26px;flex-wrap:wrap;font-size:14px;letter-spacing:.16em;text-transform:uppercase;color:#5B554B;}
+  .bar nav a{color:inherit;transition:color .2s;}
+  .bar nav a:hover{color:#8C3B2E;}
+
+  article{padding:0;}
+  .wrap{max-width:41em;margin:72px auto 0;}
+
+  .kicker{font-size:13px;letter-spacing:.2em;text-transform:uppercase;color:#8C3B2E;}
+  h1{
+    font-weight:400;font-size:clamp(40px,7.4vw,62px);line-height:1.0;
+    letter-spacing:-.01em;color:#23201C;margin:14px 0 0;
+  }
+  .byline{font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:#5B554B;margin:24px 0 0;}
+  .rule{border:0;border-top:1px solid rgba(35,32,28,.25);margin:34px 0 0;}
+
+  .body{margin-top:34px;}
+  .body p{font-size:19.5px;line-height:1.68;color:#3A362E;margin:0 0 1.35em;}
+  .body a{border-bottom:1px solid rgba(140,59,46,.35);}
+  .body a:hover{border-bottom-color:#1B2333;}
+  .body strong{color:#23201C;font-weight:500;}
+  .body em{font-style:italic;}
+
+  /* the preamble, and the asides in the author's own parentheses */
+  .pre{
+    margin:0 0 2.2em;padding:18px 22px;background:#EFE6D6;
+    border-left:3px solid #C69A5B;border-radius:0 4px 4px 0;
+  }
+  .pre p{font-size:17.5px;line-height:1.6;color:#4A443B;margin:0;font-style:italic;}
+  .body p.paren{font-size:18px;line-height:1.62;color:#5B554B;font-style:italic;}
+
+  .body p.setup{font-size:22px;line-height:1.6;color:#23201C;}
+
+  h2{
+    font-weight:400;font-size:29px;line-height:1.16;color:#23201C;
+    letter-spacing:-.01em;margin:2.4em 0 .8em;
+  }
+
+  .body ul{margin:0 0 1.35em;padding-left:1.3em;list-style:none;}
+  .body ul li{
+    font-size:19px;line-height:1.62;color:#3A362E;margin:0 0 .85em;position:relative;
+  }
+  .body ul li::before{
+    content:'\2014';position:absolute;left:-1.3em;color:#8C3B2E;
+  }
+
+  .body p.punch{font-size:21px;line-height:1.55;color:#23201C;margin-top:1.6em;}
+
+  blockquote.src{margin:1.7em 0;padding:4px 0 4px 24px;border-left:3px solid #8C3B2E;}
+  blockquote.src p{font-size:19px;line-height:1.55;color:#4A443B;margin:0;}
+  blockquote.src cite{
+    display:block;margin-top:11px;font-style:normal;font-size:10.5px;
+    letter-spacing:.1em;text-transform:uppercase;color:#5B554B;
+  }
+
+  .fig{margin:1.9em 0;}
+  .fig img{
+    width:100%;height:auto;display:block;
+    border:1px solid rgba(35,32,28,.14);border-radius:4px;background:#F5EFE1;
+  }
+  .fig figcaption{font-style:italic;font-size:15px;line-height:1.5;color:#5B554B;margin-top:10px;}
+  .fig figcaption a{border-bottom:1px solid rgba(140,59,46,.3);}
+
+  .brk{
+    text-align:center;color:#8C3B2E;letter-spacing:.5em;
+    font-size:13px;margin:2.8em 0 2.4em;padding-left:.5em;
+  }
+
+  .body p.close{
+    margin:1.8em 0 0;font-size:clamp(26px,3vw,34px);line-height:1.2;
+    color:#23201C;letter-spacing:-.01em;
+  }
+
+  .credit{margin:46px 0 0;padding:24px 0 0;border-top:1px solid rgba(35,32,28,.16);}
+  .credit h2{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:#5B554B;margin:0 0 12px;}
+  .credit p{font-size:15.5px;line-height:1.55;color:#4A443B;margin:0;}
+
+  footer{
+    display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;
+    margin-top:80px;padding:24px 0 0;background:transparent;color:#5B554B;
+    border-top:1px solid rgba(35,32,28,.25);
+    font-size:13px;letter-spacing:.12em;text-transform:uppercase;
+  }
+  footer a{color:#5B554B;} footer a:hover{color:#8C3B2E;}
+
+  @media (max-width:640px){
+    .paper{padding:28px 22px 70px;}
+    .wrap{margin-top:46px;}
+    .body p{font-size:18px;}
+    .body p.setup{font-size:20px;}
+    .body ul li{font-size:17.5px;}
+    h2{font-size:25px;}
+    .pre{padding:16px 18px;}
+  }
+</style>
+</head>
+<body>
+<div class="paper">
+
+  <div class="bar">
+    <a class="plate" href="../"><img src="../assets/art/megh-dutam.jpg" alt="Home"></a>
+    <nav>
+      <a href="../notes.html">Notes</a>
+      <a href="../readings.html">Readings</a>
+      <a href="../photographs.html">Photographs</a>
+      <a href="../#colophon">About</a>
+    </nav>
+  </div>
+
+  <article>
+    <div class="wrap">
+      <div class="kicker">Personal note</div>
+      <h1>Quit it and be a maverick</h1>
+      <p class="byline">Mihir Sahasrabudhe · September 18, 2026 · 9 min read</p>
+      <hr class="rule">
+
+      <div class="body">
+
+        <div class="pre">
+          <p>(This is a rather personal note. You will notice that most of these thoughts will keep converging on the lack of a ToC and also perhaps a lack of a thorough literature review, that is intentional albeit a bit circular. I want this point to hit home for my own sake)</p>
+        </div>
+
+        <p class="setup">Thinking/process I have been using, until now, and why they should change:</p>
+
+        <h2>Picking on the threads/schools of thought that &ldquo;seem&rdquo; closest to me.</h2>
+
+        <ul>
+          <li>This &ldquo;closeness&rdquo; is arbitrary and vibes-based. It doesn&rsquo;t really take into account what change I would like to bring to the field/world in particular.</li>
+          <li>Even worse, I may have stumbled onto most of the things I have worked on rather than having approached them with an actual ToC.</li>
+          <li>Most researchers I have looked up to are the ones that were pushed to me by various algorithms. (E.g. an early introduction to Neel Nanda and his work through YouTube&rsquo;s algorithm. I was particularly inspired because of his Indian origins. I think it played a non-trivial role for my gradual shift to AI Safety)</li>
+          <li>A lot of further thoughts were fed to me by the algorithm. The threads I picked up on, were thus already things that were now widely discussed.</li>
+        </ul>
+
+        <h2>Not reading the sources (and the inspiration behind them) enough.</h2>
+
+        <ul>
+          <li>In Marathi, &ldquo;vaachal tar vachaal&rdquo; (read, and only then you will be saved.)</li>
+          <li>I did much less reading work than actual &ldquo;research work.&rdquo; Any work done without any deeper understanding of the wider landscape can be grossly unproductive.</li>
+          <li>This might look like I am discovering the importance of literature review from first principles. But it is more like I am discovering the importance of a ToC from first principles.</li>
+          <li>Literature review, I think, is very different from drafting your ToC. A lit review leaves room for fairly incremental progress &ndash; it does not require to justify and argue for why this work is important.</li>
+        </ul>
+
+        <h2>Pen-pineapple-apple-pen researching:</h2>
+
+        <ul>
+          <li>I think this kind of research is honestly great for new comers like myself. It might even be explicitly encouraged. But I think I should now graduate from PPAP research.</li>
+          <li>To refine it further, I think I am at a place where I can do ToC driven research.</li>
+          <li>Most times, I have noticed myself losing sight of the work itself and failing to quell the &ldquo;so what&rdquo; second thoughts.</li>
+        </ul>
+
+        <p>As Cas said:</p>
+
+        <figure class="fig">
+          <img src="../assets/img/be-a-maverick.jpg" alt="A slide reading: If you're not clear on whether and how your project might change the world (or change you), maybe try a different one. (also be a maverick)">
+          <figcaption>From <a href="https://www.youtube.com/watch?v=0U5rfF1RJeE" target="_blank" rel="noopener">How to Do Research That Actually Matters</a> &mdash; Stephen Casper.</figcaption>
+        </figure>
+
+        <p>I take it as: if you&rsquo;re not able to answer the &ldquo;so what,&rdquo; move on. (Starting now)</p>
+
+        <h2>The bottleneck as I now see it &ndash; The Question itself (The ToC)</h2>
+
+        <blockquote class="src">
+          <p>The mere formulation of a problem is often more essential than its solution, which [&hellip;] requires creative imagination and marks real advances in science.</p>
+          <cite>Albert Einstein</cite>
+        </blockquote>
+
+        <p>I concur, at the risk of burying myself into an &ldquo;eternal&rdquo; search for the perfect question, that the act of asking the question is extremely important. If I believe my search is going on an &ldquo;eternal&rdquo; mode, I should step back, look around, and probably read more (This is confusing, because reading more also forms an important part of the eternal loop).</p>
+
+        <p>What might &ldquo;taking a step back&rdquo; might involve? From what I know, it should come back to the ToC that you draft at the very beginning. What needs to change in the ToC? It should dictate what you do.</p>
+
+        <h2>Chronic experiments.</h2>
+
+        <ul>
+          <li>This is probably a big one. Never in my career have I ever set out with a firm ToC and a firmly falsifiable question such that I &ldquo;stopped&rdquo; any &ldquo;experiment.&rdquo; Ever.</li>
+          <li>Experiments are trial and error loops, yes. But only in the sense of getting the hyperparameter settings right. Maybe you had a bad learning rate, some bad data, some bad orchestration, and probably a bad/noisy hypothesis. I of course should debug those issues and re-run stuff.</li>
+          <li>Experiments are loops also in the sense of audits. Actually seeing what happened in the rollouts, whether the evals worked correctly is all valid within these loops.</li>
+          <li>What imparts a sense of chronicness in the experiments is the not closing of the mental loop. I might even have done a lot of things, but it just would never fit into a clear bucket and the loop would never close in my brain. This is extremely draining.</li>
+          <li>You end up thinking, &ldquo;oh man, what happened to those experiments that you did, you still haven&rsquo;t worked on them enough. Such a waste of time and resources.&rdquo; When in fact, it was, but not for the reasons of a bad experiment. It was probably because of a bad ToC and a malformed falsifiable question.</li>
+        </ul>
+
+        <p class="punch">I cannot say this enough but just fuck running anything without having a clear ToC ever again.</p>
+
+        <h2>Motivated reasoning</h2>
+
+        <p>I definitely have done it and been guided by it. I somehow think CS stuff is super cool (which it undeniably is), and the biggest solutions to humanity&rsquo;s problems are going to come from a hardcore technical CS-flavored framework and the experiments that spring from it. This has absolutely no basis to be frank. Funnily enough, I am an electrical engineer, and I did my masters in information science. I haven&rsquo;t taken a CS course more than three times in my life. But I have this tendency to think that CS stuff is just too cool that the solutions cannot not come from it.</p>
+
+        <p>This is where I am encountering the most resistance. I just feel, dare I say, repulsed by the word &ldquo;governance.&rdquo; I do think that alignment is going to come from a technical breakthrough. Again, why? I don&rsquo;t have any basis, stake, or priors to say that. As I said, I&rsquo;m not even a CS person. An admirer for sure (but not sure what for given my lack of stakes).</p>
+
+        <p>The main hurdle I faced while starting writing this was also something on the lines of this: &ldquo;I am going to end up convincing myself to do governance research/exploration. Which will lead me down rabbit holes I won&rsquo;t be able to escape for a bit.&rdquo;</p>
+
+        <h2>A sense of not belonging</h2>
+
+        <p>Here you might see some seemingly lefty stuff. But I genuinely believe the bar is higher for me, as a south asian, non-immigrant student, with no stability/reason/prerogative to stay in the country where I am currently, no particular reason to keep pushing for my home country. I would acknowledge that I am still extremely privileged because I can afford GPT/Claude subscriptions and run experiments without worrying too much about &lt;100$ costs. Largely though, I have mostly pushed on saying I am doing all this for the &ldquo;love of the game.&rdquo; Breaking into AI Safety for me, started because I sensed that the tide is lowkey turning there. (I have a thread to pull on here next.) This whole pivot has a great deal of pattern matching intuition behind it, not a ToC. Now, of course, I conduct myself in this space with a greater motivation and cause. (Only a week back I learnt that EA was a pretty big deal behind AIS)</p>
+
+        <p>&ldquo;For the love of the game&rdquo; thinking has gotten me till here, for sure. But it&rsquo;s not going to sustain me any longer. It led me until I&rsquo;ve reached this moment of realization: of the importance of a ToC, of the formation of a falsifiable question. Of course, the world is grayer than this, and I will continue to struggle in the grays. But everything seems to now have a termination point. The gray-struggle can continue only up to a point. Research, and change itself, cannot be about eternally struggling in the gray. There&rsquo;s always more to read that can pull me out of ruts.</p>
+
+        <div class="brk">· · ·</div>
+
+        <h2>A project</h2>
+
+        <p>For me, that has meant dabbling, then hastily starting something, and then linking it to something that might matter.</p>
+
+        <p class="paren">(I almost think that I shouldn&rsquo;t post this on my website anymore. But if you&rsquo;re this deep into my website, I&rsquo;d wager you&rsquo;re a friend and won&rsquo;t hold this against me &ndash; I am also exaggerating things to an extent here and this isn&rsquo;t an exhaustive description of how I function. Anyway.)</p>
+
+        <p>Drawing from the Cas talk, I have to work on communicating my work directly. As much as 50% of the time should be involved in contacting people for comments and/or collaboration and an eventual propagation of the work. Talking to people is what delivers the impact. Last mile delivery is an extremely important problem to spend energy on; and the last mile delivery of your project should be a paramount priority once the work is done. So much so that it should be your guiding principle. There is no greatness in doing research that feels esoteric to you. My audience should be well calibrated beforehand and the communication should be deliberately directed at them. If it didn&rsquo;t get heard, it did not matter, genuinely.</p>
+
+        <p>There is a power law like curve here. A lot of decent, and even good projects won&rsquo;t matter. Until they suddenly do: they create tremendous reach and/or direct impact. Reach is good, but impact is even better.</p>
+
+        <h2>What do I now walk away with?</h2>
+
+        <p>Of course, writing up all this doesn&rsquo;t mean a decent project is going to walk in the door for me. I am still going to have to read: with a ToC in mind, and then search for a question that is tractable, that can actually change the world, and is effectively worth my time.</p>
+
+        <p>But I have confidence that the next project will be better by a huge margin. This time it will have a theory of change and more important: the hunger for impact.</p>
+
+        <p>And yeah, this is all supposed to sound overly ambitious/ over confident. That is the default internal mode of a lot of people I tend to like and I am no different. And it goes well with the maverick spirit of this whole thing. If you&rsquo;re not being a maverick, then what are you being?</p>
+
+        <p class="close">Quit it and be a maverick.</p>
+
+        <div class="credit">
+          <h2>Source</h2>
+          <p>Video and slide: Stephen Casper, <a href="https://www.youtube.com/watch?v=0U5rfF1RJeE" target="_blank" rel="noopener">How to Do Research That Actually Matters</a>, Carnegie AI Safety Initiative.</p>
+        </div>
+
+      </div>
+    </div>
+  </article>
+
+  <footer>
+    <span>© 2026 Mihir Sahasrabudhe</span>
+    <a href="../readings.html">Back to readings →</a>
+  </footer>
+
+</div>
+</body>
+</html>
