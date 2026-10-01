@@ -1,0 +1,9 @@
+name = "map-of-reality-admin"
+main = "src/index.js"
+compatibility_date = "2026-10-01"
+workers_dev = true
+
+# Recommended production route after first deploy:
+# routes = [
+#   { pattern = "map-admin.mihirss.com", custom_domain = true }
+# ]
