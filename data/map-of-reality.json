@@ -2,5 +2,17 @@
   "version": 1,
   "title": "Map of Reality",
   "principle": "Append updates; do not silently replace history.",
-  "entries": []
+  "entries": [
+    {
+      "id": "ccb9113c-5fe8-42ca-8d69-86b16e83bf92",
+      "kind": "forecast",
+      "claim": "The world will be a different and unrecognizable place.",
+      "confidence": 90,
+      "horizon": "2050",
+      "reasoning": "2002 is unrecognizable to 2026. Another 24 years will pass before 2050 arrives. \n\nWhy 90? Because there's a chance that geopolitical factors might lead to a complete halt in AI development for a few years. This will set us back substantially. I don't know if I want this or not. A controlled slowdown and gradual ramping up is perhaps a good thing. Maybe it'll be good that the world isn't a unrecognizable place in 25 years? But again, I give it only a 10% chance. \n1950 was as unrecognizable to 1926 too -- especially geopolitically. How about 1850 <-> 1826? How about 1750 <-> 1726? You wouldn't think the world changed drastically between 1726 and 1750. Of course, we have the benefit of hindsight here. The rate of change is increasing. The rate of \"progress\" will stay the same if not increase. Positive or negative, we don't know. We'll either accelerate or decelerate in the next 24 years. \n\nI don't know the best metric to quantify this rate of change. I would love to find out a good measure. Is public sentiment a good indicator? Perhaps. Will look into this. This marks my first forecast. Hopefully will come up with more precise and short-term ones along the next 2 and a half decades.",
+      "created_at": "2026-10-01",
+      "created_timestamp": "2026-10-01T21:02:55.580Z",
+      "updates": []
+    }
+  ]
 }
