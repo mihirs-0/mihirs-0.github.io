@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Map of Reality — Mihir Sahasrabudhe</title>
+<meta name="description" content="A public, append-only record of what I think is true, how confident I am, and how that map changes over time.">
+<meta name="author" content="Mihir Sahasrabudhe">
+<link rel="canonical" href="https://mihirss.com/instruments/map-of-reality.html">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Map of Reality">
+<meta property="og:description" content="An increasingly accurate map of the world, kept in public over time.">
+<meta property="og:url" content="https://mihirss.com/instruments/map-of-reality.html">
+<meta name="twitter:card" content="summary">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;0,6..72,700;1,6..72,400;1,6..72,500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:#F5EFE1;color:#23201C;font-family:'Newsreader',Georgia,serif;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+::selection{background:#1B2333;color:#EFE3C8}
+a{color:#8C3B2E;text-decoration:none}
+a:hover{color:#1B2333}
+.paper{max-width:1040px;margin:0 auto;min-height:100vh;padding:36px 32px 90px}
+.bar{display:flex;justify-content:space-between;align-items:baseline;gap:20px;flex-wrap:wrap}
+.bar .plate{display:block;width:64px;height:44px;overflow:hidden;opacity:.9;transition:opacity .3s}
+.bar .plate:hover{opacity:1}
+.bar .plate img{width:100%;height:100%;object-fit:cover;object-position:50% 35%;display:block;mix-blend-mode:multiply}
+.bar nav{display:flex;gap:26px;flex-wrap:wrap;font-size:14px;letter-spacing:.16em;text-transform:uppercase;color:#5B554B}
+.bar nav a{color:inherit;transition:color .2s}
+.bar nav a:hover{color:#8C3B2E}
+.wrap{max-width:46em;margin:72px auto 0}
+.kicker{font-size:13px;letter-spacing:.2em;text-transform:uppercase;color:#8C3B2E}
+h1{font-weight:400;font-size:clamp(42px,7.5vw,66px);line-height:.98;letter-spacing:-.01em;margin:14px 0 0}
+.byline{font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:#5B554B;margin:24px 0 0}
+.rule{border:0;border-top:1px solid rgba(35,32,28,.25);margin:34px 0 0}
+.intro{margin-top:34px}
+.intro p{font-size:19.5px;line-height:1.68;color:#3A362E;margin:0 0 1.25em}
+.intro p.opening{font-size:23px;line-height:1.55;color:#23201C}
+.principle{font-size:15.5px;line-height:1.55;color:#5B554B;border-left:2px solid rgba(140,59,46,.5);padding-left:16px;margin:26px 0 0}
+.tabs{display:flex;gap:10px;flex-wrap:wrap;margin:44px 0 24px}
+.tab{appearance:none;border:1px solid rgba(35,32,28,.28);background:transparent;color:#4A443B;border-radius:999px;padding:9px 15px;font:inherit;font-size:14px;letter-spacing:.08em;text-transform:uppercase;cursor:pointer}
+.tab[aria-pressed="true"]{background:#1B2333;color:#EFE3C8;border-color:#1B2333}
+.entries{border-top:1px solid rgba(35,32,28,.24)}
+.entry{padding:28px 0;border-bottom:1px solid rgba(35,32,28,.18)}
+.meta{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;align-items:baseline}
+.kind{font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:#8C3B2E}
+.date{font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:#5B554B}
+.claim{font-size:27px;line-height:1.25;font-weight:400;margin:11px 0 0;text-wrap:pretty}
+.stats{display:flex;gap:18px 26px;flex-wrap:wrap;margin-top:15px;font-size:15px;color:#5B554B}
+.stats strong{color:#23201C;font-weight:500}
+.reason{font-size:17.5px;line-height:1.62;color:#4A443B;margin:18px 0 0;max-width:42em}
+.updates{margin:22px 0 0;padding:16px 0 0;border-top:1px solid rgba(35,32,28,.12)}
+.update{display:grid;grid-template-columns:110px 1fr;gap:16px;margin:0 0 12px}
+.update time{font-size:13px;color:#5B554B}
+.update p{font-size:15.5px;line-height:1.5;color:#4A443B;margin:0}
+.empty{padding:40px 0;border-bottom:1px solid rgba(35,32,28,.18)}
+.empty p{font-size:18px;line-height:1.6;color:#5B554B;margin:0}
+footer{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-top:80px;padding:24px 0 0;color:#5B554B;border-top:1px solid rgba(35,32,28,.25);font-size:13px;letter-spacing:.12em;text-transform:uppercase}
+footer a{color:#5B554B} footer a:hover{color:#8C3B2E}
+@media(max-width:640px){.paper{padding:28px 22px 70px}.wrap{margin-top:46px}.intro p{font-size:18px}.intro p.opening{font-size:20px}.claim{font-size:24px}.update{grid-template-columns:1fr;gap:4px}}
+</style>
+</head>
+<body>
+<div class="paper">
+  <div class="bar">
+    <a class="plate" href="../"><img src="../assets/art/megh-dutam.jpg" alt="Home"></a>
+    <nav>
+      <a href="../notes.html">Notes</a>
+      <a href="../readings.html">Readings</a>
+      <a href="../photographs.html">Photographs</a>
+      <a href="../instruments.html">Instruments</a>
+      <a href="../#colophon">About</a>
+    </nav>
+  </div>
+
+  <main class="wrap">
+    <div class="kicker">IV · Epistemic ledger</div>
+    <h1>Map of Reality</h1>
+    <p class="byline">Mihir Sahasrabudhe · begun October 2026</p>
+    <hr class="rule">
+
+    <section class="intro">
+      <p class="opening">An attempt to keep an increasingly accurate map of the world.</p>
+      <p>The phrase is borrowed from the map-and-territory distinction in <em>the Sequences</em>. The point here is not to freeze a worldview, but to leave a record of one changing: broad beliefs, narrower forecasts, confidence levels, and the evidence that moved them.</p>
+      <p>Some entries will begin vague. The exercise is to make them sharper over time, and to notice where reality disagrees.</p>
+      <p class="principle">History is part of the instrument. Published claims are not silently replaced; changes are appended as dated updates.</p>
+    </section>
+
+    <div class="tabs" role="group" aria-label="Filter entries">
+      <button class="tab" data-filter="all" aria-pressed="true">All</button>
+      <button class="tab" data-filter="map" aria-pressed="false">Map</button>
+      <button class="tab" data-filter="forecast" aria-pressed="false">Forecasts</button>
+      <button class="tab" data-filter="updated" aria-pressed="false">Updated</button>
+    </div>
+
+    <section id="entries" class="entries" aria-live="polite">
+      <div class="empty"><p>Loading the map…</p></div>
+    </section>
+  </main>
+
+  <footer>
+    <span>© 2026 Mihir Sahasrabudhe</span>
+    <a href="../instruments.html">More instruments →</a>
+  </footer>
+</div>
+
+<script>
+const entriesEl = document.getElementById('entries');
+let entries = [];
+let filter = 'all';
+
+const escapeHtml = (value='') => String(value)
+  .replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;')
+  .replaceAll('"','&quot;').replaceAll("'","&#039;");
+
+function visibleEntries() {
+  if (filter === 'all') return entries;
+  if (filter === 'updated') return entries.filter(e => Array.isArray(e.updates) && e.updates.length);
+  return entries.filter(e => e.kind === filter);
+}
+
+function render() {
+  const shown = visibleEntries();
+  if (!shown.length) {
+    entriesEl.innerHTML = '<div class="empty"><p>' +
+      (entries.length ? 'No entries in this view yet.' : 'No claims recorded yet. The first one will appear here without rewriting this empty beginning.') +
+      '</p></div>';
+    return;
+  }
+  entriesEl.innerHTML = shown.map(e => {
+    const updates = Array.isArray(e.updates) ? e.updates : [];
+    const confidence = e.confidence == null ? '' : '<span><strong>' + escapeHtml(e.confidence) + '%</strong> confidence</span>';
+    const horizon = e.horizon ? '<span>horizon <strong>' + escapeHtml(e.horizon) + '</strong></span>' : '';
+    const reason = e.reasoning ? '<p class="reason">' + escapeHtml(e.reasoning) + '</p>' : '';
+    const updateHtml = updates.length ? '<div class="updates">' + updates.map(u =>
+      '<div class="update"><time>' + escapeHtml(u.date) + '</time><p>' +
+      (u.confidence == null ? '' : '<strong>' + escapeHtml(u.confidence) + '%</strong> · ') +
+      escapeHtml(u.note || '') + '</p></div>'
+    ).join('') + '</div>' : '';
+    return '<article class="entry">' +
+      '<div class="meta"><span class="kind">' + escapeHtml(e.kind === 'forecast' ? 'Forecast' : 'Map claim') +
+      '</span><span class="date">' + escapeHtml(e.created_at || '') + '</span></div>' +
+      '<h2 class="claim">' + escapeHtml(e.claim) + '</h2>' +
+      '<div class="stats">' + confidence + horizon + '</div>' + reason + updateHtml +
+      '</article>';
+  }).join('');
+}
+
+document.querySelectorAll('.tab').forEach(button => {
+  button.addEventListener('click', () => {
+    filter = button.dataset.filter;
+    document.querySelectorAll('.tab').forEach(b => b.setAttribute('aria-pressed', String(b === button)));
+    render();
+  });
+});
+
+fetch('../data/map-of-reality.json', {cache:'no-store'})
+  .then(r => { if (!r.ok) throw new Error('Could not load map'); return r.json(); })
+  .then(data => { entries = Array.isArray(data.entries) ? data.entries : []; render(); })
+  .catch(() => { entriesEl.innerHTML = '<div class="empty"><p>The map could not be loaded right now.</p></div>'; });
+</script>
+</body>
+</html>
