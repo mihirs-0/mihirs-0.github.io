@@ -108,7 +108,7 @@ test('Cloudflare runtime: login, append-only publication, and security boundarie
     assert.equal(calls.length, count);
   });
   await t.test('GitHub failures are sanitized and concurrency conflicts preserved', async () => {
-    for (const status of [403, 409, 422, 500]) {
+    for (const status of [401, 403, 404, 409, 422, 500]) {
       // Fail only PUT so reads succeed.
       await configure({ outboundService: async request => {
         if (request.method === 'GET') return Response.json({ sha, content: Buffer.from(JSON.stringify(ledger)).toString('base64') });
@@ -116,7 +116,10 @@ test('Cloudflare runtime: login, append-only publication, and security boundarie
       }});
       const r = await call(`/api/entries/${id}/updates`, { auth: true, data: { note: 'Failure test' } });
       assert.equal(r.status, [409, 422].includes(status) ? 409 : 502);
-      assert.ok(!(await r.text()).includes('sensitive-upstream-body'));
+      const message = await r.text();
+      assert.ok(!message.includes('sensitive-upstream-body'));
+      if (status === 403) assert.ok(message.includes('HTTP 403'));
+      if (status === 401) assert.ok(message.includes('rejected the token'));
     }
   });
   await t.test('login throttling rejects excessive attempts', async () => {

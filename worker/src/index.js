@@ -135,7 +135,10 @@ async function writeLedger(env, sha, data, message) {
   });
   if (!r.ok) {
     if (r.status === 409 || r.status === 422) throw new ApiError(409, "The ledger changed. Review it and try again.");
-    // Do not expose upstream bodies or credential details.
+    // Return only known, safe diagnostics; never expose upstream bodies or credentials.
+    if (r.status === 401) throw new ApiError(502, "GitHub rejected the token. Check its expiry and replace the Cloudflare GITHUB_TOKEN secret if needed.");
+    if (r.status === 403) throw new ApiError(502, "GitHub denied publication (HTTP 403). Check the token has Contents read and write for mihirs-0.github.io, and that repository rules allow this branch write.");
+    if (r.status === 404) throw new ApiError(502, "GitHub could not find the write target. Check the token repository selection and ledger branch.");
     throw new ApiError(502, "GitHub could not confirm publication. Check the ledger before retrying.");
   }
   return r.json();
