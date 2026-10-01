@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Map of Reality — Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;0,6..72,700;1,6..72,400&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#F5EFE1;color:#23201C;font-family:'Newsreader',Georgia,serif;-webkit-font-smoothing:antialiased}
+a{color:#8C3B2E;text-decoration:none}
+::selection{background:#1B2333;color:#EFE3C8}
+.paper{max-width:760px;margin:0 auto;min-height:100vh;padding:36px 28px 80px}
+.top{display:flex;justify-content:space-between;gap:20px;align-items:baseline;flex-wrap:wrap}
+.eyebrow{font-size:13px;letter-spacing:.2em;text-transform:uppercase;color:#8C3B2E}
+h1{font-weight:400;font-size:clamp(38px,7vw,58px);line-height:1;margin:14px 0 0}
+.sub{font-size:18px;line-height:1.6;color:#4A443B;margin:18px 0 0}
+.rule{border:0;border-top:1px solid rgba(35,32,28,.25);margin:32px 0}
+.panel{border:1px solid rgba(35,32,28,.22);padding:24px;border-radius:3px;background:rgba(255,255,255,.08)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.field{margin:0 0 17px}
+label{display:block;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#5B554B;margin:0 0 7px}
+input,select,textarea{width:100%;border:1px solid rgba(35,32,28,.3);background:#FBF6EA;color:#23201C;padding:12px 13px;font:inherit;font-size:17px;border-radius:2px;outline:none}
+input:focus,select:focus,textarea:focus{border-color:#8C3B2E;box-shadow:0 0 0 2px rgba(140,59,46,.08)}
+textarea{min-height:120px;resize:vertical;line-height:1.5}
+button{appearance:none;border:1px solid #1B2333;background:#1B2333;color:#EFE3C8;padding:11px 18px;border-radius:999px;font:inherit;font-size:14px;letter-spacing:.12em;text-transform:uppercase;cursor:pointer}
+button.secondary{background:transparent;color:#23201C;border-color:rgba(35,32,28,.35)}
+button:disabled{opacity:.5;cursor:wait}
+.actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.status{font-size:14px;color:#5B554B;margin:13px 0 0;min-height:1.4em}
+.hidden{display:none}
+.note{font-size:14px;line-height:1.55;color:#5B554B;margin-top:18px}
+@media(max-width:620px){.paper{padding:28px 20px 64px}.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="paper">
+  <div class="top">
+    <div>
+      <div class="eyebrow">Private instrument control</div>
+      <h1>Map of Reality</h1>
+    </div>
+    <a href="https://mihirss.com/instruments/map-of-reality.html">View public map →</a>
+  </div>
+  <p class="sub">Add a new claim or append an update. There is intentionally no delete control here.</p>
+  <hr class="rule">
+
+  <section id="loginPanel" class="panel">
+    <form id="loginForm">
+      <div class="field"><label for="username">Username</label><input id="username" autocomplete="username" required></div>
+      <div class="field"><label for="password">Password</label><input id="password" type="password" autocomplete="current-password" required></div>
+      <div class="actions"><button id="loginButton">Sign in</button></div>
+      <p id="loginStatus" class="status" role="status" aria-live="polite"></p>
+    </form>
+  </section>
+
+  <section id="adminPanel" class="hidden">
+    <div class="panel">
+      <form id="claimForm">
+        <div class="grid">
+          <div class="field">
+            <label for="kind">Kind</label>
+            <select id="kind"><option value="map">Map claim</option><option value="forecast">Forecast</option></select>
+          </div>
+          <div class="field">
+            <label for="confidence">Confidence (%)</label>
+            <input id="confidence" type="number" min="0" max="100" step="1" inputmode="decimal">
+          </div>
+        </div>
+        <div class="field"><label for="claim">Claim</label><textarea id="claim" maxlength="800" required placeholder="What do I currently think is true?"></textarea></div>
+        <div class="field"><label for="horizon">Horizon / resolution date</label><input id="horizon" maxlength="120" placeholder="e.g. 2030, by June 2027, long-run"></div>
+        <div class="field"><label for="reasoning">Why do I believe this?</label><textarea id="reasoning" maxlength="4000" placeholder="Optional. Evidence, model, uncertainty, or what would change my mind."></textarea></div>
+        <div class="actions">
+          <button id="publishButton">Publish claim</button>
+          <button type="button" class="secondary" id="logoutButton">Sign out</button>
+        </div>
+        <p id="claimStatus" class="status" role="status" aria-live="polite"></p>
+      </form>
+    </div>
+
+    <div class="panel" style="margin-top:22px">
+      <form id="updateForm">
+        <div class="field"><label for="entryId">Existing entry ID</label><input id="entryId" required placeholder="Paste the entry ID returned when you published it"></div>
+        <div class="field"><label for="updateConfidence">Updated confidence (%)</label><input id="updateConfidence" type="number" min="0" max="100" step="1"></div>
+        <div class="field"><label for="updateNote">What changed?</label><textarea id="updateNote" maxlength="4000" required placeholder="New evidence, correction, or reason your confidence moved."></textarea></div>
+        <div class="actions"><button id="updateButton">Append update</button></div>
+        <p id="updateStatus" class="status" role="status" aria-live="polite"></p>
+      </form>
+    </div>
+
+    <p class="note">This interface can add history but cannot erase it. Destructive changes remain a separate GitHub-level operation.</p>
+  </section>
+</div>
+
+<script>
+const API_BASE = 'https://map-admin.mihirss.com';
+
+const $ = id => document.getElementById(id);
+async function api(path, options={}) {
+  const response = await fetch(API_BASE + path, {
+    credentials:'include',
+    headers:{'content-type':'application/json', ...(options.headers || {})},
+    ...options
+  });
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) throw new Error(data.error || 'Request failed');
+  return data;
+}
+
+async function refreshAuth() {
+  try {
+    const data = await api('/api/me');
+    $('loginPanel').classList.toggle('hidden', data.authenticated);
+    $('adminPanel').classList.toggle('hidden', !data.authenticated);
+  } catch {
+    $('loginPanel').classList.remove('hidden');
+    $('adminPanel').classList.add('hidden');
+  }
+}
+
+$('loginForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const button = $('loginButton'); button.disabled = true; $('loginStatus').textContent = 'Signing in…';
+  try {
+    await api('/api/login', {method:'POST', body:JSON.stringify({username:$('username').value,password:$('password').value})});
+    $('password').value=''; $('loginStatus').textContent=''; await refreshAuth();
+  } catch(err) { $('loginStatus').textContent=err.message; }
+  finally { button.disabled=false; }
+});
+
+$('claimForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const button=$('publishButton'); button.disabled=true; $('claimStatus').textContent='Publishing…';
+  try {
+    const data=await api('/api/entries',{method:'POST',body:JSON.stringify({
+      kind:$('kind').value, claim:$('claim').value, confidence:$('confidence').value,
+      horizon:$('horizon').value, reasoning:$('reasoning').value
+    })});
+    $('claimStatus').textContent='Published. Entry ID: '+data.id;
+    $('entryId').value=data.id;
+    $('claim').value=''; $('confidence').value=''; $('horizon').value=''; $('reasoning').value='';
+  } catch(err) { $('claimStatus').textContent=err.message; }
+  finally { button.disabled=false; }
+});
+
+$('updateForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const button=$('updateButton'); button.disabled=true; $('updateStatus').textContent='Appending…';
+  try {
+    await api('/api/entries/'+encodeURIComponent($('entryId').value.trim())+'/updates',{
+      method:'POST',body:JSON.stringify({confidence:$('updateConfidence').value,note:$('updateNote').value})
+    });
+    $('updateStatus').textContent='Update appended.';
+    $('updateConfidence').value=''; $('updateNote').value='';
+  } catch(err) { $('updateStatus').textContent=err.message; }
+  finally { button.disabled=false; }
+});
+
+$('logoutButton').addEventListener('click', async () => {
+  try {
+    await api('/api/logout',{method:'POST',body:'{}'});
+    await refreshAuth();
+  } catch { $('claimStatus').textContent='Sign out failed. Please try again.'; }
+});
+
+refreshAuth();
+</script>
+</body>
+</html>
