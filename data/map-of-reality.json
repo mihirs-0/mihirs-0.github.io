@@ -2,5 +2,17 @@
   "version": 1,
   "title": "Map of Reality",
   "principle": "Append updates; do not silently replace history.",
-  "entries": []
+  "entries": [
+    {
+      "id": "7ae3ee29-fa04-4ed9-afa5-cff1e0f0300b",
+      "kind": "forecast",
+      "claim": "Temporary deployment test — remove after verification",
+      "confidence": 60,
+      "horizon": "Deployment verification only",
+      "reasoning": "Disposable test of Worker publication and dated history.",
+      "created_at": "2026-10-01",
+      "created_timestamp": "2026-10-01T20:07:18.108Z",
+      "updates": []
+    }
+  ]
 }
