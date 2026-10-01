@@ -47,14 +47,14 @@ h1{font-weight:400;font-size:clamp(42px,7.5vw,66px);line-height:.98;letter-spaci
 .meta{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;align-items:baseline}
 .kind{font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:#8C3B2E}
 .date{font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:#5B554B}
-.claim{font-size:27px;line-height:1.25;font-weight:400;margin:11px 0 0;text-wrap:pretty}
-.stats{display:flex;gap:18px 26px;flex-wrap:wrap;margin-top:15px;font-size:15px;color:#5B554B}
+.claim{overflow-wrap:anywhere;font-size:27px;line-height:1.25;font-weight:400;margin:11px 0 0;text-wrap:pretty}
+.stats{overflow-wrap:anywhere;display:flex;gap:18px 26px;flex-wrap:wrap;margin-top:15px;font-size:15px;color:#5B554B}
 .stats strong{color:#23201C;font-weight:500}
-.reason{font-size:17.5px;line-height:1.62;color:#4A443B;margin:18px 0 0;max-width:42em}
+.reason{overflow-wrap:anywhere;white-space:pre-wrap;font-size:17.5px;line-height:1.62;color:#4A443B;margin:18px 0 0;max-width:42em}
 .updates{margin:22px 0 0;padding:16px 0 0;border-top:1px solid rgba(35,32,28,.12)}
 .update{display:grid;grid-template-columns:110px 1fr;gap:16px;margin:0 0 12px}
 .update time{font-size:13px;color:#5B554B}
-.update p{font-size:15.5px;line-height:1.5;color:#4A443B;margin:0}
+.update p{overflow-wrap:anywhere;white-space:pre-wrap;font-size:15.5px;line-height:1.5;color:#4A443B;margin:0}
 .empty{padding:40px 0;border-bottom:1px solid rgba(35,32,28,.18)}
 .empty p{font-size:18px;line-height:1.6;color:#5B554B;margin:0}
 footer{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-top:80px;padding:24px 0 0;color:#5B554B;border-top:1px solid rgba(35,32,28,.25);font-size:13px;letter-spacing:.12em;text-transform:uppercase}

@@ -43,7 +43,7 @@ button:disabled{opacity:.5;cursor:wait}
       <div class="eyebrow">Private instrument control</div>
       <h1>Map of Reality</h1>
     </div>
-    <a href="map-of-reality.html">View public map →</a>
+    <a href="https://mihirss.com/instruments/map-of-reality.html">View public map →</a>
   </div>
   <p class="sub">Add a new claim or append an update. There is intentionally no delete control here.</p>
   <hr class="rule">
@@ -53,7 +53,7 @@ button:disabled{opacity:.5;cursor:wait}
       <div class="field"><label for="username">Username</label><input id="username" autocomplete="username" required></div>
       <div class="field"><label for="password">Password</label><input id="password" type="password" autocomplete="current-password" required></div>
       <div class="actions"><button id="loginButton">Sign in</button></div>
-      <p id="loginStatus" class="status"></p>
+      <p id="loginStatus" class="status" role="status" aria-live="polite"></p>
     </form>
   </section>
 
@@ -70,14 +70,14 @@ button:disabled{opacity:.5;cursor:wait}
             <input id="confidence" type="number" min="0" max="100" step="1" inputmode="decimal">
           </div>
         </div>
-        <div class="field"><label for="claim">Claim</label><textarea id="claim" required placeholder="What do I currently think is true?"></textarea></div>
-        <div class="field"><label for="horizon">Horizon / resolution date</label><input id="horizon" placeholder="e.g. 2030, by June 2027, long-run"></div>
-        <div class="field"><label for="reasoning">Why do I believe this?</label><textarea id="reasoning" placeholder="Optional. Evidence, model, uncertainty, or what would change my mind."></textarea></div>
+        <div class="field"><label for="claim">Claim</label><textarea id="claim" maxlength="800" required placeholder="What do I currently think is true?"></textarea></div>
+        <div class="field"><label for="horizon">Horizon / resolution date</label><input id="horizon" maxlength="120" placeholder="e.g. 2030, by June 2027, long-run"></div>
+        <div class="field"><label for="reasoning">Why do I believe this?</label><textarea id="reasoning" maxlength="4000" placeholder="Optional. Evidence, model, uncertainty, or what would change my mind."></textarea></div>
         <div class="actions">
           <button id="publishButton">Publish claim</button>
           <button type="button" class="secondary" id="logoutButton">Sign out</button>
         </div>
-        <p id="claimStatus" class="status"></p>
+        <p id="claimStatus" class="status" role="status" aria-live="polite"></p>
       </form>
     </div>
 
@@ -85,9 +85,9 @@ button:disabled{opacity:.5;cursor:wait}
       <form id="updateForm">
         <div class="field"><label for="entryId">Existing entry ID</label><input id="entryId" required placeholder="Paste the entry ID returned when you published it"></div>
         <div class="field"><label for="updateConfidence">Updated confidence (%)</label><input id="updateConfidence" type="number" min="0" max="100" step="1"></div>
-        <div class="field"><label for="updateNote">What changed?</label><textarea id="updateNote" required placeholder="New evidence, correction, or reason your confidence moved."></textarea></div>
+        <div class="field"><label for="updateNote">What changed?</label><textarea id="updateNote" maxlength="4000" required placeholder="New evidence, correction, or reason your confidence moved."></textarea></div>
         <div class="actions"><button id="updateButton">Append update</button></div>
-        <p id="updateStatus" class="status"></p>
+        <p id="updateStatus" class="status" role="status" aria-live="polite"></p>
       </form>
     </div>
 
@@ -140,6 +140,7 @@ $('claimForm').addEventListener('submit', async e => {
       horizon:$('horizon').value, reasoning:$('reasoning').value
     })});
     $('claimStatus').textContent='Published. Entry ID: '+data.id;
+    $('entryId').value=data.id;
     $('claim').value=''; $('confidence').value=''; $('horizon').value=''; $('reasoning').value='';
   } catch(err) { $('claimStatus').textContent=err.message; }
   finally { button.disabled=false; }
@@ -159,8 +160,10 @@ $('updateForm').addEventListener('submit', async e => {
 });
 
 $('logoutButton').addEventListener('click', async () => {
-  try { await api('/api/logout',{method:'POST',body:'{}'}); } catch {}
-  await refreshAuth();
+  try {
+    await api('/api/logout',{method:'POST',body:'{}'});
+    await refreshAuth();
+  } catch { $('claimStatus').textContent='Sign out failed. Please try again.'; }
 });
 
 refreshAuth();
