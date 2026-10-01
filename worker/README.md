@@ -9,11 +9,11 @@ The Worker is the authenticated write boundary for the Map of Reality ledger. It
 - Admin sign-in: `https://map-admin.mihirss.com/admin`
 - Fixed repository: `mihirs-0/mihirs-0.github.io`
 - Fixed file: `data/map-of-reality.json`
-- **Current ledger branch: `map-of-reality`. Do not switch to `main` before successful testing, explicit merge approval, and merge.**
+- **Production ledger branch: `main`.** The Map deployment was tested on `map-of-reality` before the approved merge. Future tests must use an isolated branch and an explicitly configured staging Worker.
 
 The Worker serves the same admin HTML checked into `instruments/map-of-reality-admin.html`. Its API origin is `https://map-admin.mihirss.com`. The sign-in form is public; publishing and updating require authentication. The admin page is unlisted and excluded from indexing, which is not an access control.
 
-GitHub Pages continues to serve `main`. The public Map page must be tested using the branch preview until merge; it is not live on the production site yet. After an approved merge and verified Pages deployment, update `LEDGER_BRANCH` to `main` and redeploy the Worker in a separate deliberate step.
+GitHub Pages serves `main`, and the public Map page is live at `https://mihirss.com/instruments/map-of-reality.html`. The production Worker writes the same branch. Use branch previews for future changes before merge; do not publish temporary tests through the production Worker.
 
 ```sh
 cd worker
@@ -51,9 +51,9 @@ All four secrets, a valid branch binding, and the login rate limiter are require
 - No edit/delete routes. GET `/api/entries` returns `405` with `Allow: POST`; DELETE/PUT/PATCH rejection is exercised in the isolated runtime test suite.
 - Worker logs/traces are disabled. Code does not log credentials, request bodies, or upstream response bodies.
 
-## Pre-merge validation
+## Validation for future changes
 
-1. Confirm production Worker still has `LEDGER_BRANCH=map-of-reality`.
+1. Use a separate staging Worker with `LEDGER_BRANCH=map-of-reality`; production remains on `main`.
 2. Sign in privately in `/admin`; check invalid login returns 401.
 3. Publish one clearly labeled temporary test claim; check the returned ID and GitHub ledger commit on `map-of-reality`.
 4. Render that committed ledger with the exact branch public page at desktop and mobile widths; exercise filters and navigation.
