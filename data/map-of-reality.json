@@ -12,7 +12,14 @@
       "reasoning": "Disposable test of Worker publication and dated history.",
       "created_at": "2026-10-01",
       "created_timestamp": "2026-10-01T20:07:18.108Z",
-      "updates": []
+      "updates": [
+        {
+          "date": "2026-10-01",
+          "timestamp": "2026-10-01T20:08:15.751Z",
+          "confidence": 75,
+          "note": "Temporary historical update: confidence moved from 60% to 75% after deployment verification. The original claim must remain unchanged."
+        }
+      ]
     }
   ]
 }
