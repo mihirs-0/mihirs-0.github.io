@@ -13,6 +13,17 @@
       "created_at": "2026-10-01",
       "created_timestamp": "2026-10-01T21:02:55.580Z",
       "updates": []
+    },
+    {
+      "id": "a3c0526e-8bf6-4cde-b511-74b391553880",
+      "kind": "map",
+      "claim": "A personal claim: AI Safety is ~impossible to enter (via MATS, Anthropic Fellows) as an international new-grad student with no industry/research experience.",
+      "confidence": 60,
+      "horizon": "short-term",
+      "reasoning": "This maybe be due to my inability to get any positive signal or any feedback based on my current work. Clearly, I'm not doing enough. Maybe I need to take up another ambitious project. From my interactions, it seems to be a bleak road.  With a random walk on Twitter, I see cracked under-grads (and honestly good for them), and PhD students from good schools. I haven't seen anyone like me making it to MATS, or even SPAR actually. I'm sure there are a few students; but I'm very certain that it's a very small minority. Indian international students (following the Indian engineering undergrad --> US Masters degree path) don't seem to be getting into AI Safety at all! Why is that? Is AI Safety to esoteric?",
+      "created_at": "2026-10-05",
+      "created_timestamp": "2026-10-05T01:05:20.391Z",
+      "updates": []
     }
   ]
 }
