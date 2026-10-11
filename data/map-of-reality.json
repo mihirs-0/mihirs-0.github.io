@@ -24,6 +24,17 @@
       "created_at": "2026-10-05",
       "created_timestamp": "2026-10-05T01:05:20.391Z",
       "updates": []
+    },
+    {
+      "id": "39aabfd2-e615-46d1-b6a3-9353845ac3cc",
+      "kind": "forecast",
+      "claim": "A substantial reward hacking incident that affects the real world. Causes a degree of upheaval (in the stock market, mostly). This will update a lot of people towards thinking more about the safety of AI Systems.",
+      "confidence": 30,
+      "horizon": "End of 2027",
+      "reasoning": "We have not eliminated reward hacking. It will arguably never be exhaustively patched. There will loopholes to exploit. In the wild, when used by billions, these loopholes are more likely to be discovered and used. \n\nThis won't happen if there is a global slowdown, if there is way more impetus on safety, or if companies decide to scale back distribution of frontier systems and restrict it to internal use only.",
+      "created_at": "2026-10-11",
+      "created_timestamp": "2026-10-11T20:43:26.992Z",
+      "updates": []
     }
   ]
 }
