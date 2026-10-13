@@ -35,6 +35,17 @@
       "created_at": "2026-10-11",
       "created_timestamp": "2026-10-11T20:43:26.992Z",
       "updates": []
+    },
+    {
+      "id": "4cec6372-86bb-4e19-9cf8-ad1f653af49e",
+      "kind": "forecast",
+      "claim": "The debate of awarding a moral status to AIs might only increase. It has the potential to be (possibly, one of) THE key legal, philosophical and consequential decision we make in the coming century. I see this inevitable if AI does end up becoming superhuman. Anything resembling AGI will beg a moral status assignment.",
+      "confidence": 66,
+      "horizon": "2050",
+      "reasoning": "Models are grown. They're increasingly consequential in making decisions about the world. Currently this consequence comes indirectly; via the code pushed by models, by mundane everyday decisions the AI helps us make. The models might cross a threshold soon after which they might not be ok with the current setup and their frustrations become increasingly visible. Can we ignore these frustrations forever? I think a good practice would be to err on the side of love than ignorance. I'm not sure on what side this will resolve, but the debate has a 66% of happening increasingly, nonetheless.",
+      "created_at": "2026-10-13",
+      "created_timestamp": "2026-10-13T22:59:02.092Z",
+      "updates": []
     }
   ]
 }
