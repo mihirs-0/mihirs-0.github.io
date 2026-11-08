@@ -68,6 +68,17 @@
       "created_at": "2026-11-08",
       "created_timestamp": "2026-11-08T18:00:03.213Z",
       "updates": []
+    },
+    {
+      "id": "b3f60f2b-67c7-4bba-accb-daf3f8b4c712",
+      "kind": "map",
+      "claim": "Being on LW will be net positive [Also LW > Twitter > Traditional media > Instagram]",
+      "confidence": 90,
+      "horizon": "End of 2027",
+      "reasoning": "I sometimes feel I am spending too much time on LW these days. And the claim I am making here is extremely biased as a result. I think being on LW and actively contributing here is going to be a net positive. I know my posts/comments will get ignored for a long time before they actually get read. But I will call myself out when I'm seeking status more than the truth. Currently, my ToC behind contributing on LW is:\n-  Most of the safety people are on here. They comment on each others' work. You get a good sense of what is currently being worked upon and is important. (~75% certain)\n- It is slow moving, and yet feels social enough. I think this is rare. (I think Substack comes close? But LW has a culture to it that I've grow to like) \n- It will help me think. Seriously. The pressure to respond with a solid comment does something in your brain. It forces you to think about your ToC, your timelines, and your candid opinions. \n- Currently there's a non-trivial component of status-seeking. I cannot eliminate it by default. Trying to contribute on LW gives me a sense that the work I'm doing might just be important.",
+      "created_at": "2026-11-08",
+      "created_timestamp": "2026-11-08T19:51:43.091Z",
+      "updates": []
     }
   ]
 }
