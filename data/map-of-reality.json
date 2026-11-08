@@ -57,6 +57,17 @@
       "created_at": "2026-11-08",
       "created_timestamp": "2026-11-08T00:22:06.074Z",
       "updates": []
+    },
+    {
+      "id": "0cd23696-b42a-4ab5-8b30-502babadb445",
+      "kind": "map",
+      "claim": "The bitter lesson was misunderstood",
+      "confidence": 50,
+      "horizon": "2028",
+      "reasoning": "Stutton tweeted yesterday:\nBrute force computation is not enough for intelligence. Clever new methods are needed. The science of AI is far from finished. IMHO\n\nI don't really know what to think anymore about the bitter lesson. Clearly, I am too new here to bear nuance and think straight.\n\nI thought: \nLLMs just unlock ~everything. It's scale. And I saw opinions twitter that said that people are confusing the bitter lesson with scaling laws. I think I did too. \n\nAnd I was also concerned after looking at the recent METR report and Seb Krier's posted graph. The graph showed that although capabilities (AEIC) are increasing with time, and it's accelerating, the capability increase per dollar is almost approaching a plateau. \n\nAre LLMs hitting the wall, then? I just can't believe I am saying this. I did think LLMs were the silver bullet. Aren't they supposed to be in concert with the bitter lesson? Aren't they free of human inductive biases? \n\nMy worry is that someone will come along and present a scalable path toward AGI that is better than LLMs. I just can't think of something \"better\" than neural networks, honestly. \n\nAll of our current AI Safety work IS about LLMs? Most of the newcomer stuff is squarely about LLMs. I see no pressure to make our papers agnostic to the model paradigm. For example, tomorrow we have OIUs (Totally a random sequence of letters). How much of our LLM work is going to translate to OIUs?\n\nI believe that the current AI R&D loop is self-sustaining. And it provides a scalable path to algorithmic discovery. Am I thinking that LLMs will give birth to OIUs? Can LLMs discover their own version of the bitter lesson? Can LLMs get rid of their own inductive bias and come up with something that scales?\n\nWell, if we look at it like this, then it feels like we have a LOT of time. I'd in fact update to longer timelines based on the latest METR report that shows how the capability increase per dollar is plateauing. The current method is highly inefficient and ad hoc, especially in the post-training RL side of things. \n\nI think this is a major existential realization. I should be relieved that I actually updated towards longer timelines for once. But I am somehow now? Am I in this for status-seeking? It's important to question all of this. The goal should be truth. I think I am far from it.",
+      "created_at": "2026-11-08",
+      "created_timestamp": "2026-11-08T18:00:03.213Z",
+      "updates": []
     }
   ]
 }
