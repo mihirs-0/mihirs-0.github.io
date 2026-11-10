@@ -29,7 +29,7 @@ img{display:block;max-width:100%;}
 </style>
 </helmet>
 
-<div data-screen-label="Home" class="home" style="min-height:100vh;box-sizing:border-box;padding:7vh 6vw 48px;display:grid;grid-template-columns:minmax(420px,1fr) minmax(260px,1fr);gap:40px 8vw;align-items:start;align-content:space-between;max-width:1400px;margin:0 auto">
+<div data-screen-label="Home" class="home" style="min-height:100vh;box-sizing:border-box;padding:7vh 6vw 48px;display:grid;grid-template-columns:minmax(420px,1fr) minmax(260px,1fr);gap:40px 8vw;align-items:start;align-content:start;max-width:1400px;margin:0 auto">
 
   <div style="animation:rise 1s .15s ease both;max-width:720px">
     <img src="assets/art/megh-dutam.jpg" alt="Megh Dutam illustration, Guler school, c. 1800" style="width:100%;max-width:467px;aspect-ratio:467/318;object-fit:cover;mix-blend-mode:multiply;">
@@ -56,17 +56,18 @@ img{display:block;max-width:100%;}
 
   <div style="animation:rise 1s .3s ease both">
     <p style="font-size:17px;line-height:1.7;color:#23201C;margin:0;max-width:30em;text-wrap:pretty">I'm currently working independently on AI safety and alignment. Graduated from the University of Illinois at Urbana-Champaign this summer. Find my latest work on <a href="https://www.lesswrong.com/posts/krzpRvxzx3sGudSv3/separating-cheating-and-aversion-in-task-gaming" target="_blank" rel="noopener" style="color:#8C3B2E;border-bottom:1px solid rgba(140,59,46,.35)">task-gaming</a> and <a href="https://www.lesswrong.com/posts/bbkYyKjj9pTCXCsEm/quantifying-cot-faithfulness" target="_blank" rel="noopener" style="color:#8C3B2E;border-bottom:1px solid rgba(140,59,46,.35)">CoT faithfulness</a> on LessWrong. I'm always down for a chat &mdash; feel free to <a href="mailto:{{ email }}" style="color:#8C3B2E;border-bottom:1px solid rgba(140,59,46,.35)">reach out</a>.</p>
+
+    <!-- the statement sits under the bio -->
+    <div id="colophon" style="margin-top:56px">
+      <p style="font-family:'Newsreader',Georgia,serif;font-size:clamp(26px,2.4vw,34px);line-height:1.2;color:#23201C;margin:0;text-wrap:pretty">Let's make AI go well.</p>
+      <p style="font-size:19px;line-height:1.65;margin:14px 0 0;text-wrap:pretty"><a href="https://intelligence-curse.ai/" target="_blank" rel="noopener" style="color:#4A443B;border-bottom:1px solid rgba(140,59,46,.4);transition:color .2s" style-hover="color:#8C3B2E">The future has to be human.</a></p>
+    </div>
   </div>
 
-  <!-- the statement sits at the foot of the page -->
-  <div id="colophon" style="grid-column:1 / -1;padding-top:64px;padding-bottom:96px;animation:rise 1s .45s ease both">
-    <p style="font-family:'Newsreader',Georgia,serif;font-size:clamp(26px,2.4vw,34px);line-height:1.2;color:#23201C;margin:0;text-wrap:pretty">Let's make AI go well.</p>
-    <p style="font-size:19px;line-height:1.65;margin:14px 0 0;text-wrap:pretty"><a href="https://intelligence-curse.ai/" target="_blank" rel="noopener" style="color:#4A443B;border-bottom:1px solid rgba(140,59,46,.4);transition:color .2s" style-hover="color:#8C3B2E">The future has to be human.</a></p>
-  </div>
 
 </div>
 
-<div aria-hidden="true" style="position:fixed;left:0;right:0;bottom:0;height:32px;pointer-events:none;animation:frieze 2.6s .8s ease both;opacity:.8;mix-blend-mode:multiply;background-image:url('assets/art/bahadur-shah-frieze.jpg');background-repeat:repeat-x;background-size:auto 200%;background-position:center top;-webkit-mask-image:linear-gradient(to bottom,transparent 0%,#000 40%,#000 100%);mask-image:linear-gradient(to bottom,transparent 0%,#000 40%,#000 100%)"></div>
+<div aria-hidden="true" style="position:fixed;left:0;right:0;bottom:0;height:40px;pointer-events:none;animation:frieze 2.6s .8s ease both;opacity:.8;mix-blend-mode:multiply;background-image:url('assets/art/bahadur-shah-frieze.jpg');background-repeat:repeat-x;background-size:auto 200%;background-position:center top;-webkit-mask-image:linear-gradient(to bottom,transparent 0%,#000 40%,#000 100%);mask-image:linear-gradient(to bottom,transparent 0%,#000 40%,#000 100%)"></div>
 </x-dc>
 <script type="text/x-dc" data-dc-script>
 class Component extends DCLogic {
