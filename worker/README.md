@@ -12,6 +12,7 @@ The same Worker, session and secrets also publish the blog.
 - Each publish, edit or delete is a single commit through the Git Data API; the branch update refuses anything but a fast-forward, so a concurrent change returns a conflict instead of being overwritten.
 - Post HTML is reduced to an allowlist of elements and attributes in the Worker (HTMLRewriter) and again in the public reader. Drafts autosave only in the editor's browser storage; nothing unpublished reaches the public repository.
 - Images: the editor shrinks uploads in the browser (max 1600px, WebP; GIFs untouched) and sends them with the post. The Worker checks file signatures (PNG, JPEG, GIF, WebP; 5 MB each, 15 MB per publish) and commits them to `assets/blog/<slug>/` in the same commit. Deleting a post removes the images it uploaded.
+- Image links: `POST /api/blog/image-from-link` fetches a public http(s) link (no IP literals or local hosts, 10 s, 5 MB). If the link is a page, it follows its `og:image`/`twitter:image`. The bytes go back to the editor and are published like an upload.
 - Unlike the ledger, posts can be edited and deleted from the editor; git history keeps every earlier version.
 
 ## Deployment

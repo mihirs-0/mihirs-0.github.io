@@ -68,6 +68,57 @@ async function linkUploads(html, urls) {
   return out.text();
 }
 
+// Fetch a picture for the editor from a link: either the image itself, or the
+// preview image a page names in its og:image / twitter:image metadata.
+const PUBLIC_HOST = /^(?!localhost$)(?!.*\.(local|internal|localhost)$)(?![\d.]+$)(?!\[)[a-z0-9.-]+\.[a-z]{2,}$/i;
+async function fetchLimited(url, accept) {
+  const r = await fetch(url, { redirect: "follow", signal: AbortSignal.timeout(10000),
+    headers: { "user-agent": "Mozilla/5.0 (compatible; mihirss-blog/1.0; +https://mihirss.com)", accept } });
+  if (!r.ok || !r.body) throw new Error("status");
+  const reader = r.body.getReader(), chunks = [];
+  let size = 0;
+  while (true) {
+    const { done, value } = await reader.read(); if (done) break;
+    size += value.length;
+    if (size > MAX_IMAGE) { await reader.cancel(); throw new Error("big"); }
+    chunks.push(value);
+  }
+  const bytes = new Uint8Array(size);
+  let at = 0; for (const c of chunks) { bytes.set(c, at); at += c.length; }
+  return { bytes, type: (r.headers.get("content-type") || "").toLowerCase() };
+}
+function checkLink(raw) {
+  let url;
+  try { url = new URL(raw); } catch { return null; }
+  return /^https?:$/.test(url.protocol) && PUBLIC_HOST.test(url.hostname) && !url.username && !url.password ? url : null;
+}
+export async function imageFromLink(raw) {
+  let url = checkLink(raw);
+  if (!url) return { error: "That doesn't look like a web link." };
+  for (let hop = 0; hop < 2; hop++) {
+    let got;
+    try { got = await fetchLimited(url.href, "image/*,text/html;q=0.8"); } catch (e) {
+      return { error: e.message === "big" ? "That image is over 5 MB." : "That site didn't hand over the image." };
+    }
+    const kind = IMAGE_TYPES.find(([, test]) => test(got.bytes))?.[0];
+    if (kind) {
+      let binary = "";
+      for (let i = 0; i < got.bytes.length; i += 32768) binary += String.fromCharCode(...got.bytes.subarray(i, i + 32768));
+      const mime = { png: "image/png", jpg: "image/jpeg", gif: "image/gif", webp: "image/webp" }[kind];
+      return { data: `data:${mime};base64,${btoa(binary)}` };
+    }
+    if (hop || !got.type.includes("html")) break;
+    let found = "";
+    await new HTMLRewriter().on("meta", { element(el) {
+      const key = (el.getAttribute("property") || el.getAttribute("name") || "").toLowerCase();
+      if (!found && ["og:image", "og:image:url", "og:image:secure_url", "twitter:image", "twitter:image:src"].includes(key)) found = el.getAttribute("content") || "";
+    } }).transform(new Response(got.bytes, { headers: { "content-type": "text/html" } })).text();
+    try { url = found && checkLink(new URL(found.replaceAll("&amp;", "&"), url).href); } catch { url = null; }
+    if (!url) return { error: "That page doesn't name an image. Right-click the picture, copy the image address, and use that instead." };
+  }
+  return { error: "That link isn't a PNG, JPEG, GIF or WebP image." };
+}
+
 export function slugify(title) {
   const s = title.normalize("NFKD").replace(/[̀-ͯ]/g, "").toLowerCase()
     .replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 70).replace(/-+$/, "");
@@ -175,6 +226,12 @@ export function blogRoutes({ json, readBody, github, ApiError, cleanText }) {
     const path = url.pathname.slice("/api/blog".length);
     const one = path.match(/^\/posts\/([a-z0-9-]{1,80})$/);
     const del = path.match(/^\/posts\/([a-z0-9-]{1,80})\/delete$/);
+    if (path === "/image-from-link") {
+      if (request.method !== "POST") return json({ ok: false, error: "Method not allowed." }, 405, { ...headers, allow: "POST" });
+      const { url } = await readBody(request);
+      const result = await imageFromLink(typeof url === "string" ? url.trim().slice(0, 2048) : "");
+      return result.error ? json({ ok: false, error: result.error }, 422, headers) : json({ ok: true, data: result.data }, 200, headers);
+    }
     const allowed = path === "/posts" ? ["GET", "POST"] : one ? ["GET", "POST"] : del ? ["POST"] : null;
     if (!allowed) return json({ ok: false, error: "Not found." }, 404, headers);
     if (!allowed.includes(request.method)) return json({ ok: false, error: "Method not allowed." }, 405, { ...headers, allow: allowed.join(", ") });

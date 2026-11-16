@@ -130,6 +130,7 @@ input.box:focus{border-color:#8C3B2E}
       <span class="sep"></span>
       <button type="button" data-cmd="hr" title="Divider (--- then Enter)">—</button>
       <button type="button" data-cmd="image" title="Upload an image (or paste / drop one)">Image</button>
+      <button type="button" data-cmd="imageLink" title="Image from a link (saved to the site)">Image link</button>
       <input type="file" id="imageInput" accept="image/png,image/jpeg,image/gif,image/webp" multiple hidden>
     </div>
     <textarea id="title" class="title" rows="1" placeholder="Title" maxlength="200"></textarea>
@@ -292,6 +293,21 @@ function image() {
   const sel = getSelection(); savedRange = sel.rangeCount ? sel.getRangeAt(0).cloneRange() : null;
   $('imageInput').value = ''; $('imageInput').click();
 }
+async function imageLink() {
+  const sel = getSelection(); const range = sel.rangeCount ? sel.getRangeAt(0).cloneRange() : null;
+  const url = prompt('Link to an image, or to a page that shows one:', '');
+  if (!url || !url.trim()) return;
+  $('editStatus').textContent = 'Fetching image…';
+  try {
+    const { data } = await api('/api/blog/image-from-link', { method: 'POST', body: JSON.stringify({ url: url.trim() }) });
+    const [head, b64] = data.split(',');
+    const blob = new Blob([Uint8Array.from(atob(b64), c => c.charCodeAt(0))], { type: head.slice(5, head.indexOf(';')) });
+    editor.focus();
+    if (range) { const s = getSelection(); s.removeAllRanges(); s.addRange(range); }
+    $('editStatus').textContent = '';
+    await insertImages([new File([blob], 'linked', { type: blob.type })]);
+  } catch (err) { $('editStatus').textContent = err.message; }
+}
 $('imageInput').addEventListener('change', () => {
   if (savedRange) { editor.focus(); const s = getSelection(); s.removeAllRanges(); s.addRange(savedRange); }
   insertImages([...$('imageInput').files]);
@@ -369,7 +385,7 @@ editor.addEventListener('drop', e => {
 const COMMANDS = {
   bold: () => document.execCommand('bold'),
   italic: () => document.execCommand('italic'),
-  link, code: inlineCode, image,
+  link, code: inlineCode, image, imageLink,
   h2: () => toggleBlock('h2'), h3: () => toggleBlock('h3'),
   blockquote: () => toggleBlock('blockquote'), pre: () => toggleBlock('pre'),
   ul: () => document.execCommand('insertUnorderedList'),

@@ -20,7 +20,7 @@ function fakeGitHub() {
   state.blobs = blobs;
   state.service = async request => {
     const url = new URL(request.url);
-    assert.equal(url.hostname, 'api.github.com');
+    if (url.hostname !== 'api.github.com') return state.web(url);
     assert.ok(url.pathname.startsWith(REPO));
     const path = url.pathname.slice(REPO.length);
     const body = ['POST', 'PATCH'].includes(request.method) ? await request.json() : null;
@@ -179,6 +179,33 @@ test('Cloudflare runtime: blog publishing', async t => {
   await t.test('deleting a post removes its uploaded images', async () => {
     assert.equal((await call('/api/blog/posts/with-pictures/delete', { data: {} })).status, 200);
     assert.equal(Object.keys(gh.files()).filter(f => f.startsWith('assets/blog/with-pictures/')).length, 0);
+  });
+
+  await t.test('images can be fetched from a link or from a page preview', async () => {
+    const pngBytes = Buffer.from(png.split(',')[1], 'base64');
+    const seen = [];
+    gh.web = url => {
+      seen.push(url.href);
+      if (url.href === 'https://img.example.com/pic.png') return new Response(pngBytes, { headers: { 'content-type': 'image/png' } });
+      if (url.href === 'https://example.com/post') return new Response('<html><head><meta property="og:image" content="https://img.example.com/pic.png?a=1&amp;b=2"></head></html>', { headers: { 'content-type': 'text/html' } });
+      if (url.href === 'https://img.example.com/pic.png?a=1&b=2') return new Response(pngBytes, { headers: { 'content-type': 'image/png' } });
+      if (url.href === 'https://example.com/plain') return new Response('<html><head><title>x</title></head></html>', { headers: { 'content-type': 'text/html' } });
+      if (url.href === 'https://example.com/fake.png') return new Response('<script>alert(1)</script>', { headers: { 'content-type': 'image/png' } });
+      return new Response('no', { status: 403 });
+    };
+    const fetchLink = async url => { const r = await call('/api/blog/image-from-link', { data: { url } }); return [r.status, await r.json()]; };
+    let [status, body] = await fetchLink('https://img.example.com/pic.png');
+    assert.equal(status, 200); assert.equal(body.data, png);
+    [status, body] = await fetchLink('https://example.com/post');
+    assert.equal(status, 200); assert.equal(body.data, png);
+    for (const [url, words] of [['https://example.com/plain', "doesn't name an image"], ['https://example.com/fake.png', "isn't a PNG"],
+        ['https://blocked.example.com/x', "didn't hand over"], ['http://localhost/x', "doesn't look like"], ['http://127.0.0.1/x', "doesn't look like"],
+        ['http://[::1]/x', "doesn't look like"], ['file:///etc/passwd', "doesn't look like"], ['not a url', "doesn't look like"]]) {
+      [status, body] = await fetchLink(url);
+      assert.equal(status, 422, url); assert.ok(body.error.includes(words), url + ': ' + body.error);
+    }
+    assert.ok(!seen.some(u => /localhost|127\.0\.0\.1|\[::1\]/.test(u)));
+    assert.equal((await call('/api/blog/image-from-link', { auth: false, data: { url: 'https://img.example.com/pic.png' } })).status, 401);
   });
 
   await t.test('a concurrent change is a conflict, not an overwrite', async () => {
