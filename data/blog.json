@@ -1,4 +1,10 @@
 {
   "version": 1,
-  "posts": []
+  "posts": [
+    {
+      "slug": "mic-check",
+      "title": "Mic check",
+      "date": "2026-11-16"
+    }
+  ]
 }
