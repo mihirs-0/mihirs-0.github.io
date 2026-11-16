@@ -14,9 +14,10 @@ const REPO = '/repos/mihirs-0/mihirs-0.github.io/';
 // A small in-memory stand-in for GitHub's contents and Git Data APIs.
 function fakeGitHub() {
   const commits = { c0: { files: { 'data/blog.json': JSON.stringify({ version: 1, posts: [] }), 'data/map-of-reality.json': '{}' } } };
-  const trees = {};
+  const trees = {}, blobs = {};
   const state = { head: 'c0', n: 0, refUpdates: 0, raceOnce: false, commits };
   state.files = () => commits[state.head].files;
+  state.blobs = blobs;
   state.service = async request => {
     const url = new URL(request.url);
     assert.equal(url.hostname, 'api.github.com');
@@ -31,11 +32,18 @@ function fakeGitHub() {
       return Response.json({ sha: 'blob', content: Buffer.from(content).toString('base64') });
     }
     if (request.method === 'GET' && path.startsWith('git/commits/')) return Response.json({ tree: { sha: 'tree-' + path.slice(12) } });
+    if (request.method === 'POST' && path === 'git/blobs') {
+      assert.equal(body.encoding, 'base64');
+      const id = 'b' + (++state.n); blobs[id] = body.content; return Response.json({ sha: id });
+    }
     if (request.method === 'POST' && path === 'git/trees') {
       const files = { ...commits[body.base_tree.slice(5)].files };
       for (const f of body.tree) {
-        assert.ok(f.path === 'data/blog.json' || /^data\/blog\/[a-z0-9-]+\.json$/.test(f.path), 'unexpected path ' + f.path);
-        if (f.sha === null) delete files[f.path]; else files[f.path] = f.content;
+        assert.ok(f.path === 'data/blog.json' || /^data\/blog\/[a-z0-9-]+\.json$/.test(f.path)
+          || /^assets\/blog\/[a-z0-9-]+\/[a-f0-9]{16}\.(png|jpg|gif|webp)$/.test(f.path), 'unexpected path ' + f.path);
+        if (f.sha === null) delete files[f.path];
+        else if (f.sha) { assert.ok(blobs[f.sha]); files[f.path] = 'blob:' + blobs[f.sha]; }
+        else files[f.path] = f.content;
       }
       const id = 't' + (++state.n); trees[id] = files; return Response.json({ sha: id });
     }
@@ -140,6 +148,39 @@ test('Cloudflare runtime: blog publishing', async t => {
     assert.equal((await call('/api/blog/posts/post/delete', { data: {} })).status, 404);
   });
 
+  const png = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==';
+  await t.test('uploaded images are committed with the post and linked from it', async () => {
+    const before = gh.refUpdates;
+    const r = await call('/api/blog/posts', { data: { title: 'With pictures',
+      html: '<p>Look:</p><img src="upload:a1" alt="dot"><img src="upload:zz9"><img src="upload:a1">',
+      images: { a1: png } } });
+    assert.equal(r.status, 201);
+    assert.equal(gh.refUpdates, before + 1);
+    const files = Object.keys(gh.files()).filter(f => f.startsWith('assets/blog/with-pictures/'));
+    assert.equal(files.length, 1);
+    assert.ok(/\.png$/.test(files[0]));
+    assert.equal(gh.files()[files[0]], 'blob:' + png.split(',')[1]);
+    const html = post('with-pictures').html;
+    assert.equal(html.split('https://mihirss.com/' + files[0]).length - 1, 2, html);
+    assert.ok(!html.includes('upload:'), 'unresolved placeholder kept: ' + html);
+  });
+
+  await t.test('images that are not really images are refused', async () => {
+    const head = gh.head;
+    const fake = 'data:image/png;base64,' + Buffer.from('<script>alert(1)</script>').toString('base64');
+    assert.equal((await call('/api/blog/posts', { data: { title: 'Fake', html: '<img src="upload:x">', images: { x: fake } } })).status, 400);
+    assert.equal((await call('/api/blog/posts', { data: { title: 'Bad id', html: '<p>x</p>', images: { '../x': png } } })).status, 400);
+    assert.equal((await call('/api/blog/posts', { data: { title: 'Not data', html: '<p>x</p>', images: { x: 'https://example.com/a.png' } } })).status, 400);
+    const big = 'data:image/png;base64,' + Buffer.concat([Buffer.from([0x89, 0x50, 0x4e, 0x47]), Buffer.alloc(6 * 1024 * 1024)]).toString('base64');
+    assert.equal((await call('/api/blog/posts', { data: { title: 'Big', html: '<p>x</p>', images: { x: big } } })).status, 413);
+    assert.equal(gh.head, head);
+  });
+
+  await t.test('deleting a post removes its uploaded images', async () => {
+    assert.equal((await call('/api/blog/posts/with-pictures/delete', { data: {} })).status, 200);
+    assert.equal(Object.keys(gh.files()).filter(f => f.startsWith('assets/blog/with-pictures/')).length, 0);
+  });
+
   await t.test('a concurrent change is a conflict, not an overwrite', async () => {
     const head = gh.head; gh.raceOnce = true;
     const r = await call('/api/blog/posts', { data: { title: 'Racing', html: '<p>x</p>' } });
@@ -152,7 +193,7 @@ test('Cloudflare runtime: blog publishing', async t => {
     assert.equal((await call('/api/blog/posts', { data: { title: '', html: '<p>x</p>' } })).status, 400);
     assert.equal((await call('/api/blog/posts', { data: { title: 'x'.repeat(201), html: '<p>x</p>' } })).status, 400);
     assert.equal((await call('/api/blog/posts', { data: { title: 'Empty', html: '<p> </p><script>x</script>' } })).status, 400);
-    assert.equal((await call('/api/blog/posts', { data: { title: 'Huge', html: 'x'.repeat(600000) } })).status, 413);
+    assert.equal((await call('/api/blog/posts', { data: { title: 'Huge', html: 'x'.repeat(600000) } })).status, 400);
     assert.equal((await call('/api/blog/posts', { headers: { 'content-type': 'text/plain' }, data: { title: 'x', html: 'x' } })).status, 415);
     for (const method of ['PUT', 'PATCH', 'DELETE']) assert.equal((await call('/api/blog/posts/hello-world', { method })).status, 405);
     for (const path of ['/api/blog/posts/..%2Fmap-of-reality', '/api/blog/posts/Hello', '/api/blog/other', '/api/blog/posts/a/b']) {

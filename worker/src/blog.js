@@ -4,6 +4,16 @@ const INDEX_PATH = "data/blog.json";
 const POST_DIR = "data/blog";
 const SLUG = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 const MAX_HTML = 400000;
+const SITE = "https://mihirss.com";
+const MAX_IMAGE = 5 * 1024 * 1024;
+const MAX_IMAGES_TOTAL = 15 * 1024 * 1024;
+// Uploaded images are recognised by their leading bytes, not by what the browser claims.
+const IMAGE_TYPES = [
+  ["png", b => b[0] === 0x89 && b[1] === 0x50 && b[2] === 0x4e && b[3] === 0x47],
+  ["jpg", b => b[0] === 0xff && b[1] === 0xd8 && b[2] === 0xff],
+  ["gif", b => b[0] === 0x47 && b[1] === 0x49 && b[2] === 0x46 && b[3] === 0x38],
+  ["webp", b => b[0] === 0x52 && b[1] === 0x49 && b[2] === 0x46 && b[3] === 0x46 && b[8] === 0x57 && b[9] === 0x45 && b[10] === 0x42 && b[11] === 0x50],
+];
 
 // Elements whose contents are dropped with them.
 const DROP = new Set(["script", "style", "iframe", "object", "embed", "template", "noscript", "svg", "math",
@@ -45,6 +55,17 @@ export async function sanitize(html) {
     })
     .transform(new Response(html, { headers: { "content-type": "text/html; charset=utf-8" } }));
   return (await out.text()).trim();
+}
+
+// Point upload:<id> placeholders at the files committed alongside the post.
+async function linkUploads(html, urls) {
+  const out = new HTMLRewriter().on("img[src]", {
+    element(el) {
+      const m = el.getAttribute("src").match(/^upload:([a-z0-9]{1,32})$/);
+      if (m && urls[m[1]]) el.setAttribute("src", urls[m[1]]);
+    },
+  }).transform(new Response(html, { headers: { "content-type": "text/html; charset=utf-8" } }));
+  return out.text();
 }
 
 export function slugify(title) {
@@ -91,10 +112,16 @@ export function blogRoutes({ json, readBody, github, ApiError, cleanText }) {
 
   // One commit for the whole change; the ref update refuses anything but a fast-forward.
   async function commit(env, parent, files, message) {
+    for (const f of files) {
+      if (f.base64 == null) continue;
+      const blob = await call(env, "git/blobs", { method: "POST", headers: { "content-type": "application/json" },
+        body: JSON.stringify({ content: f.base64, encoding: "base64" }) });
+      f.sha = blob.sha;
+    }
     const base = await call(env, `git/commits/${parent}`);
     const tree = await call(env, "git/trees", { method: "POST", headers: { "content-type": "application/json" },
       body: JSON.stringify({ base_tree: base.tree.sha, tree: files.map(f => ({ path: f.path, mode: "100644", type: "blob",
-        ...(f.content == null ? { sha: null } : { content: f.content }) })) }) });
+        ...(f.sha ? { sha: f.sha } : f.content == null ? { sha: null } : { content: f.content }) })) }) });
     const made = await call(env, "git/commits", { method: "POST", headers: { "content-type": "application/json" },
       body: JSON.stringify({ message, tree: tree.sha, parents: [parent] }) });
     await call(env, `git/refs/heads/${encodeURIComponent(env.LEDGER_BRANCH)}`, { method: "PATCH",
@@ -104,13 +131,44 @@ export function blogRoutes({ json, readBody, github, ApiError, cleanText }) {
 
   const text = data => JSON.stringify(data, null, 2) + "\n";
 
-  async function readPost(body) {
+  function readTitle(body) {
     const title = cleanText(body.title, 200);
     if (!title) throw new ApiError(400, "Title is required.");
     if (typeof body.html !== "string" || body.html.length > MAX_HTML) throw new ApiError(400, "The post body is missing or too long.");
-    const html = await sanitize(body.html);
+    return title;
+  }
+
+  async function readImages(body, slug) {
+    const images = body.images ?? {};
+    if (!images || typeof images !== "object" || Array.isArray(images) || Object.keys(images).length > 30) {
+      throw new ApiError(400, "Images must be at most 30 per publish.");
+    }
+    const files = [], urls = {};
+    let total = 0;
+    for (const [id, value] of Object.entries(images)) {
+      const m = typeof value === "string" && value.match(/^data:image\/[a-z+.-]+;base64,([A-Za-z0-9+/]+={0,2})$/);
+      if (!/^[a-z0-9]{1,32}$/.test(id) || !m) throw new ApiError(400, "An image could not be read.");
+      let bytes;
+      try { bytes = Uint8Array.from(atob(m[1]), c => c.charCodeAt(0)); } catch { throw new ApiError(400, "An image could not be read."); }
+      total += bytes.length;
+      if (bytes.length > MAX_IMAGE || total > MAX_IMAGES_TOTAL) throw new ApiError(413, "Images must be under 5 MB each and 15 MB per publish.");
+      const ext = IMAGE_TYPES.find(([, test]) => test(bytes))?.[0];
+      if (!ext) throw new ApiError(400, "Only PNG, JPEG, GIF and WebP images can be uploaded.");
+      const digest = new Uint8Array(await crypto.subtle.digest("SHA-256", bytes));
+      const name = [...digest.slice(0, 8)].map(b => b.toString(16).padStart(2, "0")).join("") + "." + ext;
+      const path = `assets/blog/${slug}/${name}`;
+      urls[id] = `${SITE}/${path}`;
+      if (!files.some(f => f.path === path)) files.push({ path, base64: m[1] });
+    }
+    return { files, urls };
+  }
+
+  async function readPost(body, slug) {
+    const title = readTitle(body);
+    const { files, urls } = await readImages(body, slug);
+    const html = await sanitize(await linkUploads(body.html, urls));
     if (!html.replace(/<[^>]*>/g, "").trim() && !/<img\s/i.test(html)) throw new ApiError(400, "The post is empty.");
-    return { title, html };
+    return { title, html, files };
   }
 
   return async function blog(request, env, url, headers) {
@@ -131,20 +189,21 @@ export function blogRoutes({ json, readBody, github, ApiError, cleanText }) {
       return json({ ok: true, post }, 200, headers);
     }
 
-    const body = del ? {} : await readBody(request, 512 * 1024);
+    const body = del ? {} : await readBody(request, 24 * 1024 * 1024);
     const parent = await head(env);
     const index = await readIndex(env, parent);
     const now = new Date().toISOString();
 
     if (path === "/posts") {
-      const { title, html } = await readPost(body);
       const taken = new Set(index.posts.map(p => p.slug));
-      const root = slugify(title);
+      const root = slugify(readTitle(body));
       let next = root;
       for (let n = 2; taken.has(next); n++) next = `${root}-${n}`;
+      const { title, html, files } = await readPost(body, next);
       const post = { slug: next, title, date: now.slice(0, 10), created_timestamp: now, updated_timestamp: null, html };
       index.posts.unshift({ slug: next, title, date: post.date });
       const sha = await commit(env, parent, [
+        ...files,
         { path: `${POST_DIR}/${next}.json`, content: text(post) },
         { path: INDEX_PATH, content: text(index) },
       ], `Blog: publish ${next}`);
@@ -156,7 +215,13 @@ export function blogRoutes({ json, readBody, github, ApiError, cleanText }) {
 
     if (del) {
       index.posts.splice(at, 1);
+      // Remove the images this post uploaded; other links are left alone.
+      const old = await readFile(env, `${POST_DIR}/${slug}.json`, parent);
+      const prefix = `${SITE}/assets/blog/${slug}/`;
+      const images = [...new Set([...(old?.html || "").matchAll(/src="([^"]+)"/g)].map(m => m[1])
+        .filter(src => src.startsWith(prefix) && /^[a-f0-9]{16}\.(png|jpg|gif|webp)$/.test(src.slice(prefix.length))))];
       const sha = await commit(env, parent, [
+        ...images.map(src => ({ path: src.slice(SITE.length + 1), content: null })),
         { path: `${POST_DIR}/${slug}.json`, content: null },
         { path: INDEX_PATH, content: text(index) },
       ], `Blog: delete ${slug}`);
@@ -165,10 +230,11 @@ export function blogRoutes({ json, readBody, github, ApiError, cleanText }) {
 
     const existing = await readFile(env, `${POST_DIR}/${slug}.json`, parent);
     if (!existing) throw new ApiError(502, "The post file is missing; repair it through GitHub.");
-    const { title, html } = await readPost(body);
+    const { title, html, files } = await readPost(body, slug);
     const post = { ...existing, title, html, updated_timestamp: now };
     index.posts[at] = { ...index.posts[at], title, updated: now.slice(0, 10) };
     const sha = await commit(env, parent, [
+      ...files,
       { path: `${POST_DIR}/${slug}.json`, content: text(post) },
       { path: INDEX_PATH, content: text(index) },
     ], `Blog: update ${slug}`);

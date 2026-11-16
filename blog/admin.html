@@ -71,6 +71,8 @@ input.box:focus{border-color:#8C3B2E}
 .editor pre code{background:none;padding:0;font-size:inherit}
 .editor hr{border:0;border-top:1px solid rgba(35,32,28,.3);margin:2em 0}
 .editor img{max-width:100%;display:block;margin:1.4em auto}
+.editor img.loading{opacity:.4}
+.editor.dragover{outline:2px dashed rgba(140,59,46,.4);outline-offset:8px}
 .footbar{position:fixed;left:0;right:0;bottom:0;z-index:6;background:rgba(245,239,225,.96);border-top:1px solid rgba(35,32,28,.18)}
 .footbar .inner{max-width:820px;margin:0 auto;padding:12px 28px;display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap}
 .footbar .meta{font-size:14px;color:#5B554B}
@@ -125,7 +127,8 @@ input.box:focus{border-color:#8C3B2E}
       <button type="button" data-cmd="pre" title="Code block (``` then space)">{ }</button>
       <span class="sep"></span>
       <button type="button" data-cmd="hr" title="Divider (--- then Enter)">—</button>
-      <button type="button" data-cmd="image" title="Image from a link">Image</button>
+      <button type="button" data-cmd="image" title="Upload an image (or paste / drop one)">Image</button>
+      <input type="file" id="imageInput" accept="image/png,image/jpeg,image/gif,image/webp" multiple hidden>
     </div>
     <textarea id="title" class="title" rows="1" placeholder="Title" maxlength="200"></textarea>
     <div id="editor" class="editor" contenteditable="true" spellcheck="true" data-placeholder="Write here…"></div>
@@ -185,7 +188,7 @@ const RENAME = {B:'STRONG',I:'EM',H1:'H2',DEL:'S',STRIKE:'S',DIV:'P',H5:'H4',H6:
 function safeUrl(v, image) {
   v = String(v || '').trim();
   if (/^https:\/\/[^\s"'<>]+$/i.test(v)) return true;
-  if (image) return /^\/(?!\/)[^\s"'<>]*$/.test(v);
+  if (image) return /^\/(?!\/)[^\s"'<>]*$/.test(v) || /^upload:[a-z0-9]{1,32}$/.test(v);
   return /^http:\/\/[^\s"'<>]+$/i.test(v) || /^mailto:[^\s"'<>]+$/i.test(v) || /^#[\w-]*$/.test(v) || /^\/(?!\/)[^\s"'<>]*$/.test(v);
 }
 function clean(node) {
@@ -280,13 +283,61 @@ function link() {
   if (range.collapsed) document.execCommand('insertHTML', false, '<a href="' + url.replace(/"/g,'&quot;') + '">' + url.replace(/</g,'&lt;') + '</a>');
   else document.execCommand('createLink', false, url);
 }
+/* ---------- images: shrunk in the browser, uploaded with the post ---------- */
+const MAX_SIDE = 1600, MAX_BYTES = 5 * 1024 * 1024;
+let savedRange = null;
 function image() {
-  const url = prompt('Image address (https://…):', 'https://');
-  if (!url || url === 'https://') return;
-  if (!safeUrl(url, true)) { alert('Images must be an https:// address.'); return; }
-  const alt = prompt('Describe the image (optional):', '') || '';
-  document.execCommand('insertHTML', false, '<img src="' + url.replace(/"/g,'&quot;') + '" alt="' + alt.replace(/"/g,'&quot;') + '"><p><br></p>');
+  const sel = getSelection(); savedRange = sel.rangeCount ? sel.getRangeAt(0).cloneRange() : null;
+  $('imageInput').value = ''; $('imageInput').click();
 }
+$('imageInput').addEventListener('change', () => {
+  if (savedRange) { editor.focus(); const s = getSelection(); s.removeAllRanges(); s.addRange(savedRange); }
+  insertImages([...$('imageInput').files]);
+});
+const asDataURL = blob => new Promise((ok, fail) => { const r = new FileReader(); r.onload = () => ok(r.result); r.onerror = fail; r.readAsDataURL(blob); });
+async function shrink(file) {
+  // GIFs keep their animation; everything else is redrawn at a sensible size.
+  if (file.type === 'image/gif') return file.size <= MAX_BYTES ? file : null;
+  const bitmap = await createImageBitmap(file);
+  const scale = Math.min(1, MAX_SIDE / Math.max(bitmap.width, bitmap.height));
+  const canvas = document.createElement('canvas');
+  canvas.width = Math.round(bitmap.width * scale); canvas.height = Math.round(bitmap.height * scale);
+  canvas.getContext('2d').drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+  let out = await new Promise(ok => canvas.toBlob(ok, 'image/webp', 0.85));
+  if (!out || out.type !== 'image/webp') out = await new Promise(ok => canvas.toBlob(ok, 'image/jpeg', 0.86));
+  if (scale === 1 && file.size < out.size && file.size <= MAX_BYTES) out = file;
+  return out && out.size <= MAX_BYTES ? out : null;
+}
+async function insertImages(files) {
+  files = files.filter(f => /^image\/(png|jpeg|gif|webp)$/.test(f.type));
+  if (!files.length) return;
+  editor.focus();
+  for (const file of files) {
+    const id = 'img' + Math.random().toString(36).slice(2, 10);
+    document.execCommand('insertHTML', false, '<img id="' + id + '" class="loading" alt=""><p><br></p>');
+    const img = document.getElementById(id);
+    try {
+      const blob = await shrink(file);
+      if (!blob) throw new Error('too big');
+      img.src = await asDataURL(blob);
+      img.removeAttribute('id'); img.classList.remove('loading'); if (!img.className) img.removeAttribute('class');
+    } catch {
+      img.remove();
+      $('editStatus').textContent = file.name + ' could not be added (PNG, JPEG, GIF or WebP, under 5 MB).';
+    }
+  }
+  changed();
+}
+editor.addEventListener('dragover', e => { if ([...e.dataTransfer.types].includes('Files')) { e.preventDefault(); editor.classList.add('dragover'); } });
+editor.addEventListener('dragleave', () => editor.classList.remove('dragover'));
+editor.addEventListener('drop', e => {
+  editor.classList.remove('dragover');
+  const files = [...e.dataTransfer.files]; if (!files.length) return;
+  e.preventDefault();
+  const pos = document.caretRangeFromPoint ? document.caretRangeFromPoint(e.clientX, e.clientY) : null;
+  if (pos) { const s = getSelection(); s.removeAllRanges(); s.addRange(pos); }
+  insertImages(files);
+});
 const COMMANDS = {
   bold: () => document.execCommand('bold'),
   italic: () => document.execCommand('italic'),
@@ -377,6 +428,8 @@ editor.addEventListener('keydown', e => {
 editor.addEventListener('paste', e => {
   const html = e.clipboardData.getData('text/html'), text = e.clipboardData.getData('text/plain');
   e.preventDefault();
+  const pics = [...e.clipboardData.files].filter(f => f.type.startsWith('image/'));
+  if (pics.length && !text.trim()) { insertImages(pics); return; }
   if (inside('PRE')) { document.execCommand('insertText', false, text); return; }
   if (html) { document.execCommand('insertHTML', false, cleanHTML(html)); }
   else {
@@ -399,7 +452,8 @@ function changed() {
   dirty = true; updateMeta();
   clearTimeout(saveTimer);
   saveTimer = setTimeout(() => {
-    try { localStorage.setItem(draftKey(), JSON.stringify({ title: titleEl.value, html: editor.innerHTML, at: Date.now() })); $('editStatus').textContent = 'Draft saved on this device'; } catch {}
+    try { localStorage.setItem(draftKey(), JSON.stringify({ title: titleEl.value, html: editor.innerHTML, at: Date.now() })); $('editStatus').textContent = 'Draft saved on this device'; }
+    catch { $('editStatus').textContent = 'Draft too large to keep on this device — publish to save it'; }
   }, 600);
 }
 function updateMeta() {
@@ -451,14 +505,22 @@ async function openEditor(slug) {
 }
 
 async function publish() {
-  const title = titleEl.value.trim(), html = cleanHTML(editor.innerHTML);
+  if (editor.querySelector('img.loading')) { $('editStatus').textContent = 'Wait for images to finish loading.'; return; }
+  // New images travel as data inside the request; the Worker commits them next to the post.
+  const copy = editor.cloneNode(true), images = {};
+  let n = 0;
+  for (const img of copy.querySelectorAll('img[src^="data:image/"]')) {
+    const id = 'i' + (++n); images[id] = img.getAttribute('src'); img.setAttribute('src', 'upload:' + id);
+  }
+  const title = titleEl.value.trim(), html = cleanHTML(copy.innerHTML);
   if (!title) { $('editStatus').textContent = 'Add a title first.'; titleEl.focus(); return; }
   if (!html) { $('editStatus').textContent = 'The post is empty.'; return; }
   const button = $('publishButton'); button.disabled = true; $('editStatus').textContent = current ? 'Updating…' : 'Publishing…';
   try {
     const path = '/api/blog/posts' + (current ? '/' + encodeURIComponent(current) : '');
-    const data = await api(path, { method:'POST', body: JSON.stringify({ title, html }) });
+    const data = await api(path, { method:'POST', body: JSON.stringify({ title, html, images }) });
     clearDraft(); current = data.slug; dirty = false;
+    if (n) { try { editor.innerHTML = (await api('/api/blog/posts/' + encodeURIComponent(data.slug))).post.html; } catch {} }
     button.textContent = 'Update';
     $('editStatus').innerHTML = '';
     const a = document.createElement('a'); a.href = 'https://mihirss.com/blog/post.html?p=' + data.slug; a.target = '_blank'; a.rel = 'noopener';
