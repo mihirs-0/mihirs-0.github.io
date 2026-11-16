@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Blog — Mihir Sahasrabudhe</title>
+<meta name="author" content="Mihir Sahasrabudhe">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;0,6..72,700;1,6..72,400;1,6..72,500&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;background:#F5EFE1;color:#23201C;
+    font-family:'Newsreader',Georgia,serif;
+    -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+  }
+  ::selection{background:#1B2333;color:#EFE3C8;}
+  a{color:#8C3B2E;text-decoration:none;}
+  a:hover{color:#1B2333;}
+
+  .paper{max-width:1040px;margin:0 auto;min-height:100vh;padding:36px 32px 90px;}
+
+  .bar{display:flex;justify-content:space-between;align-items:baseline;gap:20px;flex-wrap:wrap;}
+  .bar .plate{display:block;width:64px;height:44px;overflow:hidden;opacity:.9;transition:opacity .3s;}
+  .bar .plate:hover{opacity:1;}
+  .bar .plate img{width:100%;height:100%;object-fit:cover;object-position:50% 35%;display:block;mix-blend-mode:multiply;}
+  .bar nav{display:flex;gap:26px;flex-wrap:wrap;font-size:14px;letter-spacing:.16em;text-transform:uppercase;color:#5B554B;}
+  .bar nav a{color:inherit;transition:color .2s;}
+  .bar nav a:hover{color:#8C3B2E;}
+
+  .wrap{max-width:41em;margin:72px auto 0;}
+  .kicker{font-size:13px;letter-spacing:.2em;text-transform:uppercase;color:#8C3B2E;}
+  h1{
+    font-weight:400;font-size:clamp(40px,7.4vw,62px);line-height:1.0;
+    letter-spacing:-.01em;color:#23201C;margin:14px 0 0;text-wrap:pretty;
+  }
+  .byline{font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:#5B554B;margin:24px 0 0;}
+  .rule{border:0;border-top:1px solid rgba(35,32,28,.25);margin:34px 0 0;}
+
+  .body{margin-top:34px;overflow-wrap:break-word;}
+  .body p{font-size:19.5px;line-height:1.68;color:#3A362E;margin:0 0 1.35em;}
+  .body a{border-bottom:1px solid rgba(140,59,46,.35);}
+  .body a:hover{border-bottom-color:#1B2333;}
+  .body strong{color:#23201C;font-weight:600;}
+  .body h2{font-weight:400;font-size:28px;line-height:1.16;color:#23201C;margin:2.4em 0 .9em;letter-spacing:-.01em;}
+  .body h3{font-weight:500;font-size:22px;line-height:1.25;color:#23201C;margin:2em 0 .7em;}
+  .body h4{font-weight:500;font-size:19.5px;color:#23201C;margin:1.8em 0 .6em;}
+  .body blockquote{margin:1.6em 0;padding:2px 0 2px 22px;border-left:3px solid rgba(140,59,46,.5);}
+  .body blockquote p{color:#5B554B;}
+  .body ul,.body ol{font-size:19.5px;line-height:1.68;color:#3A362E;margin:0 0 1.35em;padding-left:1.4em;}
+  .body li{margin:.3em 0;}
+  .body li p{margin:0;}
+  .body code{font-family:ui-monospace,Menlo,monospace;font-size:.82em;background:rgba(35,32,28,.07);padding:.1em .3em;border-radius:3px;}
+  .body pre{font-family:ui-monospace,Menlo,monospace;font-size:15px;line-height:1.55;background:#EFE6D6;padding:16px 18px;border-radius:4px;overflow-x:auto;margin:0 0 1.5em;}
+  .body pre code{background:none;padding:0;font-size:inherit;}
+  .body hr{border:0;text-align:center;margin:2.8em 0 2.4em;}
+  .body hr::after{content:'· · ·';color:#8C3B2E;letter-spacing:.5em;font-size:15px;}
+  .body img{display:block;max-width:100%;height:auto;margin:1.8em auto;}
+  .body figure{margin:1.8em 0;}
+  .body figcaption{font-size:15px;color:#5B554B;text-align:center;margin-top:.6em;}
+
+  .missing{font-size:19px;line-height:1.6;color:#5B554B;}
+
+  footer{
+    display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;
+    margin-top:80px;padding:24px 0 0;color:#5B554B;
+    border-top:1px solid rgba(35,32,28,.25);
+    font-size:13px;letter-spacing:.12em;text-transform:uppercase;
+  }
+  footer a{color:#5B554B;} footer a:hover{color:#8C3B2E;}
+
+  @media (max-width:640px){
+    .paper{padding:28px 22px 70px;}
+    .wrap{margin-top:46px;}
+    .body p,.body ul,.body ol{font-size:18px;}
+    .body h2{font-size:25px;}
+  }
+</style>
+</head>
+<body>
+<div class="paper">
+
+  <div class="bar">
+    <a class="plate" href="../"><img src="../assets/art/megh-dutam.jpg" alt="Home"></a>
+    <nav>
+      <a href="../blog.html">Blog</a>
+      <a href="../readings.html">Readings</a>
+      <a href="../photographs.html">Photographs</a>
+      <a href="../instruments.html">Instruments</a>
+      <a href="../#colophon">About</a>
+    </nav>
+  </div>
+
+  <article>
+    <div class="wrap">
+      <div class="kicker">Blog</div>
+      <h1 id="title"></h1>
+      <p class="byline" id="byline"></p>
+      <hr class="rule">
+      <div class="body" id="body"></div>
+    </div>
+  </article>
+
+  <footer>
+    <span>© 2026 Mihir Sahasrabudhe</span>
+    <a href="../blog.html">More posts →</a>
+  </footer>
+</div>
+
+<script>
+// Posts are stored as HTML; render only an allowlist of elements and attributes.
+const DROP = new Set(['SCRIPT','STYLE','IFRAME','OBJECT','EMBED','TEMPLATE','NOSCRIPT','SVG','MATH','FORM','INPUT','BUTTON','TEXTAREA','SELECT','TITLE','META','LINK','BASE','AUDIO','VIDEO','CANVAS']);
+const ALLOWED = {P:[],BR:[],H2:[],H3:[],H4:[],STRONG:[],EM:[],U:[],S:[],SUP:[],SUB:[],A:['href','title'],BLOCKQUOTE:[],UL:[],OL:['start'],LI:[],PRE:[],CODE:[],HR:[],IMG:['src','alt','title'],FIGURE:[],FIGCAPTION:[]};
+function safeUrl(v, image) {
+  v = String(v || '').trim();
+  if (/^https:\/\/[^\s"'<>]+$/i.test(v)) return true;
+  if (image) return /^\/(?!\/)[^\s"'<>]*$/.test(v);
+  return /^http:\/\/[^\s"'<>]+$/i.test(v) || /^mailto:[^\s"'<>]+$/i.test(v) || /^#[\w-]*$/.test(v) || /^\/(?!\/)[^\s"'<>]*$/.test(v);
+}
+function clean(node) {
+  for (const el of [...node.childNodes]) {
+    if (el.nodeType === 8) { el.remove(); continue; }
+    if (el.nodeType !== 1) continue;
+    if (DROP.has(el.tagName)) { el.remove(); continue; }
+    const keep = ALLOWED[el.tagName];
+    if (!keep) { clean(el); el.replaceWith(...el.childNodes); continue; }
+    for (const a of [...el.attributes]) {
+      const ok = keep.includes(a.name) && (a.name !== 'href' || safeUrl(a.value)) && (a.name !== 'src' || safeUrl(a.value, true)) && (a.name !== 'start' || /^\d{1,6}$/.test(a.value));
+      if (!ok) el.removeAttribute(a.name);
+    }
+    if (el.tagName === 'A' && /^https?:/i.test(el.getAttribute('href') || '') && !/^https:\/\/mihirss\.com/i.test(el.getAttribute('href'))) {
+      el.target = '_blank'; el.rel = 'noopener';
+    }
+    if (el.tagName === 'IMG') el.loading = 'lazy';
+    clean(el);
+  }
+}
+function niceDate(iso) {
+  const d = new Date(iso + 'T12:00:00Z');
+  return isNaN(d) ? iso : d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
+}
+function missing() {
+  document.getElementById('title').textContent = 'Not found';
+  document.getElementById('body').innerHTML = '<p class="missing">This post could not be found. <a href="../blog.html">Back to the blog</a>.</p>';
+}
+
+const slug = new URLSearchParams(location.search).get('p') || '';
+if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)) missing();
+else fetch('../data/blog/' + slug + '.json', { cache: 'no-cache' })
+  .then(r => { if (!r.ok) throw new Error(); return r.json(); })
+  .then(post => {
+    document.title = post.title + ' — Mihir Sahasrabudhe';
+    document.getElementById('title').textContent = post.title;
+    const updated = post.updated_timestamp && post.updated_timestamp.slice(0, 10) !== post.date
+      ? ' · updated ' + niceDate(post.updated_timestamp.slice(0, 10)) : '';
+    document.getElementById('byline').textContent = 'Mihir Sahasrabudhe · ' + niceDate(post.date) + updated;
+    const doc = new DOMParser().parseFromString('<body>' + post.html + '</body>', 'text/html');
+    clean(doc.body);
+    document.getElementById('body').replaceChildren(...doc.body.childNodes);
+  })
+  .catch(missing);
+</script>
+</body>
+</html>

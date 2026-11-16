@@ -21,6 +21,8 @@ a:hover{color:#1B2333;}
 @keyframes rise{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:none;}}
 @media (prefers-reduced-motion:reduce){*{animation:none !important;transition:none !important;}}
 img{display:block;max-width:100%;}
+.post-link{display:flex;justify-content:space-between;gap:16px;align-items:baseline;padding:26px 0;color:inherit;transition:padding-left .3s ease;}
+.post-link:hover{padding-left:10px;}
 @media (max-width:760px){.plate{display:none !important;}.stick{position:static !important;}}
 </style>
 </helmet>
@@ -47,7 +49,7 @@ img{display:block;max-width:100%;}
           <img src="assets/art/ghulam-ali-khan.jpg" alt="" style="width:100%;height:100%;object-fit:cover;object-position:50% 30%;display:block;mix-blend-mode:multiply;-webkit-mask-image:linear-gradient(to right,transparent 0%,#000 6%,#000 94%,transparent 100%),linear-gradient(to bottom,transparent 0%,#000 6%,#000 94%,transparent 100%);mask-image:linear-gradient(to right,transparent 0%,#000 6%,#000 94%,transparent 100%),linear-gradient(to bottom,transparent 0%,#000 6%,#000 94%,transparent 100%);-webkit-mask-composite:source-in;mask-composite:intersect">
         </div>
       </div>
-      <div></div>
+      <ol id="blog-posts" style="list-style:none;margin:0;padding:0;display:flex;flex-direction:column"></ol>
     </div>
   </div>
 </div>
@@ -58,6 +60,34 @@ class Component extends DCLogic {
     return {};
   }
 }
+</script>
+<script>
+// Posts come from data/blog.json, written by the blog admin.
+fetch('data/blog.json', { cache: 'no-cache' })
+  .then(r => r.ok ? r.json() : { posts: [] })
+  .then(({ posts = [] }) => {
+    if (!posts.length) return;
+    const fill = () => {
+      const list = document.getElementById('blog-posts');
+      if (!list) return requestAnimationFrame(fill);
+      list.style.borderTop = '1px solid rgba(35,32,28,.25)';
+      for (const p of posts) {
+        const li = document.createElement('li');
+        li.style.borderBottom = '1px solid rgba(35,32,28,.18)';
+        const a = document.createElement('a');
+        a.className = 'post-link'; a.href = 'blog/post.html?p=' + encodeURIComponent(p.slug);
+        const h = document.createElement('h3');
+        h.style.cssText = "font-family:'Newsreader',Georgia,serif;font-weight:500;font-size:30px;line-height:1.1;margin:0;color:#23201C;text-wrap:pretty";
+        h.textContent = p.title;
+        const d = document.createElement('span');
+        d.style.cssText = 'font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:#5B554B;white-space:nowrap';
+        d.textContent = new Date(p.date + 'T12:00:00Z').toLocaleDateString('en-US', { month: 'short', year: 'numeric', timeZone: 'UTC' });
+        a.append(h, d); li.append(a); list.append(li);
+      }
+    };
+    fill();
+  })
+  .catch(() => {});
 </script>
 </body>
 </html>

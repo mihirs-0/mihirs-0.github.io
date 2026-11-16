@@ -1,3 +1,5 @@
+import { blogRoutes } from "./blog.js";
+
 const REPO = "mihirs-0/mihirs-0.github.io";
 const BRANCHES = new Set(["map-of-reality", "main"]);
 const DATA_PATH = "data/map-of-reality.json";
@@ -74,7 +76,7 @@ async function validSession(request, env) {
   if (!Number.isSafeInteger(expires) || expires <= Date.now() || expires > Date.now() + TTL) return false;
   return verify(env.SESSION_SECRET, sessionPayload(env, parts[0]), parts[1]);
 }
-async function readBody(request) {
+async function readBody(request, limit = 32768) {
   if (request.headers.get("content-type")?.split(";")[0].trim().toLowerCase() !== "application/json") {
     throw new ApiError(415, "JSON is required.");
   }
@@ -85,7 +87,7 @@ async function readBody(request) {
   while (true) {
     const { done, value } = await reader.read(); if (done) break;
     size += value.length;
-    if (size > 32768) { await reader.cancel(); throw new ApiError(413, "Request is too large."); }
+    if (size > limit) { await reader.cancel(); throw new ApiError(413, "Request is too large."); }
     content += decoder.decode(value, { stream: true });
   }
   content += decoder.decode();
@@ -157,15 +159,18 @@ function validConfidence(value) {
   return Number.isFinite(n) && n >= 0 && n <= 100 ? n : null;
 }
 
+const blog = blogRoutes({ json, readBody, github, ApiError, cleanText });
+
 const api = {
   async fetch(request, env) {
     const headers = cors(request);
     const url = new URL(request.url);
+    const blogRoute = url.pathname.startsWith("/api/blog/");
     const updateRoute = /^\/api\/entries\/[a-f0-9-]{36}\/updates$/.test(url.pathname);
     const method = url.pathname === "/api/me" ? "GET"
       : ["/api/login", "/api/logout", "/api/entries"].includes(url.pathname) || updateRoute ? "POST" : null;
-    if (!method) return json({ ok: false, error: "Not found." }, 404, headers);
-    if (request.method !== method && request.method !== "OPTIONS") return json({ ok: false, error: "Method not allowed." }, 405, { ...headers, allow: method });
+    if (!method && !blogRoute) return json({ ok: false, error: "Not found." }, 404, headers);
+    if (!blogRoute && request.method !== method && request.method !== "OPTIONS") return json({ ok: false, error: "Method not allowed." }, 405, { ...headers, allow: method });
     const origin = request.headers.get("Origin");
     // SameSite cookies alone do not protect against a hostile sibling subdomain.
     if ((request.method !== "GET" || origin) && !ALLOWED_ORIGINS.has(origin)) return json({ ok: false, error: "Origin is not allowed." }, 403, headers);
@@ -207,6 +212,8 @@ const api = {
     if (!(await validSession(request, env))) {
       return json({ ok: false, error: "Authentication required." }, 401, headers);
     }
+
+    if (blogRoute) return blog(request, env, url, headers);
 
     if (url.pathname === "/api/entries" && request.method === "POST") {
       const body = await readBody(request);

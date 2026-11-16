@@ -2,6 +2,17 @@
 
 The Worker is the authenticated write boundary for the Map of Reality ledger. It can create claims and append dated updates; it cannot edit or delete published history. Direct GitHub access remains the separate recovery path.
 
+## Blog
+
+The same Worker, session and secrets also publish the blog.
+
+- Editor: `https://map-admin.mihirss.com/blog` (source: `blog/admin.html`).
+- Storage: `data/blog.json` (index) and `data/blog/<slug>.json` (one file per post). Public pages: `blog.html` and `blog/post.html?p=<slug>`.
+- Routes (all require the admin session): `GET/POST /api/blog/posts`, `GET/POST /api/blog/posts/<slug>`, `POST /api/blog/posts/<slug>/delete`.
+- Each publish, edit or delete is a single commit through the Git Data API; the branch update refuses anything but a fast-forward, so a concurrent change returns a conflict instead of being overwritten.
+- Post HTML is reduced to an allowlist of elements and attributes in the Worker (HTMLRewriter) and again in the public reader. Drafts autosave only in the editor's browser storage; nothing unpublished reaches the public repository.
+- Unlike the ledger, posts can be edited and deleted from the editor; git history keeps every earlier version.
+
 ## Deployment
 
 - Worker: `map-of-reality-admin`

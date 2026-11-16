@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { readFile } from 'node:fs/promises';
+import { fileURLToPath } from 'node:url';
 import { Miniflare, convertV4MiniflareOptions } from 'miniflare';
 
 const origin = 'https://map-admin.mihirss.com';
@@ -15,7 +15,8 @@ const seed = { version: 1, title: 'Map of Reality', entries: [] };
 test('Cloudflare runtime: login, append-only publication, and security boundaries', async t => {
   let ledger = structuredClone(seed), sha = 'initial', calls = [], failStatus = 0;
   let options = {
-    modules: true, script: await readFile(new URL('../src/index.js', import.meta.url), 'utf8'),
+    modules: ['index.js', 'blog.js'].map(f => ({ type: 'ESModule', path: fileURLToPath(new URL('../src/' + f, import.meta.url)) })),
+    modulesRoot: fileURLToPath(new URL('../', import.meta.url)),
     compatibilityDate: '2026-10-01', bindings,
     ratelimits: { LOGIN_LIMITER: { namespace_id: '1044266898', simple: { limit: 5, period: 60 } } },
     outboundService: async request => {

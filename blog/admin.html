@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Blog — Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;0,6..72,700;1,6..72,400;1,6..72,500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#F5EFE1;color:#23201C;font-family:'Newsreader',Georgia,serif;-webkit-font-smoothing:antialiased}
+a{color:#8C3B2E;text-decoration:none}
+::selection{background:#1B2333;color:#EFE3C8}
+.paper{max-width:820px;margin:0 auto;min-height:100vh;padding:36px 28px 120px}
+.top{display:flex;justify-content:space-between;gap:20px;align-items:baseline;flex-wrap:wrap}
+.top nav{display:flex;gap:20px;font-size:14px;letter-spacing:.12em;text-transform:uppercase}
+.top nav button{all:unset;cursor:pointer;color:#5B554B}
+.top nav button:hover{color:#8C3B2E}
+.eyebrow{font-size:13px;letter-spacing:.2em;text-transform:uppercase;color:#8C3B2E}
+h1{font-weight:400;font-size:clamp(38px,7vw,58px);line-height:1;margin:14px 0 0}
+.rule{border:0;border-top:1px solid rgba(35,32,28,.25);margin:32px 0}
+.panel{border:1px solid rgba(35,32,28,.22);padding:24px;border-radius:3px}
+.field{margin:0 0 17px}
+label{display:block;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#5B554B;margin:0 0 7px}
+input.box{width:100%;border:1px solid rgba(35,32,28,.3);background:#FBF6EA;color:#23201C;padding:12px 13px;font:inherit;font-size:17px;border-radius:2px;outline:none}
+input.box:focus{border-color:#8C3B2E}
+.btn{appearance:none;border:1px solid #1B2333;background:#1B2333;color:#EFE3C8;padding:11px 18px;border-radius:999px;font:inherit;font-size:14px;letter-spacing:.12em;text-transform:uppercase;cursor:pointer}
+.btn.secondary{background:transparent;color:#23201C;border-color:rgba(35,32,28,.35)}
+.btn.danger{background:transparent;color:#8C3B2E;border-color:rgba(140,59,46,.45)}
+.btn:disabled{opacity:.5;cursor:wait}
+.actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.status{font-size:14px;color:#5B554B;margin:13px 0 0;min-height:1.4em}
+.hidden{display:none !important}
+
+/* post list */
+.posts{list-style:none;margin:24px 0 0;padding:0;border-top:1px solid rgba(35,32,28,.25)}
+.posts li{display:flex;justify-content:space-between;align-items:baseline;gap:16px;padding:18px 0;border-bottom:1px solid rgba(35,32,28,.18)}
+.posts .t{font-size:24px;line-height:1.2;cursor:pointer}
+.posts .t:hover{color:#8C3B2E}
+.posts .d{font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:#5B554B;white-space:nowrap}
+.posts .row{display:flex;gap:14px;align-items:baseline}
+.posts .row button{all:unset;cursor:pointer;font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:#5B554B}
+.posts .row button:hover{color:#8C3B2E}
+.empty{font-size:18px;color:#5B554B;padding:20px 0}
+
+/* editor */
+.toolbar{position:sticky;top:0;z-index:5;display:flex;flex-wrap:wrap;gap:2px;padding:8px 0;background:#F5EFE1;border-bottom:1px solid rgba(35,32,28,.18)}
+.toolbar button,.bubble button{all:unset;cursor:pointer;min-width:32px;height:32px;padding:0 8px;box-sizing:border-box;display:inline-flex;align-items:center;justify-content:center;font-size:15px;color:#4A443B;border-radius:3px}
+.toolbar button:hover{background:rgba(35,32,28,.07);color:#23201C}
+.toolbar button.on{background:#1B2333;color:#EFE3C8}
+.toolbar .sep{width:1px;background:rgba(35,32,28,.18);margin:4px 6px}
+.bubble{position:absolute;z-index:10;display:flex;gap:1px;padding:4px;background:#1B2333;border-radius:4px;box-shadow:0 6px 18px rgba(0,0,0,.18)}
+.bubble button{color:#EFE3C8;height:30px;min-width:30px}
+.bubble button:hover,.bubble button.on{background:rgba(239,227,200,.16)}
+.title{width:100%;border:0;background:transparent;outline:none;font:inherit;font-size:clamp(36px,6vw,50px);line-height:1.1;color:#23201C;padding:28px 0 6px;resize:none;overflow:hidden}
+.title::placeholder{color:rgba(35,32,28,.3)}
+.editor{min-height:55vh;outline:none;padding:10px 0 40px;font-size:19.5px;line-height:1.68;color:#3A362E;caret-color:#8C3B2E}
+.editor:empty::before{content:attr(data-placeholder);color:rgba(35,32,28,.32);pointer-events:none}
+.editor p{margin:0 0 1.1em}
+.editor h2{font-weight:400;font-size:30px;line-height:1.16;color:#23201C;margin:1.6em 0 .6em}
+.editor h3{font-weight:500;font-size:23px;line-height:1.25;color:#23201C;margin:1.4em 0 .5em}
+.editor strong{font-weight:600;color:#23201C}
+.editor a{color:#8C3B2E;border-bottom:1px solid rgba(140,59,46,.35)}
+.editor blockquote{margin:1.2em 0;padding:2px 0 2px 20px;border-left:3px solid rgba(140,59,46,.5);color:#5B554B}
+.editor ul,.editor ol{margin:0 0 1.1em;padding-left:1.4em}
+.editor li{margin:.25em 0}
+.editor code{font-family:ui-monospace,Menlo,monospace;font-size:.82em;background:rgba(35,32,28,.07);padding:.1em .3em;border-radius:3px}
+.editor pre{font-family:ui-monospace,Menlo,monospace;font-size:15px;line-height:1.55;background:#EFE6D6;padding:16px 18px;border-radius:4px;overflow-x:auto;white-space:pre-wrap;margin:0 0 1.2em}
+.editor pre code{background:none;padding:0;font-size:inherit}
+.editor hr{border:0;border-top:1px solid rgba(35,32,28,.3);margin:2em 0}
+.editor img{max-width:100%;display:block;margin:1.4em auto}
+.footbar{position:fixed;left:0;right:0;bottom:0;z-index:6;background:rgba(245,239,225,.96);border-top:1px solid rgba(35,32,28,.18)}
+.footbar .inner{max-width:820px;margin:0 auto;padding:12px 28px;display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap}
+.footbar .meta{font-size:14px;color:#5B554B}
+@media(max-width:620px){.paper{padding:28px 18px 140px}.footbar .inner{padding:10px 18px}}
+</style>
+</head>
+<body>
+<div class="paper">
+  <div class="top">
+    <div class="eyebrow">Private · Blog</div>
+    <nav id="nav" class="hidden">
+      <button type="button" id="navPosts">Posts</button>
+      <a href="https://mihirss.com/blog.html" style="color:#5B554B">View blog</a>
+      <button type="button" id="logoutButton">Sign out</button>
+    </nav>
+  </div>
+
+  <section id="loginPanel" class="hidden">
+    <h1>Sign in</h1>
+    <hr class="rule">
+    <div class="panel">
+      <form id="loginForm">
+        <div class="field"><label for="username">Username</label><input class="box" id="username" autocomplete="username" required></div>
+        <div class="field"><label for="password">Password</label><input class="box" id="password" type="password" autocomplete="current-password" required></div>
+        <div class="actions"><button class="btn" id="loginButton">Sign in</button></div>
+        <p id="loginStatus" class="status" role="status" aria-live="polite"></p>
+      </form>
+    </div>
+  </section>
+
+  <section id="listPanel" class="hidden">
+    <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap">
+      <h1>Posts</h1>
+      <button class="btn" type="button" id="newButton">New post</button>
+    </div>
+    <ul id="posts" class="posts"></ul>
+    <p id="listStatus" class="status" role="status" aria-live="polite"></p>
+  </section>
+
+  <section id="editPanel" class="hidden">
+    <div class="toolbar" id="toolbar" role="toolbar" aria-label="Formatting">
+      <button type="button" data-cmd="bold" title="Bold (⌘B)"><b>B</b></button>
+      <button type="button" data-cmd="italic" title="Italic (⌘I)"><i>I</i></button>
+      <button type="button" data-cmd="link" title="Link (⌘K)">Link</button>
+      <button type="button" data-cmd="code" title="Inline code"><span style="font-family:ui-monospace,Menlo,monospace;font-size:13px">&lt;/&gt;</span></button>
+      <span class="sep"></span>
+      <button type="button" data-cmd="h2" title="Heading (# then space)">H1</button>
+      <button type="button" data-cmd="h3" title="Subheading (## then space)">H2</button>
+      <button type="button" data-cmd="blockquote" title="Quote (&gt; then space)">“ ”</button>
+      <button type="button" data-cmd="ul" title="Bulleted list (- then space)">•</button>
+      <button type="button" data-cmd="ol" title="Numbered list (1. then space)">1.</button>
+      <button type="button" data-cmd="pre" title="Code block (``` then space)">{ }</button>
+      <span class="sep"></span>
+      <button type="button" data-cmd="hr" title="Divider (--- then Enter)">—</button>
+      <button type="button" data-cmd="image" title="Image from a link">Image</button>
+    </div>
+    <textarea id="title" class="title" rows="1" placeholder="Title" maxlength="200"></textarea>
+    <div id="editor" class="editor" contenteditable="true" spellcheck="true" data-placeholder="Write here…"></div>
+  </section>
+</div>
+
+<div class="bubble hidden" id="bubble" role="toolbar" aria-label="Selection formatting">
+  <button type="button" data-cmd="bold"><b>B</b></button>
+  <button type="button" data-cmd="italic"><i>I</i></button>
+  <button type="button" data-cmd="link">Link</button>
+  <button type="button" data-cmd="h2">H1</button>
+  <button type="button" data-cmd="h3">H2</button>
+  <button type="button" data-cmd="blockquote">“ ”</button>
+  <button type="button" data-cmd="code"><span style="font-family:ui-monospace,Menlo,monospace;font-size:13px">&lt;/&gt;</span></button>
+</div>
+
+<div class="footbar hidden" id="footbar">
+  <div class="inner">
+    <span class="meta" id="meta"></span>
+    <div class="actions">
+      <span class="status" id="editStatus" role="status" aria-live="polite" style="margin:0"></span>
+      <button class="btn secondary" type="button" id="backButton">Back</button>
+      <button class="btn" type="button" id="publishButton">Publish</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const API_BASE = 'https://map-admin.mihirss.com';
+const $ = id => document.getElementById(id);
+const editor = $('editor'), titleEl = $('title');
+let current = null;          // slug of the post being edited, or null for a new one
+let posts = [];
+
+async function api(path, options={}) {
+  const response = await fetch(API_BASE + path, {
+    credentials:'include',
+    headers:{'content-type':'application/json', ...(options.headers || {})},
+    ...options
+  });
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) throw new Error(data.error || 'Request failed');
+  return data;
+}
+
+function show(panel) {
+  for (const id of ['loginPanel','listPanel','editPanel']) $(id).classList.toggle('hidden', id !== panel);
+  $('nav').classList.toggle('hidden', panel === 'loginPanel');
+  $('footbar').classList.toggle('hidden', panel !== 'editPanel');
+  $('bubble').classList.add('hidden');
+}
+
+/* ---------- allowlist: the same rules the Worker and the public page apply ---------- */
+const DROP = new Set(['SCRIPT','STYLE','IFRAME','OBJECT','EMBED','TEMPLATE','NOSCRIPT','SVG','MATH','FORM','INPUT','BUTTON','TEXTAREA','SELECT','TITLE','META','LINK','BASE','AUDIO','VIDEO','CANVAS']);
+const ALLOWED = {P:[],BR:[],H2:[],H3:[],H4:[],STRONG:[],EM:[],U:[],S:[],SUP:[],SUB:[],A:['href','title'],BLOCKQUOTE:[],UL:[],OL:['start'],LI:[],PRE:[],CODE:[],HR:[],IMG:['src','alt','title'],FIGURE:[],FIGCAPTION:[]};
+const RENAME = {B:'STRONG',I:'EM',H1:'H2',DEL:'S',STRIKE:'S',DIV:'P',H5:'H4',H6:'H4'};
+function safeUrl(v, image) {
+  v = String(v || '').trim();
+  if (/^https:\/\/[^\s"'<>]+$/i.test(v)) return true;
+  if (image) return /^\/(?!\/)[^\s"'<>]*$/.test(v);
+  return /^http:\/\/[^\s"'<>]+$/i.test(v) || /^mailto:[^\s"'<>]+$/i.test(v) || /^#[\w-]*$/.test(v) || /^\/(?!\/)[^\s"'<>]*$/.test(v);
+}
+function clean(node) {
+  for (const child of [...node.childNodes]) {
+    if (child.nodeType === 8) { child.remove(); continue; }
+    if (child.nodeType !== 1) continue;
+    let el = child, tag = el.tagName.toUpperCase();
+    if (DROP.has(tag)) { el.remove(); continue; }
+    // Google Docs and friends express bold/italic through inline styles.
+    if (tag === 'SPAN') {
+      const st = el.getAttribute('style') || '';
+      const bold = /font-weight:\s*(bold|[6-9]00)/.test(st), ital = /font-style:\s*italic/.test(st);
+      if (bold || ital) {
+        let inner = document.createDocumentFragment(); while (el.firstChild) inner.appendChild(el.firstChild);
+        let wrap = inner;
+        for (const t of [bold && 'strong', ital && 'em'].filter(Boolean)) { const w = document.createElement(t); w.appendChild(wrap); wrap = w; }
+        el.replaceWith(wrap); clean(wrap.parentNode || node); continue;
+      }
+    }
+    // Google Docs wraps whole pastes in <b style="font-weight:normal">.
+    if (tag === 'B' && /font-weight:\s*(normal|[1-4]00)/.test(el.getAttribute('style') || '')) { clean(el); el.replaceWith(...el.childNodes); continue; }
+    if (RENAME[tag]) {
+      // A div that only wraps blocks is a container, not a paragraph.
+      if (tag === 'DIV' && el.querySelector('p,div,h1,h2,h3,h4,ul,ol,blockquote,pre,figure')) { clean(el); el.replaceWith(...el.childNodes); continue; }
+      const n = document.createElement(RENAME[tag]);
+      for (const a of el.attributes) n.setAttribute(a.name, a.value);
+      while (el.firstChild) n.appendChild(el.firstChild);
+      el.replaceWith(n); el = n; tag = n.tagName;
+    }
+    const keep = ALLOWED[tag];
+    if (!keep) { clean(el); el.replaceWith(...el.childNodes); continue; }
+    for (const a of [...el.attributes]) {
+      const ok = keep.includes(a.name) && (a.name !== 'href' || safeUrl(a.value)) && (a.name !== 'src' || safeUrl(a.value, true)) && (a.name !== 'start' || /^\d{1,6}$/.test(a.value));
+      if (!ok) el.removeAttribute(a.name);
+    }
+    if (tag === 'IMG' && !el.getAttribute('src')) { el.remove(); continue; }
+    clean(el);
+  }
+}
+function cleanHTML(html) {
+  const doc = new DOMParser().parseFromString('<body>' + html + '</body>', 'text/html');
+  clean(doc.body);
+  // Loose inline content at the top level becomes a paragraph.
+  const BLOCK = /^(P|H2|H3|H4|BLOCKQUOTE|UL|OL|PRE|HR|FIGURE|IMG)$/;
+  let para = null;
+  for (const n of [...doc.body.childNodes]) {
+    if (n.nodeType === 1 && BLOCK.test(n.tagName)) { para = null; continue; }
+    if (n.nodeType === 3 && !n.textContent.trim() && !para) { n.remove(); continue; }
+    if (!para) { para = doc.createElement('p'); n.before(para); }
+    para.appendChild(n);
+  }
+  for (const p of doc.body.querySelectorAll('p')) if (!p.textContent.trim() && !p.querySelector('img')) p.remove();
+  return doc.body.innerHTML.trim();
+}
+
+/* ---------- editor ---------- */
+document.execCommand('defaultParagraphSeparator', false, 'p');
+
+function blockOf(node) {
+  while (node && node !== editor) {
+    if (node.nodeType === 1 && /^(P|H2|H3|H4|BLOCKQUOTE|LI|PRE|DIV)$/.test(node.tagName)) return node;
+    node = node.parentNode;
+  }
+  return null;
+}
+function inside(tag) {
+  const sel = getSelection(); if (!sel.rangeCount) return false;
+  let n = sel.anchorNode;
+  while (n && n !== editor) { if (n.nodeType === 1 && n.tagName === tag) return n; n = n.parentNode; }
+  return false;
+}
+function toggleBlock(tag) {
+  const upper = tag.toUpperCase();
+  document.execCommand('formatBlock', false, inside(upper) ? 'p' : tag);
+}
+function inlineCode() {
+  const code = inside('CODE');
+  if (code) { code.replaceWith(...code.childNodes); return; }
+  const sel = getSelection(); if (!sel.rangeCount || sel.isCollapsed) return;
+  const text = sel.toString();
+  document.execCommand('insertHTML', false, '<code>' + text.replace(/&/g,'&amp;').replace(/</g,'&lt;') + '</code>&#8203;');
+}
+function link() {
+  const a = inside('A');
+  if (a) { if (confirm('Remove this link?')) { a.replaceWith(...a.childNodes); } return; }
+  const sel = getSelection(); if (!sel.rangeCount) return;
+  const range = sel.getRangeAt(0).cloneRange();
+  const url = prompt('Link to:', 'https://');
+  if (!url || url === 'https://') return;
+  if (!safeUrl(url)) { alert('Links must start with https://, http://, mailto:, # or /.'); return; }
+  sel.removeAllRanges(); sel.addRange(range);
+  if (range.collapsed) document.execCommand('insertHTML', false, '<a href="' + url.replace(/"/g,'&quot;') + '">' + url.replace(/</g,'&lt;') + '</a>');
+  else document.execCommand('createLink', false, url);
+}
+function image() {
+  const url = prompt('Image address (https://…):', 'https://');
+  if (!url || url === 'https://') return;
+  if (!safeUrl(url, true)) { alert('Images must be an https:// address.'); return; }
+  const alt = prompt('Describe the image (optional):', '') || '';
+  document.execCommand('insertHTML', false, '<img src="' + url.replace(/"/g,'&quot;') + '" alt="' + alt.replace(/"/g,'&quot;') + '"><p><br></p>');
+}
+const COMMANDS = {
+  bold: () => document.execCommand('bold'),
+  italic: () => document.execCommand('italic'),
+  link, code: inlineCode, image,
+  h2: () => toggleBlock('h2'), h3: () => toggleBlock('h3'),
+  blockquote: () => toggleBlock('blockquote'), pre: () => toggleBlock('pre'),
+  ul: () => document.execCommand('insertUnorderedList'),
+  ol: () => document.execCommand('insertOrderedList'),
+  hr: () => document.execCommand('insertHTML', false, '<hr><p><br></p>'),
+};
+for (const bar of [$('toolbar'), $('bubble')]) {
+  bar.addEventListener('mousedown', e => e.preventDefault());   // keep the selection
+  bar.addEventListener('click', e => {
+    const b = e.target.closest('button[data-cmd]'); if (!b) return;
+    editor.focus(); COMMANDS[b.dataset.cmd](); changed();
+  });
+}
+
+function refreshState() {
+  const state = {
+    bold: document.queryCommandState('bold'), italic: document.queryCommandState('italic'),
+    link: !!inside('A'), code: !!inside('CODE'),
+    h2: !!inside('H2'), h3: !!inside('H3'), blockquote: !!inside('BLOCKQUOTE'), pre: !!inside('PRE'),
+    ul: !!inside('UL'), ol: !!inside('OL'),
+  };
+  for (const b of document.querySelectorAll('[data-cmd]')) b.classList.toggle('on', !!state[b.dataset.cmd]);
+}
+function placeBubble() {
+  const sel = getSelection(), bubble = $('bubble');
+  if (!sel.rangeCount || sel.isCollapsed || !editor.contains(sel.anchorNode)) { bubble.classList.add('hidden'); return; }
+  const r = sel.getRangeAt(0).getBoundingClientRect();
+  if (!r.width) { bubble.classList.add('hidden'); return; }
+  bubble.classList.remove('hidden');
+  const w = bubble.offsetWidth;
+  bubble.style.left = Math.max(8, Math.min(scrollX + r.left + r.width / 2 - w / 2, scrollX + innerWidth - w - 8)) + 'px';
+  bubble.style.top = (scrollY + r.top - bubble.offsetHeight - 10) + 'px';
+}
+document.addEventListener('selectionchange', () => { if (!$('editPanel').classList.contains('hidden')) { refreshState(); placeBubble(); } });
+
+// Keep typing inside a paragraph, never as bare text in the editor root.
+function ensureBlock() {
+  const first = editor.firstChild;
+  if (!first || (editor.childNodes.length === 1 && first.nodeName === 'BR')) {
+    editor.innerHTML = '<p><br></p>';
+    const r = document.createRange(); r.setStart(editor.firstChild, 0); r.collapse(true);
+    const sel = getSelection(); sel.removeAllRanges(); sel.addRange(r);
+  } else if (first.nodeType === 3 || first.nodeName === 'B' || first.nodeName === 'I') {
+    document.execCommand('formatBlock', false, 'p');
+  }
+}
+editor.addEventListener('focus', ensureBlock);
+
+// Markdown-style shortcuts at the start of a block.
+const SHORTCUTS = [[/^#$/, 'h2'], [/^##$/, 'h3'], [/^>$/, 'blockquote'], [/^[-*]$/, 'ul'], [/^1[.)]$/, 'ol'], [/^```$/, 'pre']];
+editor.addEventListener('keydown', e => {
+  const mod = e.metaKey || e.ctrlKey;
+  if (mod && e.key.toLowerCase() === 'k') { e.preventDefault(); link(); changed(); return; }
+  if (mod && e.key === 'e') { e.preventDefault(); inlineCode(); changed(); return; }
+  const sel = getSelection(); if (!sel.isCollapsed) return;
+  if (editor.firstChild && editor.firstChild.nodeType === 3) ensureBlock();
+  const block = blockOf(sel.anchorNode);
+  if (!block || block.tagName === 'PRE' || block.tagName === 'LI') return;
+  const before = block.textContent.slice(0, sel.anchorOffset);
+  if (sel.anchorNode.nodeType === 3 && block.firstChild !== sel.anchorNode && block.textContent !== sel.anchorNode.textContent) return;
+  if (e.key === ' ') {
+    for (const [re, cmd] of SHORTCUTS) if (re.test(before) && before === block.textContent) {
+      e.preventDefault(); block.textContent = ''; block.appendChild(document.createElement('br'));
+      const r = document.createRange(); r.setStart(block, 0); r.collapse(true); sel.removeAllRanges(); sel.addRange(r);
+      COMMANDS[cmd](); changed(); return;
+    }
+  }
+  if (e.key === 'Enter' && /^(---|\*\*\*)$/.test(block.textContent.trim())) {
+    e.preventDefault();
+    const hr = document.createElement('hr'), p = document.createElement('p'); p.appendChild(document.createElement('br'));
+    block.replaceWith(hr); hr.after(p);
+    const r = document.createRange(); r.setStart(p, 0); r.collapse(true); sel.removeAllRanges(); sel.addRange(r);
+    changed();
+  }
+});
+
+// Leave a code block or quote with Enter on an empty line.
+editor.addEventListener('keydown', e => {
+  if (e.key !== 'Enter' || e.shiftKey) return;
+  const block = blockOf(getSelection().anchorNode);
+  if (block && block.tagName === 'BLOCKQUOTE' && !block.textContent.trim()) { e.preventDefault(); document.execCommand('formatBlock', false, 'p'); }
+});
+
+editor.addEventListener('paste', e => {
+  const html = e.clipboardData.getData('text/html'), text = e.clipboardData.getData('text/plain');
+  e.preventDefault();
+  if (inside('PRE')) { document.execCommand('insertText', false, text); return; }
+  if (html) { document.execCommand('insertHTML', false, cleanHTML(html)); }
+  else {
+    const esc = s => s.replace(/&/g,'&amp;').replace(/</g,'&lt;');
+    const paras = text.split(/\n{2,}/);
+    if (paras.length === 1) document.execCommand('insertText', false, text);
+    else document.execCommand('insertHTML', false, paras.map(p => '<p>' + esc(p).replace(/\n/g, '<br>') + '</p>').join(''));
+  }
+  changed();
+});
+editor.addEventListener('input', changed);
+titleEl.addEventListener('input', () => { fitTitle(); changed(); });
+titleEl.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); editor.focus(); } });
+function fitTitle() { titleEl.style.height = 'auto'; titleEl.style.height = titleEl.scrollHeight + 'px'; }
+
+/* ---------- local drafts ---------- */
+const draftKey = () => 'blog-draft:' + (current || 'new');
+let saveTimer = null, dirty = false;
+function changed() {
+  dirty = true; updateMeta();
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => {
+    try { localStorage.setItem(draftKey(), JSON.stringify({ title: titleEl.value, html: editor.innerHTML, at: Date.now() })); $('editStatus').textContent = 'Draft saved on this device'; } catch {}
+  }, 600);
+}
+function updateMeta() {
+  const words = (editor.innerText.match(/\S+/g) || []).length;
+  $('meta').textContent = words + (words === 1 ? ' word' : ' words') + ' · ' + Math.max(1, Math.round(words / 230)) + ' min read';
+}
+function loadDraft() { try { return JSON.parse(localStorage.getItem(draftKey()) || 'null'); } catch { return null; } }
+function clearDraft() { try { localStorage.removeItem(draftKey()); } catch {} }
+
+/* ---------- views ---------- */
+async function openList() {
+  show('listPanel'); $('listStatus').textContent = 'Loading…'; $('posts').innerHTML = '';
+  try {
+    posts = (await api('/api/blog/posts')).posts;
+    $('listStatus').textContent = '';
+    if (!posts.length) { $('posts').innerHTML = '<li class="empty">No posts yet.</li>'; return; }
+    for (const p of posts) {
+      const li = document.createElement('li');
+      const t = document.createElement('span'); t.className = 't'; t.textContent = p.title; t.onclick = () => openEditor(p.slug);
+      const row = document.createElement('span'); row.className = 'row';
+      const d = document.createElement('span'); d.className = 'd'; d.textContent = p.date;
+      const view = document.createElement('a'); view.href = 'https://mihirss.com/blog/post.html?p=' + p.slug; view.textContent = 'View'; view.className = 'd'; view.style.color = '#5B554B';
+      const edit = document.createElement('button'); edit.textContent = 'Edit'; edit.onclick = () => openEditor(p.slug);
+      const del = document.createElement('button'); del.textContent = 'Delete'; del.onclick = () => remove(p);
+      row.append(d, view, edit, del); li.append(t, row); $('posts').append(li);
+    }
+  } catch (err) { $('listStatus').textContent = err.message; }
+}
+
+async function openEditor(slug) {
+  current = slug || null; dirty = false;
+  titleEl.value = ''; editor.innerHTML = ''; $('editStatus').textContent = '';
+  $('publishButton').textContent = current ? 'Update' : 'Publish';
+  show('editPanel');
+  if (current) {
+    $('editStatus').textContent = 'Loading…';
+    try {
+      const { post } = await api('/api/blog/posts/' + encodeURIComponent(current));
+      titleEl.value = post.title; editor.innerHTML = post.html; $('editStatus').textContent = '';
+    } catch (err) { $('editStatus').textContent = err.message; return; }
+  }
+  const draft = loadDraft();
+  if (draft && (draft.title !== titleEl.value || draft.html !== editor.innerHTML)
+      && confirm('You have an unpublished draft of this from ' + new Date(draft.at).toLocaleString() + '. Restore it?')) {
+    titleEl.value = draft.title; editor.innerHTML = draft.html; dirty = true;
+  }
+  fitTitle(); updateMeta();
+  (titleEl.value ? editor : titleEl).focus();
+}
+
+async function publish() {
+  const title = titleEl.value.trim(), html = cleanHTML(editor.innerHTML);
+  if (!title) { $('editStatus').textContent = 'Add a title first.'; titleEl.focus(); return; }
+  if (!html) { $('editStatus').textContent = 'The post is empty.'; return; }
+  const button = $('publishButton'); button.disabled = true; $('editStatus').textContent = current ? 'Updating…' : 'Publishing…';
+  try {
+    const path = '/api/blog/posts' + (current ? '/' + encodeURIComponent(current) : '');
+    const data = await api(path, { method:'POST', body: JSON.stringify({ title, html }) });
+    clearDraft(); current = data.slug; dirty = false;
+    button.textContent = 'Update';
+    $('editStatus').innerHTML = '';
+    const a = document.createElement('a'); a.href = 'https://mihirss.com/blog/post.html?p=' + data.slug; a.target = '_blank'; a.rel = 'noopener';
+    a.textContent = 'View post';
+    $('editStatus').append('Published — live in about a minute. ', a);
+  } catch (err) { $('editStatus').textContent = err.message; }
+  finally { button.disabled = false; }
+}
+
+async function remove(p) {
+  if (!confirm('Delete "' + p.title + '"? It disappears from the site; GitHub history keeps a copy.')) return;
+  $('listStatus').textContent = 'Deleting…';
+  try { await api('/api/blog/posts/' + encodeURIComponent(p.slug) + '/delete', { method:'POST', body:'{}' }); await openList(); }
+  catch (err) { $('listStatus').textContent = err.message; }
+}
+
+function leaveEditor() {
+  if (dirty && !confirm('Leave the editor? Your draft stays saved on this device.')) return;
+  openList();
+}
+
+$('newButton').onclick = () => openEditor(null);
+$('backButton').onclick = leaveEditor;
+$('navPosts').onclick = () => $('editPanel').classList.contains('hidden') ? openList() : leaveEditor();
+$('publishButton').onclick = publish;
+addEventListener('beforeunload', e => { if (dirty) e.preventDefault(); });
+
+$('loginForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const button = $('loginButton'); button.disabled = true; $('loginStatus').textContent = 'Signing in…';
+  try {
+    await api('/api/login', {method:'POST', body:JSON.stringify({username:$('username').value,password:$('password').value})});
+    $('password').value=''; $('loginStatus').textContent=''; openList();
+  } catch(err) { $('loginStatus').textContent=err.message; }
+  finally { button.disabled=false; }
+});
+$('logoutButton').onclick = async () => {
+  try { await api('/api/logout',{method:'POST',body:'{}'}); } catch {}
+  show('loginPanel');
+};
+
+(async () => {
+  try { (await api('/api/me')).authenticated ? openList() : show('loginPanel'); }
+  catch { show('loginPanel'); }
+})();
+</script>
+</body>
+</html>
