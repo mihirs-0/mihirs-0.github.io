@@ -112,6 +112,15 @@ test('Cloudflare runtime: blog publishing', async t => {
     assert.deepEqual(index().posts, [{ slug: 'hello-world', title: 'Hello, Wörld!', date: p.date }]);
   });
 
+  await t.test('alignment classes survive; other classes do not', async () => {
+    const html = '<p class="align-center">c</p><h2 class="align-right">r</h2><p class="align-justify">j</p><p class="evil">e</p><p class="align-center evil">x</p><img src="https://example.com/a.png" class="align-right"><pre class="align-center">p</pre>';
+    const r = await call('/api/blog/posts', { data: { title: 'Aligned', html } });
+    const p = post((await r.json()).slug);
+    for (const good of ['<p class="align-center">c</p>', '<h2 class="align-right">r</h2>', '<p class="align-justify">j</p>', '<img src="https://example.com/a.png" class="align-right">', '<pre>p</pre>']) assert.ok(p.html.includes(good), good + ' missing: ' + p.html);
+    assert.ok(!p.html.includes('evil'), p.html);
+    await call('/api/blog/posts/' + p.slug + '/delete', { data: {} });
+  });
+
   await t.test('same title gets a distinct slug; newest first', async () => {
     const r = await call('/api/blog/posts', { data: { title: 'Hello world', html: '<p>Second</p>' } });
     assert.equal((await r.json()).slug, 'hello-world-2');

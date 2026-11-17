@@ -50,6 +50,7 @@ input.box:focus{border-color:#8C3B2E}
 .toolbar button,.bubble button{all:unset;cursor:pointer;min-width:32px;height:32px;padding:0 8px;box-sizing:border-box;display:inline-flex;align-items:center;justify-content:center;font-size:15px;color:#4A443B;border-radius:3px}
 .toolbar button:hover{background:rgba(35,32,28,.07);color:#23201C}
 .toolbar button.on{background:#1B2333;color:#EFE3C8}
+.toolbar svg{fill:currentColor;display:block}
 .toolbar .sep{width:1px;background:rgba(35,32,28,.18);margin:4px 6px}
 .bubble{position:absolute;z-index:10;display:flex;gap:1px;padding:4px;background:#1B2333;border-radius:4px;box-shadow:0 6px 18px rgba(0,0,0,.18)}
 .bubble button{color:#EFE3C8;height:30px;min-width:30px}
@@ -72,6 +73,11 @@ input.box:focus{border-color:#8C3B2E}
 .editor hr{border:0;border-top:1px solid rgba(35,32,28,.3);margin:2em 0}
 .editor img{max-width:100%;display:block;margin:1.4em auto}
 .editor img.loading{opacity:.4}
+.editor .align-center{text-align:center}
+.editor .align-right{text-align:right}
+.editor .align-justify{text-align:justify;hyphens:auto}
+.editor img.align-right{margin-right:0}
+.editor li.align-center,.editor li.align-right{list-style-position:inside}
 .editor img{cursor:pointer;min-width:60px;min-height:40px}
 .editor img.picked{outline:3px solid #8C3B2E;outline-offset:3px}
 .editor.dragover{outline:2px dashed rgba(140,59,46,.4);outline-offset:8px}
@@ -127,6 +133,11 @@ input.box:focus{border-color:#8C3B2E}
       <button type="button" data-cmd="ul" title="Bulleted list (- then space)">•</button>
       <button type="button" data-cmd="ol" title="Numbered list (1. then space)">1.</button>
       <button type="button" data-cmd="pre" title="Code block (``` then space)">{ }</button>
+      <span class="sep"></span>
+      <button type="button" data-cmd="alignLeft" title="Align left"><svg width="16" height="14" viewBox="0 0 16 14" aria-hidden="true"><rect x="0" y="1" width="16" height="1.6"/><rect x="0" y="5" width="10" height="1.6"/><rect x="0" y="9" width="16" height="1.6"/><rect x="0" y="12.4" width="10" height="1.6"/></svg></button>
+      <button type="button" data-cmd="alignCenter" title="Centre"><svg width="16" height="14" viewBox="0 0 16 14" aria-hidden="true"><rect x="0" y="1" width="16" height="1.6"/><rect x="3" y="5" width="10" height="1.6"/><rect x="0" y="9" width="16" height="1.6"/><rect x="3" y="12.4" width="10" height="1.6"/></svg></button>
+      <button type="button" data-cmd="alignRight" title="Align right"><svg width="16" height="14" viewBox="0 0 16 14" aria-hidden="true"><rect x="0" y="1" width="16" height="1.6"/><rect x="6" y="5" width="10" height="1.6"/><rect x="0" y="9" width="16" height="1.6"/><rect x="6" y="12.4" width="10" height="1.6"/></svg></button>
+      <button type="button" data-cmd="alignJustify" title="Justify (fill the line)"><svg width="16" height="14" viewBox="0 0 16 14" aria-hidden="true"><rect x="0" y="1" width="16" height="1.6"/><rect x="0" y="5" width="16" height="1.6"/><rect x="0" y="9" width="16" height="1.6"/><rect x="0" y="12.4" width="16" height="1.6"/></svg></button>
       <span class="sep"></span>
       <button type="button" data-cmd="hr" title="Divider (--- then Enter)">—</button>
       <button type="button" data-cmd="image" title="Upload an image (or paste / drop one)">Image</button>
@@ -186,7 +197,10 @@ function show(panel) {
 
 /* ---------- allowlist: the same rules the Worker and the public page apply ---------- */
 const DROP = new Set(['SCRIPT','STYLE','IFRAME','OBJECT','EMBED','TEMPLATE','NOSCRIPT','SVG','MATH','FORM','INPUT','BUTTON','TEXTAREA','SELECT','TITLE','META','LINK','BASE','AUDIO','VIDEO','CANVAS']);
-const ALLOWED = {P:[],BR:[],H2:[],H3:[],H4:[],STRONG:[],EM:[],U:[],S:[],SUP:[],SUB:[],A:['href','title'],BLOCKQUOTE:[],UL:[],OL:['start'],LI:[],PRE:[],CODE:[],HR:[],IMG:['src','alt','title'],FIGURE:[],FIGCAPTION:[]};
+const ALLOWED = {P:['class'],BR:[],H2:['class'],H3:['class'],H4:['class'],STRONG:[],EM:[],U:[],S:[],SUP:[],SUB:[],A:['href','title'],BLOCKQUOTE:[],UL:[],OL:['start'],LI:['class'],PRE:[],CODE:[],HR:[],IMG:['src','alt','title','class'],FIGURE:[],FIGCAPTION:[]};
+// Alignment is the only class a post may carry.
+const ALIGN = /^align-(center|right|justify)$/;
+function alignOf(el) { return (el.getAttribute('class') || '').split(/\s+/).find(c => ALIGN.test(c)) || ''; }
 const RENAME = {B:'STRONG',I:'EM',H1:'H2',DEL:'S',STRIKE:'S',DIV:'P',H5:'H4',H6:'H4'};
 function safeUrl(v, image) {
   v = String(v || '').trim();
@@ -223,10 +237,13 @@ function clean(node) {
     }
     const keep = ALLOWED[tag];
     if (!keep) { clean(el); el.replaceWith(...el.childNodes); continue; }
+    const pasted = /text-align:\s*(center|right|justify)/.exec(el.getAttribute('style') || '');
+    const align = alignOf(el) || (pasted ? 'align-' + pasted[1] : '');
     for (const a of [...el.attributes]) {
-      const ok = keep.includes(a.name) && (a.name !== 'href' || safeUrl(a.value)) && (a.name !== 'src' || safeUrl(a.value, true)) && (a.name !== 'start' || /^\d{1,6}$/.test(a.value));
+      const ok = keep.includes(a.name) && a.name !== 'class' && (a.name !== 'href' || safeUrl(a.value)) && (a.name !== 'src' || safeUrl(a.value, true)) && (a.name !== 'start' || /^\d{1,6}$/.test(a.value));
       if (!ok) el.removeAttribute(a.name);
     }
+    if (align && keep.includes('class')) el.setAttribute('class', align);
     if (tag === 'IMG' && !el.getAttribute('src')) { el.remove(); continue; }
     clean(el);
   }
@@ -262,6 +279,19 @@ function inside(tag) {
   let n = sel.anchorNode;
   while (n && n !== editor) { if (n.nodeType === 1 && n.tagName === tag) return n; n = n.parentNode; }
   return false;
+}
+// Alignment applies to every paragraph the selection touches (or the picked image).
+function align(kind, retried) {
+  const sel = getSelection(); if (!sel.rangeCount) return;
+  const r = sel.getRangeAt(0);
+  let blocks = picked ? [picked] : [...editor.querySelectorAll('p,h2,h3,h4,li,img')].filter(b => r.intersectsNode(b));
+  blocks = blocks.filter(b => !blocks.some(o => o !== b && b.contains(o)));
+  if (!blocks.length) { if (!retried) { ensureBlock(); align(kind, true); } return; }
+  for (const b of blocks) {
+    b.classList.remove('align-center', 'align-right', 'align-justify');
+    if (kind) b.classList.add('align-' + kind);
+    if (!b.getAttribute('class')) b.removeAttribute('class');
+  }
 }
 function toggleBlock(tag) {
   const upper = tag.toUpperCase();
@@ -391,6 +421,8 @@ const COMMANDS = {
   ul: () => document.execCommand('insertUnorderedList'),
   ol: () => document.execCommand('insertOrderedList'),
   hr: () => document.execCommand('insertHTML', false, '<hr><p><br></p>'),
+  alignLeft: () => align(''), alignCenter: () => align('center'),
+  alignRight: () => align('right'), alignJustify: () => align('justify'),
 };
 for (const bar of [$('toolbar'), $('bubble')]) {
   bar.addEventListener('mousedown', e => e.preventDefault());   // keep the selection
@@ -407,6 +439,13 @@ function refreshState() {
     h2: !!inside('H2'), h3: !!inside('H3'), blockquote: !!inside('BLOCKQUOTE'), pre: !!inside('PRE'),
     ul: !!inside('UL'), ol: !!inside('OL'),
   };
+  const sel = getSelection();
+  let blk = picked || (sel.rangeCount && sel.anchorNode);
+  while (blk && blk !== editor && !(blk.nodeType === 1 && /^(P|H2|H3|H4|LI|IMG)$/.test(blk.tagName))) blk = blk.parentNode;
+  if (blk && blk !== editor) {
+    const a = alignOf(blk);
+    state[{ '': 'alignLeft', 'align-center': 'alignCenter', 'align-right': 'alignRight', 'align-justify': 'alignJustify' }[a]] = true;
+  }
   for (const b of document.querySelectorAll('[data-cmd]')) b.classList.toggle('on', !!state[b.dataset.cmd]);
 }
 function placeBubble() {
@@ -496,7 +535,7 @@ function changed() {
   dirty = true; updateMeta();
   clearTimeout(saveTimer);
   saveTimer = setTimeout(() => {
-    try { localStorage.setItem(draftKey(), JSON.stringify({ title: titleEl.value, html: editor.innerHTML.replace(/ class="picked"/g, ''), at: Date.now() })); $('editStatus').textContent = 'Draft saved on this device'; }
+    try { localStorage.setItem(draftKey(), JSON.stringify({ title: titleEl.value, html: editor.innerHTML.replace(/(class="[^"]*?)\s*\bpicked\b/g, '$1').replace(/ class="\s*"/g, ''), at: Date.now() })); $('editStatus').textContent = 'Draft saved on this device'; }
     catch { $('editStatus').textContent = 'Draft too large to keep on this device — publish to save it'; }
   }, 600);
 }

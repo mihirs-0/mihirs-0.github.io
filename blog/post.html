@@ -59,6 +59,11 @@
   .body hr::after{content:'· · ·';color:#8C3B2E;letter-spacing:.5em;font-size:15px;}
   .body img{display:block;max-width:100%;height:auto;margin:1.8em auto;}
   .body figure{margin:1.8em 0;}
+  .body .align-center{text-align:center;}
+  .body .align-right{text-align:right;}
+  .body .align-justify{text-align:justify;hyphens:auto;}
+  .body img.align-right{margin-right:0;}
+  .body li.align-center,.body li.align-right{list-style-position:inside;}
   .body figcaption{font-size:15px;color:#5B554B;text-align:center;margin-top:.6em;}
 
   .missing{font-size:19px;line-height:1.6;color:#5B554B;}
@@ -112,7 +117,7 @@
 <script>
 // Posts are stored as HTML; render only an allowlist of elements and attributes.
 const DROP = new Set(['SCRIPT','STYLE','IFRAME','OBJECT','EMBED','TEMPLATE','NOSCRIPT','SVG','MATH','FORM','INPUT','BUTTON','TEXTAREA','SELECT','TITLE','META','LINK','BASE','AUDIO','VIDEO','CANVAS']);
-const ALLOWED = {P:[],BR:[],H2:[],H3:[],H4:[],STRONG:[],EM:[],U:[],S:[],SUP:[],SUB:[],A:['href','title'],BLOCKQUOTE:[],UL:[],OL:['start'],LI:[],PRE:[],CODE:[],HR:[],IMG:['src','alt','title'],FIGURE:[],FIGCAPTION:[]};
+const ALLOWED = {P:['class'],BR:[],H2:['class'],H3:['class'],H4:['class'],STRONG:[],EM:[],U:[],S:[],SUP:[],SUB:[],A:['href','title'],BLOCKQUOTE:[],UL:[],OL:['start'],LI:['class'],PRE:[],CODE:[],HR:[],IMG:['src','alt','title','class'],FIGURE:[],FIGCAPTION:[]};
 function safeUrl(v, image) {
   v = String(v || '').trim();
   if (/^https:\/\/[^\s"'<>]+$/i.test(v)) return true;
@@ -127,7 +132,7 @@ function clean(node) {
     const keep = ALLOWED[el.tagName];
     if (!keep) { clean(el); el.replaceWith(...el.childNodes); continue; }
     for (const a of [...el.attributes]) {
-      const ok = keep.includes(a.name) && (a.name !== 'href' || safeUrl(a.value)) && (a.name !== 'src' || safeUrl(a.value, true)) && (a.name !== 'start' || /^\d{1,6}$/.test(a.value));
+      const ok = keep.includes(a.name) && (a.name !== 'href' || safeUrl(a.value)) && (a.name !== 'src' || safeUrl(a.value, true)) && (a.name !== 'start' || /^\d{1,6}$/.test(a.value)) && (a.name !== 'class' || /^align-(center|right|justify)$/.test(a.value));
       if (!ok) el.removeAttribute(a.name);
     }
     if (el.tagName === 'A' && /^https?:/i.test(el.getAttribute('href') || '') && !/^https:\/\/mihirss\.com/i.test(el.getAttribute('href'))) {

@@ -21,9 +21,9 @@ const DROP = new Set(["script", "style", "iframe", "object", "embed", "template"
   "frame", "frameset", "applet", "audio", "video", "source", "track", "canvas", "dialog", "portal"]);
 // Elements kept, with the attributes each may carry.
 const ALLOWED = {
-  p: [], br: [], h2: [], h3: [], h4: [], strong: [], em: [], u: [], s: [], sup: [], sub: [],
-  a: ["href", "title"], blockquote: [], ul: [], ol: ["start"], li: [], pre: [], code: [], hr: [],
-  img: ["src", "alt", "title"], figure: [], figcaption: [],
+  p: ["class"], br: [], h2: ["class"], h3: ["class"], h4: ["class"], strong: [], em: [], u: [], s: [], sup: [], sub: [],
+  a: ["href", "title"], blockquote: [], ul: [], ol: ["start"], li: ["class"], pre: [], code: [], hr: [],
+  img: ["src", "alt", "title", "class"], figure: [], figcaption: [],
 };
 
 export function safeUrl(value, image = false) {
@@ -47,7 +47,8 @@ export async function sanitize(html) {
           const ok = keep.includes(name)
             && (name !== "href" || safeUrl(value))
             && (name !== "src" || safeUrl(value, true))
-            && (name !== "start" || /^\d{1,6}$/.test(value));
+            && (name !== "start" || /^\d{1,6}$/.test(value))
+            && (name !== "class" || /^align-(center|right|justify)$/.test(value));
           if (!ok) el.removeAttribute(name);
         }
         if (tag === "img" && !el.getAttribute("src")) el.remove();
