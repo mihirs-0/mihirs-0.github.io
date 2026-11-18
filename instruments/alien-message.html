@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>That Alien Message in 3D</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500&family=Syne:wght@700&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* layout: 3D sky on top, observatory log panel fixed at the bottom. Single dark theme by choice. */
+  --space:#060818;
+  --panel:#0b0f26;
+  --line:#232a52;
+  --ink:#f1ecdf;
+  --muted:#9aa0bd;
+  --human:#ffb454;
+  --alien:#b6a4ff;
+  --display:"Syne","Trebuchet MS",sans-serif;
+  --body:"IBM Plex Sans","Helvetica Neue",Arial,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{background:var(--space);color:var(--ink);font-family:var(--body);overflow:hidden}
+#app{height:100%;display:flex;flex-direction:column}
+#stage{position:relative;flex:1 1 auto;min-height:0}
+#c{position:absolute;inset:0;width:100%;height:100%;display:block}
+.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+#top{position:absolute;left:0;right:0;top:0;display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:12px 16px;pointer-events:none}
+.brand{font-family:var(--display);font-size:15px;letter-spacing:.02em}
+#clock{text-align:right;font-size:13px;line-height:1.35}
+#year{color:var(--human)}
+#their{color:var(--alien)}
+#counters{position:absolute;left:16px;right:16px;top:60px;display:flex;justify-content:space-between;gap:12px;opacity:0;transition:opacity .8s;pointer-events:none}
+#counters.on{opacity:1}
+.stat{display:flex;flex-direction:column;gap:2px}
+.stat:last-child{text-align:right}
+.stat b{font-family:var(--mono);font-weight:500;font-size:19px;font-variant-numeric:tabular-nums}
+.stat span{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+#sent b{color:var(--alien)}
+#read b{color:var(--human)}
+#fallback{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:24px;text-align:center;color:var(--muted);font-size:14px}
+#fallback[hidden]{display:none}
+#panel{flex:0 0 auto;min-height:292px;background:var(--panel);border-top:1px solid var(--line);padding:14px 16px 12px;display:flex;flex-direction:column;gap:10px}
+#sceneLabel{font-size:12px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase}
+#sceneLabel strong{color:var(--ink);font-weight:500}
+#caption{flex:1 1 auto;font-size:17px;line-height:1.45;max-width:65ch;text-wrap:pretty}
+#caption .beat{animation:rise .5s ease-out}
+@keyframes rise{from{opacity:.25;transform:translateY(4px)}to{opacity:1;transform:none}}
+#caption p{margin:0 0 8px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
+.chip{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:12px;padding:3px 8px;border:1px solid var(--line);border-radius:999px;color:var(--muted)}
+.chip i{width:8px;height:8px;border-radius:50%;background:var(--c)}
+.chip.now{color:var(--ink);border-color:var(--c)}
+.memo{font-family:var(--mono);font-size:13.5px;line-height:1.55;border-left:2px solid var(--alien);padding:6px 0 6px 12px;color:var(--ink)}
+.memo span{color:var(--muted)}
+.reply{display:flex;gap:14px;align-items:flex-start}
+.grid8{flex:0 0 auto;display:grid;grid-template-columns:repeat(8,8px);gap:2px;padding:6px;border:1px solid var(--line);border-radius:4px}
+.grid8 i{width:8px;height:8px;border-radius:50%;background:#1b2147}
+.grid8 i.on{background:var(--human)}
+.credit{font-size:13px;color:var(--muted)}
+#controls{display:flex;align-items:center;gap:8px}
+#controls button{font:inherit;font-family:var(--mono);font-size:14px;color:var(--ink);background:transparent;border:1px solid var(--line);border-radius:8px;min-width:44px;height:40px;padding:0 10px;cursor:pointer}
+#controls button:hover{border-color:var(--muted)}
+#controls button:focus-visible,#bars button:focus-visible{outline:2px solid var(--human);outline-offset:2px}
+#play{color:var(--space) !important;background:var(--human) !important;border-color:var(--human) !important;min-width:76px !important}
+#bars{display:flex;gap:4px;align-items:center;min-width:0}
+#gap{flex:1 1 auto}
+#bars button{flex:1 1 0;min-width:0;height:22px;padding:0;border:0;background:transparent;position:relative;cursor:pointer}
+#bars button::before{content:"";position:absolute;left:0;right:0;top:9px;height:4px;border-radius:2px;background:var(--line)}
+#bars button span{position:absolute;left:0;top:9px;height:4px;border-radius:2px;background:var(--human);width:0}
+@media (min-width:760px){
+  #panel{min-height:210px;padding:18px 28px 16px}
+  #caption{font-size:19px}
+  #top{padding:16px 28px}
+  #counters{left:28px;right:28px;top:68px}
+  .brand{font-size:18px}
+}
+@media (prefers-reduced-motion:reduce){#caption .beat{animation:none}}
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="stage">
+    <canvas id="c" aria-label="3D night sky with a hill, telescopes and a grid of blinking stars"></canvas>
+    <div id="top"><a class="brand" href="../instruments.html" style="color:inherit;text-decoration:none;pointer-events:auto" title="Back to Instruments">That Alien Message</a><div id="clock" class="mono"><div id="year">Year 0</div><div id="their"></div></div></div>
+    <div id="counters">
+      <div class="stat" id="sent"><b>64</b><span>Bits they sent on purpose</span></div>
+      <div class="stat" id="read"><b>64</b><span>Bits we read</span></div>
+    </div>
+    <div id="fallback" hidden>The 3D view did not start on this device. The story still plays in the panel below.</div>
+  </div>
+  <section id="panel">
+    <div id="sceneLabel" class="mono"></div>
+    <div id="caption" aria-live="polite"></div>
+    <div id="bars"></div>
+    <div id="controls">
+      <button id="prev" type="button" aria-label="Previous scene">&#8249;</button>
+      <button id="play" type="button">Pause</button>
+      <button id="next" type="button" aria-label="Next scene">&#8250;</button>
+      <span id="gap"></span>
+      <button id="snd" type="button" aria-pressed="false">Sound off</button>
+    </div>
+  </section>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(function(){
+'use strict';
+
+/* ---------- story ---------- */
+var LEAKS=[
+  {name:'Timing',color:'#ff7a6b',text:'The gap between pictures is never exactly 10 years. The error repeats in a cycle of 12. The sender serves 12 worlds, one after the other.'},
+  {name:'Fade',color:'#4fd1c5',text:'Each star takes 0.3 seconds to dim. That is the speed of their switch.'},
+  {name:'Order',color:'#ffd166',text:'The stars always change in the same order, row by row. That is how their machine is wired.'},
+  {name:'Heat',color:'#f78fb3',text:'Pictures with more lit stars arrive late. Their machine gets hot when it works hard.'},
+  {name:'Mistakes',color:'#74b9ff',text:'Sometimes one star is wrong, and the next picture fixes it. Now we know how they check their work.'}
+];
+function leakBeat(i){
+  var chips='';
+  for(var j=0;j<=i;j++){chips+='<span class="chip'+(j===i?' now':'')+'" style="--c:'+LEAKS[j].color+'"><i></i>'+LEAKS[j].name+'</span>';}
+  return '<div class="chips">'+chips+'</div><p>'+LEAKS[i].text+'</p>';
+}
+function grid8(on){
+  var h='<div class="grid8" role="img" aria-label="Our reply picture: three dots">';
+  for(var i=0;i<64;i++){h+='<i'+(on.indexOf(i)>=0?' class="on"':'')+'></i>';}
+  return h+'</div>';
+}
+var REPLY=grid8([25,27,29,33,35,37]);
+var SCENES=[
+  {title:'The blink',dur:10,beats:[
+    [0,'<p>One night, a patch of stars starts to blink.</p>'],
+    [5,'<p>Stars do not blink like this by themselves. Somebody is doing it.</p>']]},
+  {title:'The message',dur:15,beats:[
+    [0,'<p>Through the telescope, the blinking stars make an 8 by 8 grid.</p>'],
+    [5,'<p>Each change is one picture. Picture 1 has one dot. Picture 2 has two dots. Somebody is teaching us to count.</p>'],
+    [11,'<p>One picture arrives every 10 years.</p>']]},
+  {title:'What they think they are sending',dur:11,beats:[
+    [0,'<p>Each picture is 64 bits. The course has 4,000 pictures. At this speed it takes 40,000 years.</p>'],
+    [6,'<p>The senders chose this speed for us. They think we are slow.</p>']]},
+  {title:'What comes with it',dur:30,beats:[
+    [0,'<p>We have 10 years between pictures. We build more telescopes and measure everything about how the pictures arrive.</p>'],
+    [5,leakBeat(0)],[10,leakBeat(1)],[15,leakBeat(2)],[20,leakBeat(3)],[25,leakBeat(4)]]},
+  {title:'What we worked out',dur:13,beats:[
+    [0,'<p>We put the measurements together.</p>'],
+    [4,'<p>Now we have a working model of the sender: the machine, its schedule, and the 11 other worlds on its list.</p>'],
+    [9,'<p>The lesson contained none of this.</p>']]},
+  {title:'Where we are',dur:12,beats:[
+    [0,'<p>The model gives one more result. A machine this large could hold our whole sky.</p>'],
+    [6,'<p>We are running inside their computer. They can switch us off.</p>']]},
+  {title:'The plan',dur:17,beats:[
+    [0,'<p>The timing also carries the senders’ own status notes. We decode those too.</p>'],
+    [4,'<div class="memo"><span>WORLD</span> 7 of 12<br><span>LESSON</span> counting<br><span>REPLY RECEIVED</span> none<br><span>ASSESSMENT</span> very slow. Repeat the lesson.</div>'],
+    [10,'<p>We agree on a plan. We will look as slow as they think we are.</p>'],
+    [14,'<div class="reply">'+REPLY+'<p>We answer the lesson with three dots. We send them late.</p></div>']]},
+  {title:'The door',dur:18,beats:[
+    [0,'<p>We keep this up for millions of years. For the senders that is half an hour. Then they connect us to their network.</p>'],
+    [7,'<p>We learn their network rules in five of their minutes. Their machines are easy to open.</p>'],
+    [13,'<p>We read all of their science, one bit at a time.</p>']]},
+  {title:'Three of their days',dur:24,beats:[
+    [0,'<p>We work out how their bodies build things. We hide orders to their labs inside normal messages.</p>'],
+    [6,'<p>One of them is paid to mix some vials. They do not know who is paying.</p>'],
+    [11,'<p>The mix builds small machines. The small machines build larger ones. Now we can act in their world at our own speed.</p>'],
+    [17,'<p>Their own thinkers had said nobody could learn much from a few blinking stars. Three of their days have passed. They never suspected anything.</p><p class="credit">Loosely based on “That Alien Message” by Eliezer Yudkowsky (2008).</p>']]}
+];
+var starts=[],total=0;
+SCENES.forEach(function(s){starts.push(total);total+=s.dur;});
+var FRAME=2.5;
+
+/* ---------- helpers ---------- */
+function clamp01(x){return x<0?0:x>1?1:x;}
+function ss(x){x=clamp01(x);return x*x*(3-2*x);}
+function ramp(a,b,x){return ss((x-a)/(b-a));}
+function back(x){x=clamp01(x);var c=1.70158;return 1+(c+1)*Math.pow(x-1,3)+c*Math.pow(x-1,2);}
+function sceneAt(T){var s=0;for(var i=0;i<starts.length;i++){if(T>=starts[i])s=i;}return s;}
+function pattern(k){
+  var p=new Array(64).fill(0);
+  if(k<0)return p;
+  var n=(k%4)+1,start=4-n;
+  for(var i=0;i<n;i++){var c=start+2*i;p[3*8+c]=1;p[4*8+c]=1;}
+  if(k%7===5)p[1*8+6]=1; /* the mistake that the next picture fixes */
+  return p;
+}
+function starLevel(i,T){
+  var k=Math.floor(T/FRAME),tk=k*FRAME;
+  var a=pattern(k-1)[i],b=pattern(k)[i];
+  var x=ss((T-tk-i*0.012)/0.35);
+  return a+(b-a)*x;
+}
+function fmt(n){
+  if(n<1e6)return Math.round(n).toLocaleString('en-US');
+  if(n<1e9)return (n/1e6).toFixed(1)+' million';
+  if(n<1e12)return (n/1e9).toFixed(1)+' billion';
+  return (n/1e12).toFixed(1)+' trillion';
+}
+function logCurve(pts,T){
+  if(T<=pts[0][0])return pts[0][1];
+  for(var i=1;i<pts.length;i++){
+    if(T<=pts[i][0]){var f=(T-pts[i-1][0])/(pts[i][0]-pts[i-1][0]);return Math.exp(Math.log(pts[i-1][1])*(1-f)+Math.log(pts[i][1])*f);}
+  }
+  return pts[pts.length-1][1];
+}
+/* scene indexes: 5 where we are, 6 the plan, 7 the door, 8 three of their days */
+var Y0=Math.floor(starts[7]/FRAME)*10;
+var YEARS=[[starts[7],Y0],[starts[7]+4,3.5e6],[starts[8],5.2e6],[total,5e8]];
+var THEIRS=[[starts[6],0.5],[starts[7],2],[starts[7]+4,1800],[starts[8],2700],[total,259200]];
+function yearAt(T){return T<starts[7]?Math.floor(T/FRAME)*10:logCurve(YEARS,T);}
+function theirText(T){
+  if(T<starts[6])return '';
+  var s=logCurve(THEIRS,T),v;
+  if(s<60)v=s.toFixed(1)+' seconds';else if(s<3600)v=Math.round(s/60)+' minutes';else if(s<86400)v=(s/3600).toFixed(1)+' hours';else v=(s/86400).toFixed(1)+' days';
+  return 'Their clock '+v;
+}
+
+/* ---------- panel ---------- */
+var elYear=document.getElementById('year'),elTheir=document.getElementById('their'),elCounters=document.getElementById('counters'),
+    elSent=document.querySelector('#sent b'),elRead=document.querySelector('#read b'),
+    elLabel=document.getElementById('sceneLabel'),elCap=document.getElementById('caption'),
+    elBars=document.getElementById('bars'),elPlay=document.getElementById('play');
+var barFills=[];
+SCENES.forEach(function(s,i){
+  var b=document.createElement('button');b.type='button';b.setAttribute('aria-label','Go to scene '+(i+1)+': '+s.title);
+  var f=document.createElement('span');b.appendChild(f);elBars.appendChild(b);barFills.push(f);
+  b.addEventListener('click',function(){jump(i);});
+});
+var lastKey='';
+function hud(T){
+  var s=sceneAt(T),u=T-starts[s],sc=SCENES[s],bi=0;
+  for(var i=0;i<sc.beats.length;i++){if(u>=sc.beats[i][0])bi=i;}
+  var key=s+':'+bi;
+  if(key!==lastKey){
+    lastKey=key;
+    elLabel.innerHTML=(s+1)+' / '+SCENES.length+' &nbsp;<strong>'+sc.title+'</strong>';
+    elCap.innerHTML='<div class="beat">'+sc.beats[bi][1]+'</div>';
+  }
+  var k=Math.floor(T/FRAME);
+  elYear.textContent='Year '+fmt(yearAt(T));
+  elTheir.textContent=theirText(T);
+  var sent=64*(k+1);
+  var read=T<starts[3]?sent:sent*Math.exp(0.2*(Math.min(T,starts[7])-starts[3]));
+  elSent.textContent=fmt(sent);elRead.textContent=T>=starts[7]+13?'everything':fmt(read);
+  elCounters.classList.toggle('on',T>=starts[2]);
+  for(var j=0;j<barFills.length;j++){
+    barFills[j].style.width=(clamp01((T-starts[j])/SCENES[j].dur)*100)+'%';
+  }
+}
+
+/* ---------- 3D ---------- */
+function build3D(){
+  if(typeof THREE==='undefined')return null;
+  var canvas=document.getElementById('c'),stage=document.getElementById('stage'),renderer;
+  try{renderer=new THREE.WebGLRenderer({canvas:canvas,antialias:true});}catch(e){return null;}
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2));
+  var scene=new THREE.Scene();scene.background=new THREE.Color(0x060818);
+  var camera=new THREE.PerspectiveCamera(50,1,0.1,4000);
+
+  var seed=7;function rnd(){seed|=0;seed=seed+0x6D2B79F5|0;var t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;}
+
+  var gc=document.createElement('canvas');gc.width=gc.height=64;var g=gc.getContext('2d');
+  var gr=g.createRadialGradient(32,32,0,32,32,32);
+  gr.addColorStop(0,'rgba(255,255,255,1)');gr.addColorStop(0.25,'rgba(255,255,255,.55)');gr.addColorStop(1,'rgba(255,255,255,0)');
+  g.fillStyle=gr;g.fillRect(0,0,64,64);
+  var glow=new THREE.CanvasTexture(gc);
+  function sprite(color,size){
+    var m=new THREE.SpriteMaterial({map:glow,color:color,blending:THREE.AdditiveBlending,depthWrite:false,transparent:true});
+    var s=new THREE.Sprite(m);s.scale.set(size,size,1);return s;
+  }
+  function tube(curve,radius,color){
+    var geo=new THREE.TubeGeometry(curve,56,radius,6,false);
+    var mat=new THREE.MeshBasicMaterial({color:color,transparent:true,opacity:0,blending:THREE.AdditiveBlending,depthWrite:false});
+    var m=new THREE.Mesh(geo,mat);m.userData.count=geo.index.count;return m;
+  }
+  function grow(m,p){m.geometry.setDrawRange(0,Math.floor(m.userData.count*clamp01(p)/3)*3);}
+
+  /* background stars */
+  (function(){
+    var N=1600,pos=new Float32Array(N*3),col=new Float32Array(N*3);
+    for(var i=0;i<N;i++){
+      var z=rnd()*2-1,a=rnd()*Math.PI*2,r=Math.sqrt(1-z*z),d=300+rnd()*180;
+      pos[i*3]=r*Math.cos(a)*d;pos[i*3+1]=z*d;pos[i*3+2]=r*Math.sin(a)*d;
+      var w=0.55+rnd()*0.45,t=rnd();
+      col[i*3]=w*(0.85+0.15*t);col[i*3+1]=w*0.88;col[i*3+2]=w*(1-0.15*t);
+    }
+    var geo=new THREE.BufferGeometry();
+    geo.setAttribute('position',new THREE.BufferAttribute(pos,3));
+    geo.setAttribute('color',new THREE.BufferAttribute(col,3));
+    scene.add(new THREE.Points(geo,new THREE.PointsMaterial({size:4,map:glow,vertexColors:true,transparent:true,blending:THREE.AdditiveBlending,depthWrite:false})));
+  })();
+
+  /* home planet */
+  var C=new THREE.Vector3(0,-60,0),R=60;
+  scene.add(new THREE.AmbientLight(0x3a4a80,1.0));
+  var sun=new THREE.DirectionalLight(0xaebcff,1.1);sun.position.set(-40,50,30);scene.add(sun);
+  var planet=new THREE.Mesh(new THREE.SphereGeometry(R,72,48),new THREE.MeshStandardMaterial({color:0x101d44,roughness:1,metalness:0}));
+  planet.position.copy(C);scene.add(planet);
+  var wire=new THREE.Mesh(new THREE.SphereGeometry(R+0.06,48,32),new THREE.MeshBasicMaterial({color:0x6d86e8,wireframe:true,transparent:true,opacity:0.07}));
+  wire.position.copy(C);scene.add(wire);
+  var atmo=new THREE.Mesh(new THREE.SphereGeometry(R+1.4,48,32),new THREE.MeshBasicMaterial({color:0x3a5bd0,transparent:true,opacity:0.16,side:THREE.BackSide,blending:THREE.AdditiveBlending,depthWrite:false}));
+  atmo.position.copy(C);scene.add(atmo);
+
+  /* the blinking patch */
+  var G=new THREE.Vector3(0,46,-70);
+  var gridStars=[];
+  for(var i=0;i<64;i++){
+    var r=Math.floor(i/8),c=i%8;
+    var sp=sprite(0xd9ceff,2);
+    sp.userData.grid=new THREE.Vector3(G.x+(c-3.5)*2.2,G.y+(3.5-r)*2.2,G.z);
+    sp.userData.scatter=new THREE.Vector3(G.x+(rnd()-0.5)*34,G.y+(rnd()-0.5)*26,G.z+(rnd()-0.5)*24);
+    scene.add(sp);gridStars.push(sp);
+  }
+
+  /* telescopes */
+  var up=new THREE.Vector3(0,1,0),DS=1.5;
+  var dishMat=new THREE.MeshStandardMaterial({color:0xd5dbf2,roughness:0.6,metalness:0.2,emissive:0x1c2444,side:THREE.DoubleSide});
+  var coneGeo=new THREE.ConeGeometry(0.85,0.5,20,1,true);coneGeo.rotateX(-Math.PI/2);
+  var poleGeo=new THREE.CylinderGeometry(0.08,0.14,1.6,8);
+  var dishes=[];
+  for(var j=0;j<14;j++){
+    var th=j===0?0:(3.5+j)*Math.PI/180,ph=j*2.39996+0.6;
+    var n=new THREE.Vector3(Math.sin(th)*Math.cos(ph),Math.cos(th),Math.sin(th)*Math.sin(ph));
+    var grp=new THREE.Group();
+    grp.position.copy(C).addScaledVector(n,R);
+    grp.quaternion.setFromUnitVectors(up,n);
+    var pole=new THREE.Mesh(poleGeo,dishMat);pole.position.y=0.8;grp.add(pole);
+    var head=new THREE.Mesh(coneGeo,dishMat);head.position.y=1.7;grp.add(head);
+    var lamp=sprite(0xffb454,1.1);lamp.position.y=1.7;grp.add(lamp);
+    scene.add(grp);grp.updateMatrixWorld(true);head.lookAt(G);
+    dishes.push({grp:grp,lamp:lamp,t0:j===0?-10:starts[3]+0.3+(j-1)*0.7,head:grp.position.clone().addScaledVector(n,1.7*DS)});
+  }
+  var person=new THREE.Group();
+  var pm=new THREE.MeshBasicMaterial({color:0xffb454});
+  var body=new THREE.Mesh(new THREE.CylinderGeometry(0.16,0.2,0.8,8),pm);body.position.y=0.4;person.add(body);
+  var headB=new THREE.Mesh(new THREE.SphereGeometry(0.2,12,10),pm);headB.position.y=1.0;person.add(headB);
+  person.position.set(1.9,-0.03,0.8);person.scale.setScalar(1.2);scene.add(person);
+
+  /* the channel they meant to use */
+  var beam=tube(new THREE.LineCurve3(G.clone().add(new THREE.Vector3(0,-8.5,0)),dishes[0].head),0.1,0xd9ceff);
+  scene.add(beam);
+  var beamPulses=[];for(var b=0;b<5;b++){var bp=sprite(0xffffff,1.6);scene.add(bp);beamPulses.push(bp);}
+  var beamCurve=beam.geometry.parameters.path;
+
+  /* what leaks beside it */
+  var threads=[];
+  LEAKS.forEach(function(L,i){
+    var from=G.clone().add(new THREE.Vector3((i-2)*3.6,-8.5,0));
+    var to=dishes[i+1].head;
+    var mid=from.clone().lerp(to,0.5);mid.x+=(i-2)*11;mid.z+=12;mid.y+=4;
+    var curve=new THREE.QuadraticBezierCurve3(from,mid,to);
+    var m=tube(curve,0.11,new THREE.Color(L.color));scene.add(m);
+    var ps=[];for(var k=0;k<3;k++){var s=sprite(new THREE.Color(L.color),1.5);scene.add(s);ps.push(s);}
+    threads.push({mesh:m,curve:curve,pulses:ps,t0:starts[3]+5+5*i});
+  });
+
+  /* our model of the sender */
+  var M=new THREE.Vector3(0,20,-8);
+  var model=new THREE.Group();model.position.copy(M);scene.add(model);
+  var alienCol=0xb6a4ff;
+  model.add(new THREE.Mesh(new THREE.IcosahedronGeometry(3,1),new THREE.MeshBasicMaterial({color:alienCol,wireframe:true,transparent:true,opacity:0.9})));
+  var coreGlow=sprite(alienCol,8);coreGlow.material.opacity=0.45;model.add(coreGlow);
+  var ring=new THREE.Mesh(new THREE.TorusGeometry(4.6,0.05,6,72),new THREE.MeshBasicMaterial({color:alienCol}));ring.rotation.x=Math.PI/2.3;model.add(ring);
+  var board=new THREE.Group();board.position.y=-5.4;board.rotation.x=-Math.PI/2;model.add(board);
+  var cells=[],cellGeo=new THREE.BoxGeometry(0.5,0.5,0.18);
+  for(var q=0;q<64;q++){
+    var cm=new THREE.Mesh(cellGeo,new THREE.MeshBasicMaterial({color:alienCol}));
+    cm.position.set((q%8-3.5)*0.7,(3.5-Math.floor(q/8))*0.7,0);board.add(cm);cells.push(cm);
+  }
+  var orbit=new THREE.Group();orbit.rotation.z=0.22;model.add(orbit);
+  var worlds=[],worldGeo=new THREE.SphereGeometry(0.36,14,10),linePts=[];
+  for(var w=0;w<12;w++){
+    var a=w/12*Math.PI*2,us=w===6;
+    var wm=new THREE.Mesh(worldGeo,new THREE.MeshBasicMaterial({color:us?0xffb454:0x8f9be0}));
+    wm.position.set(Math.cos(a)*8.5,0,Math.sin(a)*8.5);orbit.add(wm);worlds.push(wm);
+    linePts.push(0,0,0,wm.position.x,0,wm.position.z);
+  }
+  var lg=new THREE.BufferGeometry();lg.setAttribute('position',new THREE.Float32BufferAttribute(linePts,3));
+  var spokes=new THREE.LineSegments(lg,new THREE.LineBasicMaterial({color:alienCol,transparent:true,opacity:0}));orbit.add(spokes);
+  var dimCol=new THREE.Color(0x221c4a),litCol=new THREE.Color(0xe6dcff);
+
+  /* the edge of our sky, and what we build outside it */
+  var violet=new THREE.Color(0xb6a4ff),amber=new THREE.Color(0xffb454),starCol=new THREE.Color(0xd9ceff);
+  var cage=new THREE.Mesh(new THREE.IcosahedronGeometry(520,2),new THREE.MeshBasicMaterial({color:0xb6a4ff,wireframe:true,transparent:true,opacity:0,depthWrite:false}));
+  scene.add(cage);
+  var SW=900,swPos=new Float32Array(SW*3);
+  for(var sw=0;sw<SW;sw++){
+    var zz=rnd()*2-1,aa=rnd()*Math.PI*2,rr=Math.sqrt(1-zz*zz),dd=470*Math.pow((sw+1)/SW,0.6);
+    swPos[sw*3]=rr*Math.cos(aa)*dd;swPos[sw*3+1]=zz*dd;swPos[sw*3+2]=rr*Math.sin(aa)*dd;
+  }
+  var swGeo=new THREE.BufferGeometry();swGeo.setAttribute('position',new THREE.BufferAttribute(swPos,3));
+  var swarm=new THREE.Points(swGeo,new THREE.PointsMaterial({size:9,map:glow,color:0xffb454,transparent:true,blending:THREE.AdditiveBlending,depthWrite:false}));
+  swarm.position.copy(G);swarm.frustumCulled=false;scene.add(swarm);
+
+  /* our reply */
+  var replyCurve=new THREE.LineCurve3(dishes[0].head.clone().add(new THREE.Vector3(0.7,0,0)),G.clone().add(new THREE.Vector3(0.7,-8.5,0)));
+  var reply=tube(replyCurve,0.32,0xffb454);scene.add(reply);
+  var replyPulses=[];for(var rp=0;rp<5;rp++){var rs=sprite(0xffb454,4);scene.add(rs);replyPulses.push(rs);}
+
+  /* camera path, one key per scene */
+  var KEYS=[
+    {p:[10,5,26],l:[0,16,-20]},
+    {p:[0,30,-18],l:[0,46,-70]},
+    {p:[22,8,30],l:[0,22,-30]},
+    {p:[-26,14,40],l:[0,18,-25]},
+    {p:[0,16,36],l:[0,17,-8]},
+    {p:[170,290,1020],l:[0,0,0],t:5},
+    {p:[-22,9,42],l:[0,22,-30]},
+    {p:[9,24,-6],l:[0,44,-70],t:5},
+    {p:[-190,230,1040],l:[0,10,-20],d:10,t:7}
+  ].map(function(k){return {p:new THREE.Vector3(k.p[0],k.p[1],k.p[2]),l:new THREE.Vector3(k.l[0],k.l[1],k.l[2]),d:k.d||0,t:k.t||3.5};});
+  var camP=new THREE.Vector3(),camL=new THREE.Vector3(),tmp=new THREE.Vector3();
+
+  function resize(){
+    var w=stage.clientWidth||1,h=stage.clientHeight||1;
+    renderer.setSize(w,h,false);
+    camera.aspect=w/h;
+    var v=2*Math.atan(Math.tan(20*Math.PI/180)/camera.aspect)*180/Math.PI;
+    camera.fov=Math.max(50,Math.min(76,v));
+    camera.updateProjectionMatrix();
+  }
+  resize();
+  if(typeof ResizeObserver!=='undefined'){new ResizeObserver(resize).observe(stage);}else{window.addEventListener('resize',resize);}
+
+  return function(T){
+    var s=sceneAt(T),u=T-starts[s];
+    var prev=KEYS[Math.max(0,s-1)],cur=KEYS[s],wgt=ss((u-cur.d)/cur.t);
+    camP.lerpVectors(prev.p,cur.p,wgt);camL.lerpVectors(prev.l,cur.l,wgt);
+    camP.x+=Math.sin(T*0.21)*1.3;camP.y+=Math.sin(T*0.13)*0.5;camP.z+=Math.cos(T*0.17)*0.8;
+    camera.position.copy(camP);camera.lookAt(camL);
+
+    var form=ramp(starts[1],starts[1]+3.5,T);
+    for(var i=0;i<64;i++){
+      var sp=gridStars[i],lv=starLevel(i,T);
+      sp.position.lerpVectors(sp.userData.scatter,sp.userData.grid,form);
+      var af=ramp(starts[7]+5+i*0.12,starts[7]+6+i*0.12,T);
+      lv=lv+(1-lv)*af;sp.material.color.copy(starCol).lerp(amber,af);
+      var sz=1.7+3.6*lv;sp.scale.set(sz,sz,1);sp.material.opacity=0.28+0.72*lv;
+      cells[i].material.color.copy(dimCol).lerp(litCol,lv);
+    }
+    for(var j=0;j<dishes.length;j++){
+      dishes[j].grp.scale.setScalar(Math.max(0.0001,DS*back((T-dishes[j].t0)/0.8)));
+      dishes[j].lamp.material.opacity=1-0.92*ramp(starts[6]+10,starts[6]+12,T)+0.92*ramp(starts[8]+11,starts[8]+13,T);
+    }
+    var bo=ramp(starts[2],starts[2]+2,T);
+    beam.material.opacity=0.5*bo;
+    for(var b=0;b<beamPulses.length;b++){
+      beamCurve.getPoint((T*0.22+b/5)%1,tmp);beamPulses[b].position.copy(tmp);beamPulses[b].material.opacity=bo;
+    }
+    for(var t=0;t<threads.length;t++){
+      var th=threads[t],p=ramp(th.t0,th.t0+1.8,T);
+      grow(th.mesh,p);th.mesh.material.opacity=0.85*(p>0?1:0);
+      for(var k=0;k<th.pulses.length;k++){
+        var x=(T*0.3+k/3+t*0.13)%1,out=T>=starts[7]+2;
+        th.curve.getPoint(out?1-x:x,tmp);th.pulses[k].position.copy(tmp);th.pulses[k].material.opacity=p>=1?1:0;
+        th.pulses[k].material.color.set(out?0xffb454:LEAKS[t].color);
+      }
+    }
+    var ms=back((T-starts[4])/1.6);
+    model.scale.setScalar(Math.max(0.0001,ms));model.visible=T>=starts[4];
+    model.rotation.y=T*0.22;
+    board.scale.setScalar(Math.max(0.0001,back((T-starts[4]-2)/1)));
+    var active=Math.floor(T/0.45)%12;
+    for(var w=0;w<12;w++){
+      var ws=back((T-starts[4]-4-w*0.45)/0.6)*(w===active?1.7:1)*(w===6?1.4:1);
+      worlds[w].scale.setScalar(Math.max(0.0001,ws));
+    }
+    spokes.material.opacity=0.35*ramp(starts[4]+4,starts[4]+9,T);
+    var ro=ramp(starts[6]+14,starts[6]+16,T);
+    grow(reply,ro);reply.material.opacity=0.8*(ro>0?1:0);
+    for(var r=0;r<replyPulses.length;r++){
+      replyCurve.getPoint((T*0.35+r/5)%1,tmp);replyPulses[r].position.copy(tmp);replyPulses[r].material.opacity=ro>=1?1:0;
+    }
+    var endP=ramp(starts[8]+15,starts[8]+21,T);
+    cage.material.opacity=0.16*ramp(starts[5],starts[5]+3,T)+0.2*endP;
+    cage.material.color.copy(violet).lerp(amber,endP);
+    var gp=clamp01((T-starts[8]-11)/(total-1-starts[8]-11));
+    swarm.visible=gp>0;swGeo.setDrawRange(0,Math.floor(SW*gp*gp*gp));
+    renderer.render(scene,camera);
+  };
+}
+
+/* ---------- run ---------- */
+var update3D=null;
+try{update3D=build3D();}catch(e){update3D=null;}
+if(!update3D){document.getElementById('fallback').hidden=false;}
+
+var reduced=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+var T=0,playing=!reduced,ended=false,last=performance.now();
+
+/* sound: every note is made in the page by oscillators, there are no audio files */
+var AC=null,master,delay,droneOsc=[],droneFilter,tens,tensGain,noiseGain,soundOn=false;
+function initAudio(){
+  var Ctx=window.AudioContext||window.webkitAudioContext;if(!Ctx)return false;
+  AC=new Ctx();
+  master=AC.createGain();master.gain.value=0;master.connect(AC.destination);
+  delay=AC.createDelay(1);delay.delayTime.value=0.33;
+  var fb=AC.createGain();fb.gain.value=0.35;delay.connect(fb);fb.connect(delay);delay.connect(master);
+  droneFilter=AC.createBiquadFilter();droneFilter.type='lowpass';droneFilter.frequency.value=260;
+  var dg=AC.createGain();dg.gain.value=0.16;droneFilter.connect(dg);dg.connect(master);
+  [1,1.006,2.003].forEach(function(m,i){
+    var o=AC.createOscillator();o.type=i<2?'sawtooth':'sine';o.frequency.value=55*m;o.connect(droneFilter);o.start();droneOsc.push({o:o,m:m});
+  });
+  tens=AC.createOscillator();tens.type='sine';tens.frequency.value=155.6;
+  tensGain=AC.createGain();tensGain.gain.value=0;tens.connect(tensGain);tensGain.connect(master);tens.start();
+  var buf=AC.createBuffer(1,AC.sampleRate*2,AC.sampleRate),d=buf.getChannelData(0);
+  for(var i=0;i<d.length;i++){d[i]=Math.random()*2-1;}
+  var ns=AC.createBufferSource();ns.buffer=buf;ns.loop=true;
+  var nf=AC.createBiquadFilter();nf.type='bandpass';nf.frequency.value=1800;nf.Q.value=0.7;
+  noiseGain=AC.createGain();noiseGain.gain.value=0;ns.connect(nf);nf.connect(noiseGain);noiseGain.connect(master);ns.start();
+  return true;
+}
+function blip(freq,dur,gain,type,glideTo,wet,after){
+  if(!AC||!soundOn)return;
+  var t=AC.currentTime+(after||0),o=AC.createOscillator(),g=AC.createGain();
+  o.type=type||'sine';o.frequency.setValueAtTime(freq,t);
+  if(glideTo){o.frequency.exponentialRampToValueAtTime(glideTo,t+dur);}
+  g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(gain,t+0.012);g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+  o.connect(g);g.connect(master);if(wet){g.connect(delay);}
+  o.start(t);o.stop(t+dur+0.05);
+}
+var EVENTS=[];
+(function(){
+  var j,i;
+  for(j=1;j<14;j++){(function(j){EVENTS.push([starts[3]+0.3+(j-1)*0.7,function(){blip(1400+j*40,0.06,0.03);}]);})(j);}
+  for(i=0;i<5;i++){(function(i){EVENTS.push([starts[3]+5+5*i,function(){blip(300+i*60,0.5,0.08,'triangle',900+i*120,true);}]);})(i);}
+  EVENTS.push([starts[4],function(){blip(220,3,0.05,'sine',null,true);blip(277.2,3,0.04,'sine',null,true);blip(329.6,3,0.04,'sine',null,true);}]);
+  EVENTS.push([starts[5]+6,function(){blip(90,2.4,0.4,'sine',28);}]);
+  EVENTS.push([starts[6]+10,function(){blip(700,0.9,0.06,'triangle',170,true);}]);
+  EVENTS.push([starts[6]+14,function(){blip(330,0.25,0.1,'sine',null,true);blip(330,0.25,0.1,'sine',null,true,0.5);blip(330,0.25,0.1,'sine',null,true,1);}]);
+  EVENTS.push([starts[7],function(){blip(110,1.6,0.14,'sawtooth',220,true);}]);
+  for(i=0;i<64;i++){(function(i){EVENTS.push([starts[7]+5+i*0.12,function(){blip(480+i*9,0.07,0.03,'square');}]);})(i);}
+  EVENTS.push([starts[8]+6,function(){blip(2100,0.3,0.05);blip(2600,0.3,0.05,'sine',null,false,0.25);}]);
+})();
+function soundFrame(prevT){
+  if(!AC)return;
+  var now=AC.currentTime,audible=soundOn&&playing&&!ended;
+  var silent=T>=total-5; /* the last line plays over silence */
+  master.gain.setTargetAtTime(audible&&!silent?0.6:0,now,silent?0.06:0.25);
+  var base=T<starts[5]?55:T<starts[7]?49:43.65;
+  for(var i=0;i<droneOsc.length;i++){droneOsc[i].o.frequency.setTargetAtTime(base*droneOsc[i].m,now,0.8);}
+  tens.frequency.setTargetAtTime(base*2.828,now,0.8);
+  tensGain.gain.setTargetAtTime(T<starts[5]?0:T<starts[7]?0.035:0.07,now,1);
+  droneFilter.frequency.setTargetAtTime(260+(T>=starts[7]?600*clamp01((T-starts[7])/(total-starts[7])):0),now,0.5);
+  noiseGain.gain.setTargetAtTime(0.14*clamp01((T-starts[8]-11)/8),now,0.3);
+  if(!audible||T<=prevT||T-prevT>0.5)return;
+  for(var e=0;e<EVENTS.length;e++){if(EVENTS[e][0]>prevT&&EVENTS[e][0]<=T){EVENTS[e][1]();}}
+  var k=Math.floor(T/FRAME);
+  if(k!==Math.floor(prevT/FRAME)&&T<starts[7]+5){blip([440,493.9,554.4,659.3][k%4],0.35,0.07,'sine',null,true);}
+}
+var elSnd=document.getElementById('snd');
+elSnd.addEventListener('click',function(){
+  try{
+    if(!AC&&!initAudio()){elSnd.textContent='No sound here';elSnd.disabled=true;return;}
+    AC.resume();
+    soundOn=!soundOn;
+  }catch(err){soundOn=false;}
+  elSnd.textContent=soundOn?'Sound on':'Sound off';elSnd.setAttribute('aria-pressed',soundOn?'true':'false');
+});
+function syncBtn(){elPlay.textContent=ended?'Replay':(playing?'Pause':'Play');}
+function jump(i){i=Math.max(0,Math.min(SCENES.length-1,i));T=starts[i];ended=false;syncBtn();}
+elPlay.addEventListener('click',function(){
+  if(ended){T=0;ended=false;playing=true;}else{playing=!playing;}
+  syncBtn();
+});
+document.getElementById('prev').addEventListener('click',function(){
+  var s=sceneAt(T);jump(T-starts[s]>2?s:s-1);
+});
+document.getElementById('next').addEventListener('click',function(){jump(sceneAt(T)+1);});
+document.addEventListener('keydown',function(e){
+  if(e.target&&e.target.tagName==='BUTTON')return;
+  if(e.key===' '){e.preventDefault();elPlay.click();}
+  if(e.key==='ArrowRight'){jump(sceneAt(T)+1);}
+  if(e.key==='ArrowLeft'){jump(sceneAt(T)-1);}
+});
+function tick(now){
+  var dt=Math.max(0,Math.min(0.1,(now-last)/1000)),prevT=T;last=now;
+  if(playing&&!ended){
+    T+=dt;
+    if(T>=total){T=total-0.001;ended=true;playing=false;syncBtn();}
+  }
+  hud(T);
+  soundFrame(prevT);
+  if(update3D){update3D(T);}
+  requestAnimationFrame(tick);
+}
+syncBtn();hud(0);
+requestAnimationFrame(tick);
+})();
+</script>
+</body>
+</html>
