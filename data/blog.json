@@ -2,6 +2,11 @@
   "version": 1,
   "posts": [
     {
+      "slug": "first",
+      "title": "first",
+      "date": "2026-11-18"
+    },
+    {
       "slug": "mic-check",
       "title": "Mic check",
       "date": "2026-11-16",
