@@ -2,6 +2,11 @@
   "version": 1,
   "posts": [
     {
+      "slug": "i-m-going-to-beach",
+      "title": "I'm going to beach",
+      "date": "2026-11-20"
+    },
+    {
       "slug": "coherent-extrapolated-volition",
       "title": "Coherent extrapolated volition",
       "date": "2026-11-18"
