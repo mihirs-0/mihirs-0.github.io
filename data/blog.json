@@ -3,8 +3,9 @@
   "posts": [
     {
       "slug": "i-m-going-to-beach",
-      "title": "I'm going to beach",
-      "date": "2026-11-20"
+      "title": "I'm going to the beach",
+      "date": "2026-11-20",
+      "updated": "2026-11-21"
     },
     {
       "slug": "coherent-extrapolated-volition",
