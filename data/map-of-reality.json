@@ -79,6 +79,17 @@
       "created_at": "2026-11-08",
       "created_timestamp": "2026-11-08T19:51:43.091Z",
       "updates": []
+    },
+    {
+      "id": "717c686f-9f18-4da4-a6bc-e15497e2af22",
+      "kind": "map",
+      "claim": "The utility of world models is unclear to me. I want to close this mental thread for now. So I say: World models help us build an accurate synthetic world for better RL rollouts for robotics.",
+      "confidence": 66,
+      "horizon": "June 2027",
+      "reasoning": "I don't get where the agent lies in a world model. If our goal is to train a superintelligent agent, I don't see how a world model helps directly. It doesn't imply training the agent. It's just a very good predictor of what happens in the physical world. The absence of an agent bugs me. Seems like an agent would be some external optimizer. Feels not in line with the bitter lesson. I'll leave it at this for now. I don't see the promise of world models -- I will pick them up if I see new evidence by mid-2027.",
+      "created_at": "2026-11-21",
+      "created_timestamp": "2026-11-21T20:29:57.615Z",
+      "updates": []
     }
   ]
 }
