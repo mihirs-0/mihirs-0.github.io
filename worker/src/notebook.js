@@ -27,7 +27,7 @@ export function notebookRoutes({ json, readBody, ApiError }) {
       signal: AbortSignal.timeout(15000),
       headers: {
         "accept": "application/vnd.github+json",
-        "authorization": `Bearer ${env.NOTEBOOK_GITHUB_TOKEN}`,
+        "authorization": `Bearer ${env.NOTEBOOK_GITHUB_TOKEN.trim()}`,
         "x-github-api-version": "2022-11-28",
         "user-agent": "research-notebook-worker",
         ...(options.headers || {}),
