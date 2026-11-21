@@ -847,7 +847,8 @@ function eraseAt(pt) {
 }
 vp.addEventListener('dblclick', e => {
   if (e.target.closest('#tools,#inks')) return;
-  const cardNode = e.target.closest('.card');
+  // Pointer capture retargets the dblclick to the viewport, so find the card under the pointer.
+  const cardNode = document.elementFromPoint(e.clientX, e.clientY)?.closest('.card');
   if (cardNode) {
     const c = card(cardNode.dataset.id);
     if (c.kind === 'experiment') location.hash = '#/p/' + P.slug + '/exp/' + c.exp; else startEdit(c.id);
