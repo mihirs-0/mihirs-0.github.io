@@ -15,7 +15,7 @@ const seed = { version: 1, title: 'Map of Reality', entries: [] };
 test('Cloudflare runtime: login, append-only publication, and security boundaries', async t => {
   let ledger = structuredClone(seed), sha = 'initial', calls = [], failStatus = 0;
   let options = {
-    modules: ['index.js', 'blog.js'].map(f => ({ type: 'ESModule', path: fileURLToPath(new URL('../src/' + f, import.meta.url)) })),
+    modules: ['index.js', 'blog.js', 'notebook.js'].map(f => ({ type: 'ESModule', path: fileURLToPath(new URL('../src/' + f, import.meta.url)) })),
     modulesRoot: fileURLToPath(new URL('../', import.meta.url)),
     compatibilityDate: '2026-10-01', bindings,
     ratelimits: { LOGIN_LIMITER: { namespace_id: '1044266898', simple: { limit: 5, period: 60 } } },

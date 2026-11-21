@@ -1,4 +1,5 @@
 import { blogRoutes } from "./blog.js";
+import { notebookRoutes } from "./notebook.js";
 
 const REPO = "mihirs-0/mihirs-0.github.io";
 const BRANCHES = new Set(["map-of-reality", "main"]);
@@ -160,17 +161,18 @@ function validConfidence(value) {
 }
 
 const blog = blogRoutes({ json, readBody, github, ApiError, cleanText });
+const notebook = notebookRoutes({ json, readBody, ApiError });
 
 const api = {
   async fetch(request, env) {
     const headers = cors(request);
     const url = new URL(request.url);
-    const blogRoute = url.pathname.startsWith("/api/blog/");
+    const sectionRoute = url.pathname.startsWith("/api/blog/") || url.pathname.startsWith("/api/notebook/");
     const updateRoute = /^\/api\/entries\/[a-f0-9-]{36}\/updates$/.test(url.pathname);
     const method = url.pathname === "/api/me" ? "GET"
       : ["/api/login", "/api/logout", "/api/entries"].includes(url.pathname) || updateRoute ? "POST" : null;
-    if (!method && !blogRoute) return json({ ok: false, error: "Not found." }, 404, headers);
-    if (!blogRoute && request.method !== method && request.method !== "OPTIONS") return json({ ok: false, error: "Method not allowed." }, 405, { ...headers, allow: method });
+    if (!method && !sectionRoute) return json({ ok: false, error: "Not found." }, 404, headers);
+    if (!sectionRoute && request.method !== method && request.method !== "OPTIONS") return json({ ok: false, error: "Method not allowed." }, 405, { ...headers, allow: method });
     const origin = request.headers.get("Origin");
     // SameSite cookies alone do not protect against a hostile sibling subdomain.
     if ((request.method !== "GET" || origin) && !ALLOWED_ORIGINS.has(origin)) return json({ ok: false, error: "Origin is not allowed." }, 403, headers);
@@ -213,7 +215,8 @@ const api = {
       return json({ ok: false, error: "Authentication required." }, 401, headers);
     }
 
-    if (blogRoute) return blog(request, env, url, headers);
+    if (url.pathname.startsWith("/api/notebook/")) return notebook(request, env, url, headers);
+    if (sectionRoute) return blog(request, env, url, headers);
 
     if (url.pathname === "/api/entries" && request.method === "POST") {
       const body = await readBody(request);

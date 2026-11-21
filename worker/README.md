@@ -76,3 +76,13 @@ All four secrets, a valid branch binding, and the login rate limiter are require
 8. Review the final diff against `main`, show the result, and obtain merge approval. Do not merge automatically.
 
 Local tests use Cloudflare's actual runtime with a simulated GitHub contents service. They cover valid/invalid login, cookies, malformed sessions, credential rotation, missing setup, origin checks, request validation/size limits, Unicode, append-only publication, history preservation, fixed branch/path, conflict responses, sanitized failures, throttling, and rejected destructive methods. Live GitHub publication and visual checks are separate evidence.
+
+## Private research notebook
+
+`https://map-admin.mihirss.com/notebook` is a private notebook behind the same login. Its page lives in `src/notebook.html`; its routes in `src/notebook.js`.
+
+- **Storage:** everything is written to the private repository `mihirs-0/research-notebook` (branch `main`): `index.json` lists projects, and each project is one file, `projects/<slug>.json`, holding its whiteboard, pins and experiments. Nothing is written to the public site repository.
+- **Token:** `NOTEBOOK_GITHUB_TOKEN`, a separate fine-grained token selecting only `research-notebook`, with **Contents: read and write**. The site token cannot reach the notebook and the notebook token cannot reach the site. Without it, notebook routes answer 503 and touch nothing.
+- **Routes** (session required; only the `map-admin.mihirss.com` origin, not the public site): `GET/POST /api/notebook/projects`, `GET/POST /api/notebook/projects/<slug>`, `POST /api/notebook/projects/<slug>/delete`.
+- **Saving:** the page autosaves the whole project with its revision number. A save made from an older revision is refused (409, `stale`), so two open tabs cannot overwrite each other.
+- **Preregistration:** when an experiment moves out of draft, the Worker stamps `registered_at` and a SHA-256 `registered_hash` of the title and plan. After that the title and plan cannot change, the experiment cannot be deleted, and its status only moves forward (preregistered → running → concluded). Results, deviations and the verdict stay writable. Projects holding preregistered experiments can be archived, not deleted. The git history of the private repository is the independent timestamp.

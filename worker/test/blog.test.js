@@ -65,7 +65,7 @@ function fakeGitHub() {
 test('Cloudflare runtime: blog publishing', async t => {
   const gh = fakeGitHub();
   const mf = new Miniflare(convertV4MiniflareOptions({
-    modules: ['index.js', 'blog.js'].map(f => ({ type: 'ESModule', path: fileURLToPath(new URL('../src/' + f, import.meta.url)) })),
+    modules: ['index.js', 'blog.js', 'notebook.js'].map(f => ({ type: 'ESModule', path: fileURLToPath(new URL('../src/' + f, import.meta.url)) })),
     modulesRoot: fileURLToPath(new URL('../', import.meta.url)),
     compatibilityDate: '2026-10-01', bindings,
     ratelimits: { LOGIN_LIMITER: { namespace_id: '1044266898', simple: { limit: 5, period: 60 } } },

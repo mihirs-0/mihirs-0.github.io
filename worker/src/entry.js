@@ -1,8 +1,9 @@
 import api from "./index.js";
 import admin from "../../instruments/map-of-reality-admin.html";
 import blogAdmin from "../../blog/admin.html";
+import notebook from "./notebook.html";
 
-const PAGES = { "/admin": admin, "/blog": blogAdmin };
+const PAGES = { "/admin": admin, "/blog": blogAdmin, "/notebook": notebook };
 
 export default {
   async fetch(request, env) {
