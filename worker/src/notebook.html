@@ -95,6 +95,7 @@ details.arch li{padding:6px 0;font-size:18px}
 .card.from{outline:2px dashed #8C3B2E;outline-offset:3px}
 .card .cbar{font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:#8A7A52;margin-bottom:6px}
 .card .ctext{white-space:pre-wrap;overflow-wrap:anywhere;min-height:1.4em;outline:none}
+.card .ctext a{color:#2F5D8A;text-decoration:underline;text-underline-offset:2px;cursor:pointer}
 .card .ctext[data-empty]::before{content:'Write here…';color:#A89F8D}
 .card.editing{cursor:text}
 .card.editing .ctext{user-select:text;-webkit-user-select:text}
@@ -302,6 +303,25 @@ dialog p{font-size:17px;line-height:1.5;margin:0 0 14px}
 const $ = id => document.getElementById(id);
 const NS = 'http://www.w3.org/2000/svg';
 function el(tag, cls, text) { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
+// Card text is plain, with links written as [label](https://…); bare URLs link too.
+const LINK_RE = /\[([^\]\n]+)\]\((https?:\/\/[^\s)]+)\)|(https?:\/\/[^\s<>()\[\]]+[^\s<>()\[\].,;:!?'"])/g;
+function richText(node, text) {
+  let i = 0;
+  for (const m of text.matchAll(LINK_RE)) {
+    node.append(text.slice(i, m.index));
+    const a = el('a', null, m[1] || m[3]); a.href = m[2] || m[3]; a.target = '_blank'; a.rel = 'noopener noreferrer';
+    node.appendChild(a); i = m.index + m[0].length;
+  }
+  node.append(text.slice(i));
+  return node;
+}
+const isUrl = v => /^https?:\/\/\S+$/.test(v.trim());
+function insertLink(t, url, caretInUrl) {
+  const s = getSelection(); if (!s.rangeCount || !t.contains(s.anchorNode)) return;
+  const label = s.toString().replace(/[\[\]\n]/g, ' ').trim() || (caretInUrl ? 'link' : url.trim());
+  document.execCommand('insertText', false, '[' + label + '](' + url.trim() + ')');
+  if (caretInUrl) s.modify('move', 'backward', 'character');
+}
 function uid() { return [...crypto.getRandomValues(new Uint8Array(12))].map(b => (b % 36).toString(36)).join(''); }
 const r1 = v => Math.round(v * 10) / 10;
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
@@ -647,7 +667,7 @@ function cardEl(c) {
       d.appendChild(el('div', 'cbar', c.superseded_at ? 'Replaced · ' + fmtDate(c.superseded_at)
         : 'Belief · ' + fmtDate(c.pinned_at) + (c.conf != null ? ' · ' + c.conf + '%' : '')));
     } else d.appendChild(el('div', 'cbar', KIND_LABEL[c.kind]));
-    const t = el('div', 'ctext', c.text); if (!c.text) t.dataset.empty = '1'; d.appendChild(t);
+    const t = richText(el('div', 'ctext'), c.text); if (!c.text) t.dataset.empty = '1'; d.appendChild(t);
   }
   d.appendChild(el('span', 'rz'));
   return d;
@@ -733,7 +753,7 @@ function startEdit(id) {
   const node = nodeOf(id), c = card(id); if (!node || !c || c.kind === 'experiment') return;
   const t = node.querySelector('.ctext');
   editingId = id; editSnapshot = snapshot();
-  node.classList.add('editing'); delete t.dataset.empty;
+  node.classList.add('editing'); delete t.dataset.empty; t.textContent = c.text;
   try { t.contentEditable = 'plaintext-only'; } catch { t.contentEditable = 'true'; }
   if (t.contentEditable !== 'plaintext-only') t.contentEditable = 'true';
   t.focus();
@@ -741,6 +761,16 @@ function startEdit(id) {
   const s = getSelection(); s.removeAllRanges(); s.addRange(range);
   t.addEventListener('input', () => { hcache.set(id, node.offsetHeight); renderLinks(); });
   t.addEventListener('blur', endEdit, { once: true });
+  t.addEventListener('paste', e => {
+    const v = e.clipboardData.getData('text/plain');
+    if (isUrl(v) && !getSelection().isCollapsed) { e.preventDefault(); insertLink(t, v); }
+  });
+  t.addEventListener('keydown', e => {
+    if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+      // Wrap the selection as [text](https://) and leave the caret where the URL goes.
+      e.preventDefault(); insertLink(t, 'https://', true);
+    }
+  });
   t.addEventListener('keydown', e => { if (e.key === 'Escape' || (e.key === 'Enter' && (e.metaKey || e.ctrlKey))) { e.preventDefault(); t.blur(); } });
 }
 function endEdit() {
@@ -761,6 +791,7 @@ vp.addEventListener('pointerdown', e => {
   if (e.target.closest('#tools,#inks')) return;
   if (e.pointerType === 'mouse' && e.button !== 0 && e.button !== 1) return;
   if (editingId && e.target.closest('.card.editing')) return;
+  if (!editingId && e.target.closest('.card a') && tool === 'select') return;   // let the link open
   const hitId = e.target.closest('.card')?.dataset.id, onResize = e.target.classList.contains('rz');
   let linkNode = e.target.closest('.link');
   if (editingId) { endEdit(); linkNode = null; }   // the board re-rendered; look nodes up again
